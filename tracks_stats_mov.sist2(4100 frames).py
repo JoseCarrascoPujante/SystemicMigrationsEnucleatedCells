@@ -59,7 +59,7 @@ for root, subdirs, files in os.walk(walk_dir):
             experiment = scenario + '_' + cell_type
             file_path = os.path.join(root, filename)
             serie = pd.read_excel(file_path, header=None)
-            group_ids = (serie[7] > (serie[7].shift() + 1)).cumsum()            
+            group_ids = (serie[7] < (serie[7].shift())).cumsum()            
             #Coordenadas X iniciales de cada célula en esa serie
             o = serie.groupby(group_ids, as_index=False).first()[4] 
             #Coordenadas X finales de cada célula en esa serie
