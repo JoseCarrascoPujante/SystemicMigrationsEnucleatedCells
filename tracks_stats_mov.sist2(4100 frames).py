@@ -106,7 +106,7 @@ logging.info(f'{elapsed} seconds elapsed')
 
 # Count "leaf" folders (videos) in the supp. material directory
 
-supp_material = r'E:\Doctorado\Amebas\Papers enucleadas TODO\frames completos'
+supp_material = r'E:\Doctorado\Amebas\Papers enucleadas TODO\frames enucleadas completos'
 
 logging.info(f'{chr(10)}{chr(10)}Now counting videos in Supp. Material and xlsx files in \
 "tracks válidas" folder...{chr(10)}{chr(10)}')

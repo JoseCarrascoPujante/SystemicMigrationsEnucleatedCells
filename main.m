@@ -117,7 +117,7 @@ for f = 1:length(UsefulSubFolderNames)
     condition_track_n = 0 ;
     for l = 1:length(files)
         thisxlsx = files(l).name ;
-        opts.SelectedVariableNames = ["Var5" "Var6" "Var8"];
+        opts.SelectedVariableNames = ["Var5" "Var6" "Var8"]; % (columns) XY-coordinates and data point sequence
         temp_xlsx = readmatrix(thisxlsx, opts);
         
 
