@@ -15,18 +15,22 @@ import pandas as pd
 import logging
 from PIL import Image
 
+
 logging.basicConfig(
     level=logging.INFO,
     format="[%(asctime)s] %(message)s",
     datefmt='%d-%b-%y %H:%M:%S',
     handlers=[
-        logging.FileHandler(fr'C:\Users\pc\Desktop\Doctorado\Publicaciones\Papers enucleadas\Tracks válidas\Track_info_{datetime.now().strftime("%d.%m.%Y_%H.%M.%S")}.txt'),
+        logging.FileHandler(fr'C:\Users\pc\Desktop\Doctorado\Publicaciones\Papers enucleadas\mov.sist.enucleadas\Tracks válidas\Track_info_{datetime.now().strftime("%d.%m.%Y_%H.%M.%S")}.txt'),
         logging.StreamHandler(sys.stdout)
     ])
 
+
 t = time.time()
 
-walk_dir = r'C:\Users\pc\Desktop\Doctorado\Publicaciones\Papers enucleadas\Tracks válidas'
+
+walk_dir = r'C:\Users\pc\Desktop\Doctorado\Publicaciones\Papers enucleadas\mov.sist.enucleadas\Tracks válidas'
+
 
 logging.info('\n\n\nwalk_dir = ' + walk_dir)
 # If your current working directory may change during script execution, it's recommended to
@@ -34,6 +38,7 @@ logging.info('\n\n\nwalk_dir = ' + walk_dir)
 # be an absolute path as well.
 walk_dir = os.path.abspath(walk_dir)
 logging.info('walk_dir (absolute) = ' + os.path.abspath(walk_dir))
+
 
 excelfiles = []
 tracks_quantity = defaultdict()
@@ -44,12 +49,15 @@ left_n = defaultdict(defaultdict().copy)
 right_n = defaultdict(defaultdict().copy)
 x_displacement_serie = defaultdict(defaultdict().copy)
 
+
 for root, subdirs, files in os.walk(walk_dir):
     logging.info(f'\n\nNOW IN ROOT = {root}\n')
     logging.info(f'\n\n\tThere are {len(files)} files in {root}\n')
     
+
     for subdir in subdirs:
         logging.info('\t- subdirectory ' + subdir)
+
 
     for filename in files:
         if filename.endswith('.xlsx'):
@@ -73,6 +81,7 @@ for root, subdirs, files in os.walk(walk_dir):
             numcells[experiment][filename] = len(x_displacement_serie[experiment][filename])
             logging.info(f'\n\t- video {filename} contains {numcells[experiment][filename]} tracks and {len(serie)} data points,{chr(10)}{chr(10)}\t of which {left_n[experiment][filename]} end on the left side and {right_n[experiment][filename]} on the right side, with ratios {(left_n[experiment][filename]/len(x_displacement_serie[experiment][filename]))*100}% left and {(right_n[experiment][filename]/len(x_displacement_serie[experiment][filename]))*100}% right{chr(10)}{chr(10)}')
 
+
     if any(file.endswith('.xlsx') for file in files): # If the folder that was just parsed by the previous for loop contained any xlsx files do...
         max_min_cells[experiment]['max'] = max(numcells[experiment].values())
         max_min_cells[experiment]['min'] = min(numcells[experiment].values())
@@ -89,25 +98,28 @@ for root, subdirs, files in os.walk(walk_dir):
     else:
         logging.info(f'\nThere are no xlsx files in folder: {root}')
 
+
 logging.info(f'All subfolders contain {sum(numreps.values())} videos and {sum(tracks_quantity.values())} tracks')
 elapsed = time.time() - t
 logging.info(f'{elapsed} seconds elapsed')
 
+
 # Count "leaf" folders (videos) in the supp. material directory
+
+supp_material = r'E:\Doctorado\Amebas\Papers enucleadas TODO\frames completos'
 
 logging.info(f'{chr(10)}{chr(10)}Now counting videos in Supp. Material and xlsx files in \
 "tracks válidas" folder...{chr(10)}{chr(10)}')
 folders = []
-supp_material = r'E:\Doctorado\Amebas\Papers enucleadas TODO\frames completos'
 for root, dirs, files in os.walk(supp_material):
     for file in files:
         if file.endswith(".jpg"):
             folders.append(os.path.join(root, file))
             img = Image.open(os.path.join(root, file))
             wid, hgt = img.size
-            if wid != 1280 or hgt!= 960:
-                raise SystemExit(f'\t {root.rsplit({chr(92)},1)[1]} resolution not 1280x960')
-            # logging.info(f'{chr(10)}File {root.split(chr(92),6)[-1]} has {str(wid) + "x" + str(hgt)} resolution')
-            break
-logging.info(f'There are {len(folders)} videos in TODOS enucleadas and {len(excelfiles)} xlsx files in "tracks válidas"{chr(10)}{chr(10)}')
+            logging.info(f'{chr(10)}File {root.split(chr(92),6)[-1]} has {str(wid) + "x" + str(hgt)} resolution')
+            # if wid != 1280 or hgt!= 960:
+            #     raise SystemExit(f'\t {root.rsplit({chr(92)},1)[1]} resolution not 1280x960')
+            break # This break ensures only the first frame from each experiment/folder is read, thus speeding up experiment-resolution assessment
+logging.info(f'There are {len(folders)} videos in "{supp_material}" and {len(excelfiles)} xlsx files in "{walk_dir}"{chr(10)}')
 
