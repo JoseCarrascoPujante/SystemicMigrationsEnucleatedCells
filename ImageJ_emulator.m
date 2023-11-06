@@ -1,4 +1,4 @@
-load(coordinates.mat)
+function ImageJ_emulator(coordinates)
 fig = figure('Position', [250 0 700 700]);
 f_n = fieldnames(coordinates);
 button = '';
@@ -10,15 +10,15 @@ while f <= length(f_n)
     while i <= size(coordinates.(f_n{f}).scaled_x,2)
         Previous.Callback = {@ButtonMode,fig};
         Next.Callback = {@ButtonMode,fig};
-        plot(coordinates.(f_n{f}).scaled_x(:,i), ...
-            coordinates.(f_n{f}).scaled_y(:,i),'Color','b')
+        plot(coordinates.(f_n{f}).scaled_x{i}, ...
+            coordinates.(f_n{f}).scaled_y{i},'Color','b')
         hold on
-        plot(coordinates.(f_n{f}).scaled_x(end,i), ...
-            coordinates.(f_n{f}).scaled_y(end,i),...
+        plot(coordinates.(f_n{f}).scaled_x{i}(end), ...
+            coordinates.(f_n{f}).scaled_y{i}(end),...
             'ko','MarkerFaceColor','k','MarkerSize', 1.75)
-        text(.05,.95,[f_n{f},'\_nº',num2str(i)],'Units','normalized')
+        text(.05,.95,[f_n{f},'_nº',num2str(i)],'Units','normalized','Interpreter','none')
         axis equal
-%%% Uncomment the following lines to "square" up the plots
+%%% Uncomment the following lines to "square up" the plots
 %             if MaxX > MaxY 
 %                 axis([-MaxX MaxX -MaxY*(MaxX/MaxY) MaxY*(MaxX/MaxY)]);
 %             elseif MaxY > MaxX
@@ -51,5 +51,6 @@ if strcmpi(object.String, 'Previous')
 elseif strcmpi(object.String, 'Next')
     button = 'Next';
     uiresume(fig)
+end
 end
 end
