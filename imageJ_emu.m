@@ -1,4 +1,4 @@
-function imagej_emu(coordinates)
+function imageJ_emu(coordinates)
 frameDir = 'E:\Doctorado\Amebas\Papers enucleadas TODO\frames enucleadas completos\';
 fig = figure('Position', [0 0 1200 770]);
 f_n = fieldnames(coordinates);
@@ -31,7 +31,9 @@ while f <= length(f_n)
 
         % Head to video frames dir
         scenarioAndCondition = strsplit(f_n{f}, '_');
-        cd(strcat(frameDir,scenarioAndCondition(1),scenarioAndCondition(2)))
+        cd(string(strcat(frameDir,scenarioAndCondition(1),'\',scenarioAndCondition(2),'\')))
+        listofstrings = extractfield(dir('*mkv'),'name');
+        v = VideoReader(strnearest(,listofstrings));
 
         t = uicontrol('String',[currentframe '/' allframes],'frame','Style','text','Enable','inactive');
         hold off
