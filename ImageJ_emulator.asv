@@ -1,5 +1,4 @@
-function imagej_emulator(coordinates)
-frameDir = 'E:\Doctorado\Amebas\Papers enucleadas TODO\frames enucleadas completos\';
+function imageJ_emulator(coordinates)
 fig = figure('Position', [0 0 1200 770]);
 f_n = fieldnames(coordinates);
 button = '';
@@ -30,8 +29,7 @@ while f <= length(f_n)
         % end
 
         % Head to video frames dir
-        scenarioAndCondition = strsplit(f_n{f}, '_');
-        cd(strcat(frameDir,scenarioAndCondition(1),scenarioAndCondition(2)))
+        cd()
 
         t = uicontrol('String',[currentframe '/' allframes],'frame','Style','text','Enable','inactive');
         hold off

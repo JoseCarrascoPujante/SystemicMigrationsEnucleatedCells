@@ -114,7 +114,7 @@ for f = 1:length(UsefulSubFolderNames)
     files = natsortfiles(files) ;
     
     % Initialize condition track figure
-    figures.(conditionValidName).tracks = figure('Name',strcat('Tracks',condition),...
+    figures.(conditionValidName).tracks = figure('Name',strcat('Tracks_',condition),...
         'Visible','off','NumberTitle','off') ;
     hTracks = gca;
     
