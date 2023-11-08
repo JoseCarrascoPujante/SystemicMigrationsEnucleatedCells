@@ -1,4 +1,4 @@
-function imagej_emulator(coordinates)
+function imagej_emu(coordinates)
 frameDir = 'E:\Doctorado\Amebas\Papers enucleadas TODO\frames enucleadas completos\';
 fig = figure('Position', [0 0 1200 770]);
 f_n = fieldnames(coordinates);
