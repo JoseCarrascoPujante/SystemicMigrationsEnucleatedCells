@@ -101,12 +101,7 @@ for f = 1:length(UsefulSubFolderNames)
         ix = cumsum(temp_xlsx(:,3) < circshift(temp_xlsx(:,3),1,1));
         series = splitapply(@(x1){x1},temp_xlsx(:,1:2),ix);
         for s = 1:length(series)
-            scenario_cell_count = scenario_cell_count + 1;
-            
-            %%%INVERT Y AXIS TO DISPLAY THE REAL TRAJECTORY AS SEEN IN THE
-            %%%VIDEO (IMAGEJ'S PIXEL COUNT GOES BOTTOM-UP IN EACH FRAME)
-            series{s}(:,2) = flipud(series{s}(:,2));
-            
+            scenario_cell_count = scenario_cell_count + 1;            
             tracks.(conditionValidName).(genvarname(num2str(scenario_cell_count))) = series{s};
         end
     end
@@ -221,6 +216,7 @@ for f = 1:length(UsefulSubFolderNames)
     elseif MaxY == MaxX
         axis([-MaxX MaxX -MaxY MaxY]);
     end
+    set(hTracks, 'YDir','reverse')
     hold off
     
     [condition ' runtime was ' num2str(toc(thisfoldertic)) ' seconds']
@@ -229,7 +225,7 @@ for f = 1:length(UsefulSubFolderNames)
     % exportgraphics(hTracks,strcat(destination_folder, strcat('\Tracks_',condition),'.jpg'), ...
     % "Resolution",300)
     
-    % update condition/subfolder progress bar
+    % Update condition/subfolder progress bar
     bar1 = waitbar(f/length(UsefulSubFolderNames), bar1, condition) ;
 end
 
