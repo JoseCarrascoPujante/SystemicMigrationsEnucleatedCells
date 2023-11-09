@@ -81,7 +81,7 @@ for f = 1:length(UsefulSubFolderNames)
     conditionValidName = matlab.lang.makeValidName(condition) ;
     
     % update condition/subfolder progress bar
-    bar1 = waitbar(f/length(UsefulSubFolderNames)-1, bar1, condition) ;
+    bar1 = waitbar(f/length(UsefulSubFolderNames), bar1, condition) ;
 
     % Sort file names in natural order 
     files = natsortfiles(files) ;
@@ -228,8 +228,6 @@ for f = 1:length(UsefulSubFolderNames)
     % exportgraphics(hTracks,strcat(destination_folder, strcat('\Tracks_',condition),'.jpg'), ...
     % "Resolution",300)
     
-    % Update condition/subfolder progress bar
-    bar1 = waitbar(f/length(UsefulSubFolderNames), bar1, condition) ;
 end
 
 tImportSec = num2str(toc(tImportSec)) ;
