@@ -233,7 +233,7 @@ end
 tImportSec = num2str(toc(tImportSec)) ;
 
 % Save data
-save(strcat(destination_folder, '\', run_date, '_coordinates.mat'),...
+save(strcat(destination_folder, '\ParaImagejEmu_', run_date, '_coordinates.mat'),...
     'coordinates','figures','stat_names','shuffles','tImportSec','destination_folder') ;
 
 ['Coordinate section FINISHED in ', tImportSec, ' seconds']

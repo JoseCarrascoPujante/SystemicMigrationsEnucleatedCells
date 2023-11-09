@@ -1,9 +1,9 @@
 % function imageJ_emu(coordinates)
 close all
 clear
-load("C:\Users\pc\Desktop\Doctorado\Publicaciones\Papers enucleadas\mov.sist.enucleadas\ParaImagejEmu_2023-11-08_15.03'15''_200000_shuffles\ParaImageJEmu_2023-11-08_15.03'15''_coordinates.mat")
-load("C:\Users\pc\Desktop\Doctorado\Publicaciones\Papers enucleadas\mov.sist.enucleadas\code\framestack1.mat")
-TopLevelDir = 'E:\Doctorado\Amebas\Papers enucleadas TODO\frames enucleadas completos\';
+load("C:\Users\pc\Desktop\Doctorado\Publicaciones\Papers enucleadas\mov.sist.enucleadas\ParaImagejEmu_2023-11-09_02.48'13''_200000_shuffles\ParaImagejEmu_2023-11-09_02.48'13''_coordinates.mat")
+load("C:\Users\pc\Desktop\Doctorado\Publicaciones\Papers enucleadas\mov.sist.enucleadas\sample_framestack.mat")
+TopLevelDir = 'C:\Users\pc\Desktop\Doctorado\Publicaciones\Papers enucleadas\frames para comprobar tracks sinEst,galv,chem\';
 fig = figure('Position', [0 0 1200 770]);
 f_n = fieldnames(coordinates);
 button = '';
@@ -41,19 +41,15 @@ while f <= length(f_n)
             frameList = dir(strcat(conditionDir,chosenFolder,'\*.jpg'));
             nframes = max(size(frameList)) ;
             
-            % Preallocate frame number and resolution for importing later
-            % firstframe = imread([pwd '\' frameList(i).name]);
-            % [rows, columns] = size(firstframe);      
-            % framestack = cell(nframes);
-            % [framestack{:}] = deal(zeros(rows,columns));
-            % Load frames
-            % tic
-            % for n=1:nframes
-            %     framestack{n} = rgb2gray(imread(strcat(conditionDir,chosenFolder,'\',frameList(i).name))) ;
-            % end
-            % toc
+            % Load frames (preallocation does not decrease running time here)
+            tic
+            for n=1:nframes
+                framestack{n} = rgb2gray(imread(strcat(conditionDir,chosenFolder,'\',frameList(i).name))) ;
+            end
+            toc
             
             hImage=imshow(framestack{1});
+            hold on
             currentframe = '1';
             t = uicontrol('String',[num2str(currentframe) '/' num2str(nframes)],'Style','text','Position',[50 604 50 15]);
             jSlider = javax.swing.JSlider;
@@ -61,7 +57,7 @@ while f <= length(f_n)
             set(jSlider, 'Value', 1, 'Minimum', 1, 'Maximum', nframes, 'MajorTickSpacing', 200, 'PaintLabels', true, 'PaintTicks',true);
             hjSlider = handle(jSlider, 'CallbackProperties');
             set(hjSlider, 'StateChangedCallback', @sliderCallback);
-            hold on
+            
             
             % Plot track and pointer
             plot(coordinates.(f_n{f}).(j_n{j}).original_x{j}, ...
@@ -99,7 +95,7 @@ function ButtonMode(object,~,fig)
         uiresume(fig)
     end
 end
-function sliderCallback( slider, hImage, t, nframes, framestack )
+function sliderCallback( jSlider, hImage, t, nframes, framestack )
     idx = jSlider.getValue ;
     hImage.CData = imshow(framestack{idx});
     t.String = [num2str(idx) '/' num2str(nframes)];
