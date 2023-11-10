@@ -56,7 +56,9 @@ while f <= length(f_n)
             
             hImage=imshow(framestack{1},'Parent',ax);
             hold on
-            set(slider, 'Value', 1,'Min', 1, 'Max', nframes, 'UserData', framestack);
+            currentframe = '1';
+            set(slider, 'Value', str2double(currentframe),'Min', 1, 'Max', nframes, ...
+                'UserData',framestack);
             
             
             % Plot track and pointer
@@ -97,13 +99,12 @@ function ButtonMode(object,~,fig)
     end
 end
 
-function sliderCallback(src, event, ax, nframes)
+function sliderCallback(src, event)
     idx = round(src.Value) ;
     imageArray = src.UserData ;
     % t.String = [num2str(idx) '/' num2str(nframes)];
-    hold on
     o = imshow(imageArray{idx}(:,:),'Parent',src.Parent.Children(4));
-    % title(ax, sprintf('%g/%g', idx, nframes));
+    title(ax, sprintf('%g/%g', idx, nframes));
     uistack(o,'bottom')
 end
 
