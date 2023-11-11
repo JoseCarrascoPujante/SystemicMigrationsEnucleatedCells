@@ -1,19 +1,24 @@
 % function imageJ_emu(coordinates)
 close all
-clear
-load("C:\Users\pc\Desktop\Doctorado\Publicaciones\Papers enucleadas\mov.sist.enucleadas\ParaImagejEmu_2023-11-09_02.48'13''_200000_shuffles\ParaImagejEmu_2023-11-09_02.48'13''_coordinates.mat")
-load("C:\Users\pc\Desktop\Doctorado\Publicaciones\Papers enucleadas\mov.sist.enucleadas\sample_framestack.mat")
+clearvars -except framestack coordinates
+% load("C:\Users\pc\Desktop\Doctorado\Publicaciones\Papers enucleadas\mov.sist.enucleadas\ParaImagejEmu_2023-11-09_02.48'13''_200000_shuffles\ParaImagejEmu_2023-11-09_02.48'13''_coordinates.mat")
+% load("C:\Users\pc\Desktop\Doctorado\Publicaciones\Papers enucleadas\mov.sist.enucleadas\sample_framestack.mat")
 TopLevelDir = 'C:\Users\pc\Desktop\Doctorado\Publicaciones\Papers enucleadas\frames para comprobar tracks sinEst,galv,chem\';
-fig = figure('Position', [0 0 1200 750]);
-ax = axes('Parent',fig);
+fig = uifigure('Position', [0 0 1200 750]);
+ax = uiaxes(fig,'Position', fig.Position);
 f_n = fieldnames(coordinates);
+
+% Create Next and Previous buttons
 button = '';
-Previous = uicontrol('String','Previous','Position',[30 10 90 30]);
-Next = uicontrol('String','Next','Position',[130 10 90 30]);
-slider = uicontrol('Parent',fig,'Style','slider',...
-    'Min',1,'Max',10,'Value',1,'SliderStep',[1/9 1/9],...
-    'Position',[100 590 900 35],...
-    'Callback',@sliderCallback);
+Previous = uicontrol('Parent',fig,'String','Previous','Position',[30 10 90 30]);
+Next = uicontrol('Parent',fig,'String','Next','Position',[130 10 90 30]);
+
+% Create frameButton
+frameButton = uibutton('state','Parent',fig,'Position',[1100 715 80 20]);
+
+% Create slider
+slider = uislider(fig, 'Orientation','vertical','Value', 1,...
+                'Position',[1040 30 1 690]);
 
 f = 1; % N of usefulSubfolders
 i = 1; % N of experiment in usefulSubfolder
@@ -53,22 +58,29 @@ while f <= length(f_n)
             %     framestack{n} = rgb2gray(imread(strcat(conditionDir,chosenFolder,'\',frameList(n)))) ;
             % end
             % toc
-            
+
             hImage=imshow(framestack{1},'Parent',ax);
-            hold on
-            set(slider, 'Value', 1,'Min', 1, 'Max', nframes, 'UserData', framestack);
-            
+            hold(ax, "on")
             
             % Plot track and pointer
-            plot(coordinates.(f_n{f}).(j_n{j}).original_x{j}, ...
+            plot(ax,coordinates.(f_n{f}).(j_n{j}).original_x{j}, ...
                 coordinates.(f_n{f}).(j_n{j}).original_y{j},'Color','r')
-            plot(coordinates.(f_n{f}).(j_n{j}).original_x{j}(end), ...
+            plot(ax,coordinates.(f_n{f}).(j_n{j}).original_x{j}(end), ...
                 coordinates.(f_n{f}).(j_n{j}).original_y{j}(end),...
-                'ko','MarkerFaceColor','m','MarkerEdgeColor','m','MarkerSize', 2)
-            text(.05,.95,[f_n{f} ' ' j_n{j} ' nº' num2str(j)],'Units','normalized','Interpreter','none','Color','m')
-            % axis equal
-            hold off
+                'pentagram','MarkerFaceColor','g','MarkerEdgeColor','g','MarkerSize', 3)
+            hMarker = plot(ax,coordinates.(f_n{f}).(j_n{j}).original_x{j}(1), ...
+                coordinates.(f_n{f}).(j_n{j}).original_y{j}(1),...
+                'o','MarkerFaceColor','none','MarkerEdgeColor','g','MarkerSize', 8);
+            text(ax,.05,.96,[f_n{f} ' ' j_n{j} ' nº' num2str(j)],...
+                'Units','normalized','Interpreter','none','Color','m','FontSize',16)
+
+            set(slider,'Limits',[1 nframes],'UserData', framestack,...
+                'MajorTicks', 1:200:nframes,'ValueChangingFcn',...
+                @(src,event) updateImage(src,event,frameButton,hImage,hMarker,coordinates.(f_n{f}).(j_n{j}).original_x{j},coordinates.(f_n{f}).(j_n{j}).original_y{j}));
+                %if func and vargin are not defined here I get "not enough input argument" error
+            % Wait for user input
             uiwait(fig)
+            hold(ax,"off")
             if contains(button,'Next')
                 i = i + 1;
             elseif contains(button,'Previous')
@@ -97,26 +109,14 @@ function ButtonMode(object,~,fig)
     end
 end
 
-function sliderCallback(src, event, ax, nframes)
-    idx = round(src.Value) ;
-    imageArray = src.UserData ;
-    % t.String = [num2str(idx) '/' num2str(nframes)];
-    hold on
-    o = imshow(imageArray{idx}(:,:),'Parent',src.Parent.Children(4));
-    % title(ax, sprintf('%g/%g', idx, nframes));
-    uistack(o,'bottom')
+function updateImage(src,event,frameButton,hImage,hMarker,coordsX,coordsY)
+    idx = round(event.Value) ;
+    hImage.CData = src.UserData{idx}(:,:);
+    hMarker.XData = coordsX(idx);
+    hMarker.YData = coordsY(idx);
+    if frameButton.Value == 1
+        frameButton.Text = num2str(idx);
+    end
 end
-
-% function framestack = readFrames(nframes,conditionDir,chosenFolder,frameList)
-%     firstframe = rgb2gray(imread(strcat(conditionDir,chosenFolder,'\',frameList(1))));
-%     [rows, columns] = size(firstframe);      
-%     framestack = cell(nframes,1);
-%     [framestack{:}] = deal(zeros(rows,columns));
-%     tic
-%     parfor n=1:nframes
-%         framestack{n}=rgb2gray(imread(strcat(conditionDir,chosenFolder,'\',frameList(n))));
-%     end
-%     toc
-% end
 
 % end
