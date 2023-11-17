@@ -1,5 +1,8 @@
 function imageJ_emu(coordinates)
     % close all
+    % clearvars -except framestack coordinates
+    % load("C:\Users\pc\Desktop\Doctorado\Publicaciones\Papers enucleadas\mov.sist.enucleadas\ParaImagejEmu_2023-11-09_02.48'13''_200000_shuffles\ParaImagejEmu_2023-11-09_02.48'13''_coordinates.mat")
+    % load("C:\Users\pc\Desktop\Doctorado\Publicaciones\Papers enucleadas\mov.sist.enucleadas\sample_framestack.mat")
     fig = uifigure('Position', [0 0 1100 700]);
     ax = uiaxes(fig,'Position', fig.Position);
     hold(ax, "on")
@@ -55,11 +58,10 @@ function imageJ_emu(coordinates)
                 
                 % Wait for user input
                 uiwait(fig)
-                                
+                % hold(ax,"off")
+                
             end
             j = 1;
-            msgbox('Switched to previous experiment, loading frames:')
-            loadExp()            
         end
         i = 1;
         f = f + 1;
@@ -85,6 +87,7 @@ function imageJ_emu(coordinates)
         elseif (j == 1) && (i ~= 1) && (f ~= 1)
             i = i - 1;
             j = size(coordinates.(f_n{f}).(i_n{i}).scaled_x,2) ;
+            msgbox('Switched to previous experiment')
         end
         uiresume(fig)
     end
@@ -94,11 +97,11 @@ function imageJ_emu(coordinates)
         frameDir = uigetdir('C:\Users\JoseC\Desktop\Doctorado\Publicaciones\Papers enucleadas\frames para comprobar tracks sinEst,galv,chem');
         frameList = extractfield(dir(strcat(frameDir,'\*.jpg')),'name') ;
         nframes = numel(frameList) ;
-        framestack = cell(nframes,1);
         % Load frames
+        framestack = cell(nframes,1);
         tic
         for n=1:nframes
-            framestack{n} = rgb2gray(imread(string(strcat(frameDir,'\',frameList(n))))) ;
+            framestack{n} = rgb2gray(imread(strcat(frameDir,'\',frameList(n)))) ;
         end
         toc
     end
