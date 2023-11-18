@@ -29,21 +29,24 @@ function imageJ_emu(coordinates)
 
             % choose if to display frames in the background &
             % update slider accordingly
-            if exist('hImage','var') == 0                
-                selection = uiconfirm(fig,["Load experiment's" i_n{i} "frames?"],...
-                    'Confirm import',"Options",["Yes","No"],...
-                    "DefaultOption",2,"CancelOption",2);
-                switch selection
-                    case 'Yes'
-                        [framestack, nframes] = loadExp();
-                    case 'No'
-                end                                
-            end
+            selection = uiconfirm(fig,["Load experiment's" i_n{i} "frames?"],...
+                'Confirm import',"Options",["Yes","No"],...
+                "DefaultOption",2,"CancelOption",2);
+            switch selection
+                case 'Yes'
+                    [framestack,hImage,nframes] = loadExp();
+                case 'No'
+            end                                
             
             while j <= size(coordinates.(f_n{f}).(i_n{i}).original_x,2)
                 
                 % Plot track
                 [pc,pf,pm,pt] = plotData(pc,pf,pm,pt);
+                setup_scroll_wheel(slider,displaycurrentframeButton,hImage,pm,coordinates.(f_n{f}).(i_n{i}).original_x{j},coordinates.(f_n{f}).(i_n{i}).original_y{j})
+                set(slider,'Limits',[1 nframes],'UserData',framestack,...
+                    'Value',1,'MajorTicks', 1:200:nframes,'ValueChangingFcn',...
+                    @(src,event) updateImage(src,event,displaycurrentframeButton,hImage,pm,coordinates.(f_n{f}).(i_n{i}).original_x{j},coordinates.(f_n{f}).(i_n{i}).original_y{j}))
+                
 
                 % Wait for user input
                 m = msgbox("Waiting for user input");
@@ -55,13 +58,6 @@ function imageJ_emu(coordinates)
             end
             i = i + 1;
             j = 1;
-            % selection = uiconfirm(fig,"Load next experiment's frames?","Options",["Yes","No"],...
-            %     "DefaultOption",2,"CancelOption",2);
-            % switch selection
-            %     case 'Yes'
-            %         [framestack, nframes] = loadExp();
-            %     case 'No'
-            % end            
         end
         i = 1;
         f = f + 1;
@@ -92,12 +88,12 @@ function imageJ_emu(coordinates)
         end
     end
 
-    function nextButton(src,~)
+    function nextButton(~,~)
         j = j + 1;
         uiresume(fig)
     end
     
-    function prevButton(src,~)
+    function prevButton(~,~)
         if (j ~= 1)
             j = j - 1;
         elseif (j == 1) && (i == 1) && (f == 1)
@@ -116,14 +112,12 @@ function imageJ_emu(coordinates)
         uiresume(fig)
     end
     
-    function [framestack, nframes] = loadExp()  
-        % Get frame dir and N of frames
+    function [framestack,hImage,nframes] = loadExp()  
         frameDir = uigetdir('C:\Users\JoseC\Desktop\Doctorado\Publicaciones\Papers sin nucleo\frames', ...
             ['Find ' f_n{f} ' ' i_n{i} ' frames']);
         frameList = extractfield(dir(strcat(frameDir,'\*.jpg')),'name') ;
         nframes = numel(frameList) ;
         framestack = cell(nframes,1);
-        % Load frames
         tic
         for n=1:nframes
             framestack{n} = rgb2gray(imread(string(strcat(frameDir,'\',frameList(n))))) ;
@@ -131,11 +125,30 @@ function imageJ_emu(coordinates)
         toc
         hImage=imshow(framestack{1},'Parent',ax);
         uistack(hImage,'bottom')
-        set(slider,'Limits',[1 nframes],'UserData',framestack,...
-            'Value',1,'MajorTicks', 1:200:nframes,'ValueChangingFcn',...
-            @(src,event) updateImage(src,event,displaycurrentframeButton,hImage,pm,coordinates.(f_n{f}).(i_n{i}).original_x{j},coordinates.(f_n{f}).(i_n{i}).original_y{j}))
     end
     
+    function setup_scroll_wheel(slider,~,hImage,pm,~,~)
+        set(fig, 'WindowScrollWheelFcn', @(src,event) scroll_wheel_callback(src,event,slider,displaycurrentframeButton,hImage,pm,coordinates.(f_n{f}).(i_n{i}).original_x{j},coordinates.(f_n{f}).(i_n{i}).original_y{j}))
+    end
+    
+    function scroll_wheel_callback(~,event,slider,dispframeButton,hImage,pm,coordsX,coordsY)
+        current_slider_value = round(slider.Value);
+        if event.VerticalScrollCount < 0
+            current_slider_value = current_slider_value + event.VerticalScrollAmount*10;
+        elseif event.VerticalScrollCount > 0
+            current_slider_value = current_slider_value - event.VerticalScrollAmount*10;
+        end
+        if (slider.Limits(1) < current_slider_value) && (current_slider_value < slider.Limits(2))
+            set(slider, 'Value', current_slider_value);
+            hImage.CData = slider.UserData{current_slider_value}(:,:);
+            pm.XData = coordsX(current_slider_value);
+            pm.YData = coordsY(current_slider_value);
+            if dispframeButton.Value == 1
+                dispframeButton.Text = num2str(current_slider_value);
+            end
+        end
+    end
+
     function updateImage(src,event,dispframeButton,hImage,pm,coordsX,coordsY)
         idx = round(event.Value) ;
         hImage.CData = src.UserData{idx}(:,:);
@@ -145,4 +158,5 @@ function imageJ_emu(coordinates)
             dispframeButton.Text = num2str(idx);
         end
     end
+
 end
