@@ -5,9 +5,9 @@ function imageJ_emu(coordinates,framestack)
     f_n = fieldnames(coordinates);
     nframes = 4100;
     
-    f = 1; % N usefulSubfolders
-    i = 1; % N experiments in usefulSubfolder
-    j = 1; % N tracks in experiment
+    f = 1; % f usefulSubfolders
+    i = 1; % i experiments in usefulSubfolder
+    j = 1; % j tracks in experiment
     
     % Create buttons
     uibutton('push','Parent',fig,'Text','Next',...
@@ -44,8 +44,8 @@ function imageJ_emu(coordinates,framestack)
             end
             i = i + 1;
             j = 1;
-            msgbox('Switched to next experiment, loading frames:')
-            loadExp()            
+            msgbox('Switching to next experiment, load frames:')
+            [framestack, nframes] = loadExp();            
         end
         i = 1;
         f = f + 1;
