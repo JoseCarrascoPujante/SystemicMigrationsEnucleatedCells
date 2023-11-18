@@ -26,42 +26,38 @@ function imageJ_emu(coordinates)
     while f <= length(f_n)
         i_n = fieldnames(coordinates.(f_n{f}));
         while i <= size(i_n,1)
-
-            % choose if to display frames in the background &
-            % update slider accordingly
-            if exist('hImage','var') == 0                
-                selection = uiconfirm(fig,["Load experiment's" i_n{i} "frames?"],...
-                    'Confirm import',"Options",["Yes","No"],...
-                    "DefaultOption",2,"CancelOption",2);
-                switch selection
-                    case 'Yes'
-                        [framestack, nframes] = loadExp();
-                    case 'No'
-                end                                
-            end
-            
             while j <= size(coordinates.(f_n{f}).(i_n{i}).original_x,2)
                 
                 % Plot track
                 [pc,pf,pm,pt] = plotData(pc,pf,pm,pt);
+                % choose if to display frames in the background &
+                % update slider accordingly
+                if exist('hImage','var') == 0                
+                    selection = uiconfirm(fig,"Load next experiment's frames?",...
+                        'Confirm import',"Options",["Yes","No"],...
+                        "DefaultOption",2,"CancelOption",2);
+                    switch selection
+                        case 'Yes'
+                            [framestack, nframes] = loadExp();
+                        case 'No'
+                            return
+                    end                                
+                end
 
                 % Wait for user input
-                m = msgbox("Waiting for user input");
                 uiwait(fig)
-                if exist('m', 'var')
-                  delete(m);
-                  clear('m');
-                end                                
+                                
             end
             i = i + 1;
             j = 1;
-            % selection = uiconfirm(fig,"Load next experiment's frames?","Options",["Yes","No"],...
-            %     "DefaultOption",2,"CancelOption",2);
-            % switch selection
-            %     case 'Yes'
-            %         [framestack, nframes] = loadExp();
-            %     case 'No'
-            % end            
+            selection = uiconfirm(fig,"Load next experiment's frames?","Options",["Yes","No"],...
+                "DefaultOption",2,"CancelOption",2);
+            switch selection
+                case 'Yes'
+                    [framestack, nframes] = loadExp();
+                case 'No'
+                    return
+            end            
         end
         i = 1;
         f = f + 1;
@@ -118,8 +114,7 @@ function imageJ_emu(coordinates)
     
     function [framestack, nframes] = loadExp()  
         % Get frame dir and N of frames
-        frameDir = uigetdir('C:\Users\JoseC\Desktop\Doctorado\Publicaciones\Papers sin nucleo\frames', ...
-            ['Find ' f_n{f} ' ' i_n{i} ' frames']);
+        frameDir = uigetdir('C:\Users\JoseC\Desktop\Doctorado\Publicaciones\Papers sin nucleo\frames');
         frameList = extractfield(dir(strcat(frameDir,'\*.jpg')),'name') ;
         nframes = numel(frameList) ;
         framestack = cell(nframes,1);

@@ -87,7 +87,7 @@ for f = 1:length(UsefulSubFolderNames)
     files = natsortfiles(files) ;
     
     % Initialize condition track figure
-    figures.(conditionValidName).tracks = figure('Name',strcat('Tracks_',condition),...
+    figures.(conditionValidName).tracks = figure('Name',strcat('Tracks',condition),...
         'Visible','off','NumberTitle','off') ;
     hTracks = gca;
     
@@ -233,7 +233,7 @@ end
 tImportSec = num2str(toc(tImportSec)) ;
 
 % Save data
-save(strcat(destination_folder, '\ParaImagejEmu_', run_date, '_coordinates.mat'),...
+save(strcat(destination_folder, '\imageJemu_', run_date, '_coordinates.mat'),...
     'coordinates','figures','stat_names','shuffles','tImportSec','destination_folder') ;
 
 ['Coordinate section FINISHED in ', tImportSec, ' seconds']
