@@ -1,4 +1,4 @@
-function imageJ_emu(coordinates,framestack)
+function imageJ_emu(coordinates)
     fig = uifigure('Position', [0 0 1100 700]);
     ax = uiaxes(fig,'Position', fig.Position);
     hold(ax, "on")

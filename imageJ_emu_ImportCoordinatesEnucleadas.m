@@ -1,4 +1,4 @@
-%% Preprocessing
+% Preprocessing
 
 clear
 close all
