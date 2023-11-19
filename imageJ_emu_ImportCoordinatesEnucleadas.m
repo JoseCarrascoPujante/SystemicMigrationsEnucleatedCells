@@ -1,13 +1,13 @@
 % Preprocessing
 
-clear
+clear all
 close all
 
 % Run date & time
 run_date = char(datetime('now','Format','yyyy-MM-dd_HH.mm''''ss''''''''')) ;
 
 % Select dir containing .xlsx track files
-topLevelFolder = uigetdir('C:\Users\pc\Desktop\Doctorado\Publicaciones\Papers enucleadas\mov.sist.enucleadas') ;
+topLevelFolder = uigetdir('C:\Users\pc\Desktop\Doctorado\Publicaciones\Papers sin nucleo\mov.sist.enucleadas') ;
 
 % Number of times Rho(s) will be randomly permuted to test against the
 % null hypothesis that results are random

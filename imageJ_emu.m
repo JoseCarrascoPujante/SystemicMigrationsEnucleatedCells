@@ -1,22 +1,25 @@
 function imageJ_emu(coordinates)
     % Create ui elements
-    fig = uifigure('Position', [0 0 1100 700]);
+    fig = uifigure('Position', [0 0 1200 700]);
     ax = uiaxes(fig,'Position', fig.Position);
-    hold(ax, "on")        
+    hold(ax, "on")
+    uibutton('push','Parent',fig,'Text','Load frames',...
+        'Position',[1250 600 90 20],'ButtonPushedFcn', @loadButton);
+    displaycurrentframeButton = uibutton('state','Parent',fig, ...
+        'Position',[1250 650 80 20]);    
     uibutton('push','Parent',fig,'Text','Next',...
         'Position',[110 5 90 30],'ButtonPushedFcn', @nextButton);
     uibutton('push','Parent',fig,'Text','Previous',...
         'Position',[10 5 90 30],'ButtonPushedFcn', @prevButton);
-    displaycurrentframeButton = uibutton('state','Parent',fig,'Position',[1100 715 80 20]);
     slider = uislider(fig, 'Orientation','vertical','Value', 1,...
-        'Position',[1060 30 1 690]);
+        'Position',[1200 30 1 690]);
     
     % Track iteration while loop
     f_n = fieldnames(coordinates);
     
-    % Dropdown menu to choose scenario->experiment->track to plot
-    % dd = uidropdown(fig,'Editable','off','Position',[320 5 200 30],'DropDownOpeningFcn',@dropdownUpdate, ...
-    %     'ValueChangedFcn',@dropdownPlot);
+    % Optional dropdown menu to choose scenario->experiment->track to plot
+    % dd = uidropdown(fig,'Editable','off','Position',[320 5 200 30],...
+    %     'DropDownOpeningFcn',@dropdownUpdate,'ValueChangedFcn',@dropdownPlot);
     
     f = 1; % f scenario
     i = 1; % i experiments in scenario
@@ -24,37 +27,11 @@ function imageJ_emu(coordinates)
     
     [pc,pf,pm,pt] = deal('');
     while f <= length(f_n)
-        i_n = fieldnames(coordinates.(f_n{f}));
-        while i <= size(i_n,1)
-
-            % choose if to display frames in the background &
-            % update slider accordingly
-            selection = uiconfirm(fig,["Load experiment's" i_n{i} "frames?"],...
-                'Confirm import',"Options",["Yes","No"],...
-                "DefaultOption",2,"CancelOption",2);
-            switch selection
-                case 'Yes'
-                    [framestack,hImage,nframes] = loadExp();
-                case 'No'
-            end                                
-            
-            while j <= size(coordinates.(f_n{f}).(i_n{i}).original_x,2)
-                
-                % Plot track
-                [pc,pf,pm,pt] = plotData(pc,pf,pm,pt);
-                setup_scroll_wheel(slider,displaycurrentframeButton,hImage,pm,coordinates.(f_n{f}).(i_n{i}).original_x{j},coordinates.(f_n{f}).(i_n{i}).original_y{j})
-                set(slider,'Limits',[1 nframes],'UserData',framestack,...
-                    'Value',1,'MajorTicks', 1:200:nframes,'ValueChangingFcn',...
-                    @(src,event) updateImage(src,event,displaycurrentframeButton,hImage,pm,coordinates.(f_n{f}).(i_n{i}).original_x{j},coordinates.(f_n{f}).(i_n{i}).original_y{j}))
-                
-
-                % Wait for user input
-                m = msgbox("Waiting for user input");
-                uiwait(fig)
-                if exist('m', 'var')
-                  delete(m);
-                  clear('m');
-                end                                
+        i_n = fieldnames(coordinates.(f_n{f}));        
+        while (i > 0) && (i <= size(i_n,1))  
+            while (j > 0) && (j <= size(coordinates.(f_n{f}).(i_n{i}).original_x,2))   
+                [pc,pf,pm,pt] = plotData(pc,pf,pm,pt); % Plot track
+                uiwait(fig) % Wait for user input
             end
             i = i + 1;
             j = 1;
@@ -63,6 +40,16 @@ function imageJ_emu(coordinates)
         f = f + 1;
     end
     
+    function loadButton(~,~)
+        % choose experiment to display in the background &
+        % update slider accordingly
+        [framestack,hImage,nframes] = loadExp();
+        setup_scroll_wheel(slider,displaycurrentframeButton,hImage,pm,coordinates.(f_n{f}).(i_n{i}).original_x{j},coordinates.(f_n{f}).(i_n{i}).original_y{j})
+        set(slider,'Limits',[1 nframes],'UserData',framestack,...
+            'Value',1,'MajorTicks', 1:200:nframes,'ValueChangingFcn',...
+            @(src,event) updateImage(src,event,displaycurrentframeButton,hImage,pm,coordinates.(f_n{f}).(i_n{i}).original_x{j},coordinates.(f_n{f}).(i_n{i}).original_y{j}))
+    end
+
     function [pc,pf,pm,pt] = plotData(pc,pf,pm,pt)
         switch all(arrayfun(@isempty, [pc,pf,pm,pt]))
             case 1
@@ -75,8 +62,8 @@ function imageJ_emu(coordinates)
                 pm = plot(ax,coordinates.(f_n{f}).(i_n{i}).original_x{j}(1), ...
                     coordinates.(f_n{f}).(i_n{i}).original_y{j}(1), ...
                     'o','MarkerFaceColor','none','MarkerEdgeColor','g','MarkerSize', 8);                
-                pt = text(ax,.05,.97,[f_n{f} ' ' i_n{i} ' nº' num2str(j)], ...
-                    'Units','normalized','Interpreter','none','Color','m','FontSize',16);
+                pt = text(ax,.05,1.05,[f_n{f} ' ' i_n{i} ' nº' num2str(j)], ...
+                    'Units','normalized','Interpreter','none','Color','k','FontSize',16);
             case 0
                 pc.XData = coordinates.(f_n{f}).(i_n{i}).original_x{j};
                 pc.YData = coordinates.(f_n{f}).(i_n{i}).original_y{j};
@@ -94,7 +81,7 @@ function imageJ_emu(coordinates)
     end
     
     function prevButton(~,~)
-        if (j ~= 1)
+        if j ~= 1
             j = j - 1;
         elseif (j == 1) && (i == 1) && (f == 1)
             f = length(f_n);
@@ -102,10 +89,14 @@ function imageJ_emu(coordinates)
             j = size(coordinates.(f_n{f}).(i_n{i}).scaled_x,2);
         elseif (j == 1) && (i == 1) && (f ~= 1)
             f = f - 1;
+            i_n = fieldnames(coordinates.(f_n{f}));
             i = size(i_n,1);
             j = size(coordinates.(f_n{f}).(i_n{i}).scaled_x,2) ;
-            msgbox('Reached first track in this scenario')
+        elseif (j == 1) && (i ~= 1) && (f == 1)
+            i = i - 1;
+            j = size(coordinates.(f_n{f}).(i_n{i}).scaled_x,2) ;
         elseif (j == 1) && (i ~= 1) && (f ~= 1)
+            f = f - 1;
             i = i - 1;
             j = size(coordinates.(f_n{f}).(i_n{i}).scaled_x,2) ;
         end
@@ -114,15 +105,24 @@ function imageJ_emu(coordinates)
     
     function [framestack,hImage,nframes] = loadExp()  
         frameDir = uigetdir('C:\Users\JoseC\Desktop\Doctorado\Publicaciones\Papers sin nucleo\frames', ...
-            ['Find ' f_n{f} ' ' i_n{i} ' frames']);
+            ['Please, load ' f_n{f} ' ' i_n{i} ' frames']);
+        experimentName = strsplit(frameDir,'\');
+        set(fig,'Name',strcat('Frames',string(experimentName(11))))
+        bar1 = waitbar(0,'1','Name',sprintf('Loading %g...',string(experimentName(11))), ...
+            'Position',[-800 269 550 56]);
+        childrenWaitb = get(bar1, 'Children'); 
+        set(childrenWaitb, 'Position',[-800 269 550 56]);        
         frameList = extractfield(dir(strcat(frameDir,'\*.jpg')),'name') ;
         nframes = numel(frameList) ;
-        framestack = cell(nframes,1);
+        framestack = cell(1,nframes);
         tic
         for n=1:nframes
+            % Update waitbar and message
+            waitbar(n/nframes,bar1,sprintf('%1d',n))       
             framestack{n} = rgb2gray(imread(string(strcat(frameDir,'\',frameList(n))))) ;
         end
         toc
+        close(bar1)
         hImage=imshow(framestack{1},'Parent',ax);
         uistack(hImage,'bottom')
     end
@@ -138,7 +138,7 @@ function imageJ_emu(coordinates)
         elseif event.VerticalScrollCount > 0
             current_slider_value = current_slider_value - event.VerticalScrollAmount*10;
         end
-        if (slider.Limits(1) < current_slider_value) && (current_slider_value < slider.Limits(2))
+        if (slider.Limits(1) <= current_slider_value) && (current_slider_value <= slider.Limits(2))
             set(slider, 'Value', current_slider_value);
             hImage.CData = slider.UserData{current_slider_value}(:,:);
             pm.XData = coordsX(current_slider_value);
