@@ -4,15 +4,15 @@ function imageJ_emu(coordinates)
     ax = uiaxes(fig,'Position', fig.Position);
     hold(ax, "on")
     uibutton('push','Parent',fig,'Text','Load frames',...
-        'Position',[1250 600 90 20],'ButtonPushedFcn', @loadButton);
+        'Position',[1220 600 90 20],'ButtonPushedFcn', @loadframesButton);
     displaycurrentframeButton = uibutton('state','Parent',fig, ...
-        'Position',[1250 650 80 20]);    
+        'Position',[1220 650 80 20]);    
     uibutton('push','Parent',fig,'Text','Next',...
         'Position',[110 5 90 30],'ButtonPushedFcn', @nextButton);
     uibutton('push','Parent',fig,'Text','Previous',...
         'Position',[10 5 90 30],'ButtonPushedFcn', @prevButton);
     slider = uislider(fig, 'Orientation','vertical','Value', 1,...
-        'Position',[1200 30 1 690]);
+        'Position',[1150 30 1 690]);
     
     % Track iteration while loop
     f_n = fieldnames(coordinates);
@@ -25,12 +25,17 @@ function imageJ_emu(coordinates)
     i = 1; % i experiments in scenario
     j = 1; % j tracks in experiment
     
-    [pc,pf,pm,pt] = deal('');
-    while f <= length(f_n)
+    [pc,pf,pm,pt,hImage] = deal('');
+    while (f > 0) && (f <= length(f_n))
         i_n = fieldnames(coordinates.(f_n{f}));        
         while (i > 0) && (i <= size(i_n,1))  
             while (j > 0) && (j <= size(coordinates.(f_n{f}).(i_n{i}).original_x,2))   
                 [pc,pf,pm,pt] = plotData(pc,pf,pm,pt); % Plot track
+                if ~isempty(hImage)
+                    setup_scroll_wheel(slider,displaycurrentframeButton,hImage,pm,coordinates.(f_n{f}).(i_n{i}).original_x{j},coordinates.(f_n{f}).(i_n{i}).original_y{j})
+                    set(slider,'ValueChangingFcn',...
+                        @(src,event) updateImage(src,event,displaycurrentframeButton,hImage,pm,coordinates.(f_n{f}).(i_n{i}).original_x{j},coordinates.(f_n{f}).(i_n{i}).original_y{j}))
+                end
                 uiwait(fig) % Wait for user input
             end
             i = i + 1;
@@ -40,7 +45,7 @@ function imageJ_emu(coordinates)
         f = f + 1;
     end
     
-    function loadButton(~,~)
+    function loadframesButton(~,~)
         % choose experiment to display in the background &
         % update slider accordingly
         [framestack,hImage,nframes] = loadExp();
@@ -62,7 +67,7 @@ function imageJ_emu(coordinates)
                 pm = plot(ax,coordinates.(f_n{f}).(i_n{i}).original_x{j}(1), ...
                     coordinates.(f_n{f}).(i_n{i}).original_y{j}(1), ...
                     'o','MarkerFaceColor','none','MarkerEdgeColor','g','MarkerSize', 8);                
-                pt = text(ax,.05,1.05,[f_n{f} ' ' i_n{i} ' nº' num2str(j)], ...
+                pt = text(ax,.03,1.03,[f_n{f} ' ' i_n{i} ' nº' num2str(j)], ...
                     'Units','normalized','Interpreter','none','Color','k','FontSize',16);
             case 0
                 pc.XData = coordinates.(f_n{f}).(i_n{i}).original_x{j};
@@ -76,7 +81,14 @@ function imageJ_emu(coordinates)
     end
 
     function nextButton(~,~)
-        j = j + 1;
+        if (f == length(f_n)) && (i == length(i_n)) && (j == size(coordinates.(f_n{f}).(i_n{i}).scaled_x,2))
+            f = 1;
+            i_n = fieldnames(coordinates.(f_n{f}));
+            i = 1;
+            j = 1;
+        else
+            j = j + 1;
+        end
         uiresume(fig)
     end
     
@@ -85,18 +97,20 @@ function imageJ_emu(coordinates)
             j = j - 1;
         elseif (j == 1) && (i == 1) && (f == 1)
             f = length(f_n);
-            i = size (fieldnames(coordinates.(f_n{f})),1);
+            i_n = fieldnames(coordinates.(f_n{f}));
+            i = length(i_n);
             j = size(coordinates.(f_n{f}).(i_n{i}).scaled_x,2);
         elseif (j == 1) && (i == 1) && (f ~= 1)
             f = f - 1;
             i_n = fieldnames(coordinates.(f_n{f}));
-            i = size(i_n,1);
+            i = length(i_n);
             j = size(coordinates.(f_n{f}).(i_n{i}).scaled_x,2) ;
         elseif (j == 1) && (i ~= 1) && (f == 1)
             i = i - 1;
             j = size(coordinates.(f_n{f}).(i_n{i}).scaled_x,2) ;
         elseif (j == 1) && (i ~= 1) && (f ~= 1)
             f = f - 1;
+            i_n = fieldnames(coordinates.(f_n{f}));
             i = i - 1;
             j = size(coordinates.(f_n{f}).(i_n{i}).scaled_x,2) ;
         end
@@ -108,10 +122,11 @@ function imageJ_emu(coordinates)
             ['Please, load ' f_n{f} ' ' i_n{i} ' frames']);
         experimentName = strsplit(frameDir,'\');
         set(fig,'Name',strcat('Frames',string(experimentName(11))))
-        bar1 = waitbar(0,'1','Name',sprintf('Loading %g...',string(experimentName(11))), ...
-            'Position',[-800 269 550 56]);
-        childrenWaitb = get(bar1, 'Children'); 
-        set(childrenWaitb, 'Position',[-800 269 550 56]);        
+        bar1 = waitbar(0,'1','Name',sprintf('Loading %s...',string(experimentName(11))), ...
+            'Units', 'Normalized', 'Position', [0.1 0.25 0.8 0.25]);
+        tmp = findall(bar1);
+        set(tmp(2), 'Units', 'Normalized', 'Position', [0.1 0.3 0.8 0.2])
+        set(tmp(4), 'Units', 'Normalized', 'Position', [0.1 0.3 0.8 0.25])
         frameList = extractfield(dir(strcat(frameDir,'\*.jpg')),'name') ;
         nframes = numel(frameList) ;
         framestack = cell(1,nframes);
