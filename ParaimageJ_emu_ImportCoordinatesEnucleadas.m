@@ -80,9 +80,6 @@ for f = 1:length(UsefulSubFolderNames)
     disp(['Now parsing:', ' "', condition,'"'])
     conditionValidName = matlab.lang.makeValidName(condition) ;
     
-    % update condition/subfolder progress bar
-    bar1 = waitbar(f/length(UsefulSubFolderNames), bar1, condition) ;
-
     % Sort file names in natural order 
     files = natsortfiles(files) ;
     
@@ -95,23 +92,22 @@ for f = 1:length(UsefulSubFolderNames)
     scenario_cell_count = 0 ;
     for l = 1:length(files)
         thisxlsx = files(l).name ;
-        opts = detectImportOptions(thisxlsx);
-        opts.SelectedVariableNames = ["Var5" "Var6" "Var8"]; % (columns) XY-coordinates and data point sequence
-        temp_xlsx = readmatrix(thisxlsx, opts);
-        ix = cumsum(temp_xlsx(:,3) < circshift(temp_xlsx(:,3),1,1));
+        % opts = detectImportOptions(thisxlsx);
+        % opts.SelectedVariableNames = ["Var5" "Var6" "Var8"]; % (columns) XY-coordinates and data point sequence
+        temp_xlsx = readmatrix(thisxlsx,'Range','E:H');
+        ix = cumsum(temp_xlsx(:,4) < circshift(temp_xlsx(:,4),1,1));
         series = splitapply(@(x1){x1},temp_xlsx(:,1:2),ix);
         for s = 1:length(series)
             scenario_cell_count = scenario_cell_count + 1;            
             tracks.(conditionValidName).(matlab.lang.makeValidName(thisxlsx(1:end-5))).(genvarname(num2str(scenario_cell_count))) = series{s};
         end
+        waitbar(l/length(files), bar2, matlab.lang.makeValidName(thisxlsx(1:end-5))) ;    
     end
 
     % Loop for track importing and processing
     A = fieldnames(tracks.(conditionValidName)) ;
     for i = 1:length(A)
         B = fieldnames(tracks.(conditionValidName).(A{i})) ;
-        % update track progress bar
-        bar2 = waitbar(i/length(A), bar2, A{i}) ;
         for j = 1:length(B)
              
             % Save original X and Y coordinates as x(i) and y(i)
@@ -227,13 +223,16 @@ for f = 1:length(UsefulSubFolderNames)
     % %Save figure as a jpg file
     % exportgraphics(hTracks,strcat(destination_folder, strcat('\Tracks_',condition),'.jpg'), ...
     % "Resolution",300)
-    
+
+    % update condition/subfolder progress bar
+    waitbar(f/length(UsefulSubFolderNames), bar1, condition) ;    
 end
 
+close(bar1,bar2)
 tImportSec = num2str(toc(tImportSec)) ;
 
 % Save data
-save(strcat(destination_folder, '\imageJemu_', run_date, '_coordinates.mat'),...
+save(strcat(destination_folder, 'ParaImageJ_emu_', run_date, '_coordinates.mat'),...
     'coordinates','figures','stat_names','shuffles','tImportSec','destination_folder') ;
 
 ['Coordinate section FINISHED in ', tImportSec, ' seconds']

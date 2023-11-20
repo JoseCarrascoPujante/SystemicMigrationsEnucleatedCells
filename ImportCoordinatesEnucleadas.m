@@ -95,15 +95,16 @@ for f = 1:length(UsefulSubFolderNames)
     scenario_cell_count = 0 ;
     for l = 1:length(files)
         thisxlsx = files(l).name ;
-        opts = detectImportOptions(thisxlsx);
-        opts.SelectedVariableNames = ["Var5" "Var6" "Var8"]; % (columns) XY-coordinates and data point sequence
-        temp_xlsx = readmatrix(thisxlsx, opts);
-        ix = cumsum(temp_xlsx(:,3) < circshift(temp_xlsx(:,3),1,1));
+        % opts = detectImportOptions(thisxlsx);
+        % opts.SelectedVariableNames = ["Var5" "Var6" "Var8"]; % (columns) XY-coordinates and data point sequence
+        temp_xlsx = readmatrix(thisxlsx, 'Range','E:H');
+        ix = cumsum(temp_xlsx(:,4) < circshift(temp_xlsx(:,4),1,1));
         series = splitapply(@(x1){x1},temp_xlsx(:,1:2),ix);
         for s = 1:length(series)
             scenario_cell_count = scenario_cell_count + 1;            
             tracks.(conditionValidName).(genvarname(num2str(scenario_cell_count))) = series{s};
         end
+        waitbar(l/length(files), bar2, genvarname(num2str(scenario_cell_count))) ;
     end
 
     % Loop for track importing and processing
