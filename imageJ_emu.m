@@ -6,9 +6,9 @@ function imageJ_emu(coordinates)
     slider = uislider(fig, 'Orientation','vertical','Value', 1,...
         'Position',[1135 30 1 690]);
     displaycurrentframeButton = uibutton('state','Parent',fig, ...
-        'Position',[1180 650 80 20],'ValueChangedFcn',@(src,event) stateButtonClicked(src,event,slider));
+        'Position',[1175 650 80 20],'ValueChangedFcn',@(src,event) stateButtonClicked(src,event,slider));
     uibutton('push','Parent',fig,'Text','Load frames',...
-        'Position',[1180 600 90 20],'ButtonPushedFcn', @loadframesButton);
+        'Position',[1175 600 90 20],'ButtonPushedFcn', @loadframesButton);
     uibutton('push','Parent',fig,'Text','Next',...
         'Position',[110 5 90 30],'ButtonPushedFcn', @nextButton);
     uibutton('push','Parent',fig,'Text','Previous',...
@@ -143,6 +143,7 @@ function imageJ_emu(coordinates)
         end
         toc
         close(bar1)
+        delete(findall(ax.Children, 'type', 'Image'))
         hImage=imshow(framestack{1},'Parent',ax);
         uistack(hImage,'bottom')
     end
