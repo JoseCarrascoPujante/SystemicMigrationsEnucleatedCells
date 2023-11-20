@@ -28,7 +28,16 @@ function imageJ_emu(coordinates)
     [pc,pf,pm,pt,hImage] = deal('');
     while (f > 0) && (f <= length(f_n))
         i_n = fieldnames(coordinates.(f_n{f}));        
-        while (i > 0) && (i <= size(i_n,1))  
+        while (i > 0) && (i <= size(i_n,1))
+            selection = uiconfirm(fig,["Load experiment" i_n{i} "frames?"],...
+                'Confirm import',"Options",["Yes","No"],...
+                "DefaultOption",2,"CancelOption",2);
+            switch selection
+                case 'Yes'
+                    [framestack, hImage, nframes] = loadExp();
+                case 'No'
+            end                                
+            
             while (j > 0) && (j <= size(coordinates.(f_n{f}).(i_n{i}).original_x,2))   
                 [pc,pf,pm,pt] = plotData(pc,pf,pm,pt); % Plot track
                 if ~isempty(hImage)
@@ -138,7 +147,7 @@ function imageJ_emu(coordinates)
         end
         toc
         close(bar1)
-        hImage=imshow(framestack{1},'Parent',ax);
+        hImage = imshow(framestack{1},'Parent',ax);
         uistack(hImage,'bottom')
     end
     
