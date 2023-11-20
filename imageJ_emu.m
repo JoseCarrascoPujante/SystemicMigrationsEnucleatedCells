@@ -10,7 +10,7 @@ function imageJ_emu(coordinates)
     uibutton('push','Parent',fig,'Text','Previous',...
         'Position',[10 5 90 30],'ButtonPushedFcn', @prevButton);
     slider = uislider(fig, 'Orientation','vertical','Value', 1,...
-        'Position',[1130 30 1 690]);
+        'Position',[1135 30 1 690]);
     displaycurrentframeButton = uibutton('state','Parent',fig, ...
         'Position',[1170 650 80 20],'ValueChangedFcn',@(src,event) stateButtonClicked(src,event,slider));    
     
@@ -35,7 +35,6 @@ function imageJ_emu(coordinates)
                     setup_scroll_wheel(slider,displaycurrentframeButton,hImage,pm,coordinates.(f_n{f}).(i_n{i}).original_x{j},coordinates.(f_n{f}).(i_n{i}).original_y{j})
                     set(slider,'ValueChangingFcn',...
                         @(src,event) updateImage(src,event,displaycurrentframeButton,hImage,pm,coordinates.(f_n{f}).(i_n{i}).original_x{j},coordinates.(f_n{f}).(i_n{i}).original_y{j}))
-                    set()
                 end
                 uiwait(fig) % Wait for user input
             end
@@ -180,6 +179,5 @@ function imageJ_emu(coordinates)
             src.Text = num2str(slider.Value);
         end
     end
-
 
 end
