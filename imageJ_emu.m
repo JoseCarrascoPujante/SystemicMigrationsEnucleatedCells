@@ -3,16 +3,16 @@ function imageJ_emu(coordinates)
     fig = uifigure('Position', [0 0 1200 700]);
     ax = uiaxes(fig,'Position', fig.Position);
     hold(ax, "on")
-    uibutton('push','Parent',fig,'Text','Load frames',...
-        'Position',[1170 600 90 20],'ButtonPushedFcn', @loadframesButton);
-    uibutton('push','Parent',fig,'Text','Next',...
-        'Position',[110 5 90 30],'ButtonPushedFcn', @nextButton);
-    uibutton('push','Parent',fig,'Text','Previous',...
-        'Position',[10 5 90 30],'ButtonPushedFcn', @prevButton);
     slider = uislider(fig, 'Orientation','vertical','Value', 1,...
         'Position',[1135 30 1 690]);
     displaycurrentframeButton = uibutton('state','Parent',fig, ...
-        'Position',[1170 650 80 20],'ValueChangedFcn',@(src,event) stateButtonClicked(src,event,slider));    
+        'Position',[1180 650 80 20],'ValueChangedFcn',@(src,event) stateButtonClicked(src,event,slider));
+    uibutton('push','Parent',fig,'Text','Load frames',...
+        'Position',[1180 600 90 20],'ButtonPushedFcn', @loadframesButton);
+    uibutton('push','Parent',fig,'Text','Next',...
+        'Position',[110 5 90 30],'ButtonPushedFcn', @nextButton);
+    uibutton('push','Parent',fig,'Text','Previous',...
+        'Position',[10 5 90 30],'ButtonPushedFcn', @prevButton);    
     
     % Track iteration while loop
     f_n = fieldnames(coordinates);
@@ -25,25 +25,25 @@ function imageJ_emu(coordinates)
     i = 1; % i experiments in scenario
     j = 1; % j tracks in experiment
     
-    [pc,pf,pm,pt,hImage] = deal('');
+    [pc,pf,pm,pt] = deal('');
     while (f > 0) && (f <= length(f_n))
         i_n = fieldnames(coordinates.(f_n{f}));        
         while (i > 0) && (i <= size(i_n,1))
-            selection = uiconfirm(fig,["Load experiment" i_n{i} "frames?"],...
+            selection = uiconfirm(fig,["Load experiment's" i_n{i} "frames?"],...
                 'Confirm import',"Options",["Yes","No"],...
                 "DefaultOption",2,"CancelOption",2);
             switch selection
                 case 'Yes'
-                    [framestack, hImage, nframes] = loadExp();
+                    [hImage,nframes,framestack] = loadExp;
                 case 'No'
             end                                
             
             while (j > 0) && (j <= size(coordinates.(f_n{f}).(i_n{i}).original_x,2))   
                 [pc,pf,pm,pt] = plotData(pc,pf,pm,pt); % Plot track
-                if ~isempty(hImage)
+                if exist('hImage','var')
                     setup_scroll_wheel(slider,displaycurrentframeButton,hImage,pm,coordinates.(f_n{f}).(i_n{i}).original_x{j},coordinates.(f_n{f}).(i_n{i}).original_y{j})
-                    set(slider,'ValueChangingFcn',...
-                        @(src,event) updateImage(src,event,displaycurrentframeButton,hImage,pm,coordinates.(f_n{f}).(i_n{i}).original_x{j},coordinates.(f_n{f}).(i_n{i}).original_y{j}))
+                    set(slider,'Limits',[1 nframes],'UserData',framestack,'Value',1,'MajorTicks', 1:200:nframes,...
+                        'ValueChangingFcn',@(src,event) updateImage(src,event,displaycurrentframeButton,hImage,pm,coordinates.(f_n{f}).(i_n{i}).original_x{j},coordinates.(f_n{f}).(i_n{i}).original_y{j}))
                 end
                 uiwait(fig) % Wait for user input
             end
@@ -57,11 +57,7 @@ function imageJ_emu(coordinates)
     function loadframesButton(~,~)
         % choose experiment to display in the background &
         % update slider accordingly
-        [framestack,hImage,nframes] = loadExp;
-        setup_scroll_wheel(slider,displaycurrentframeButton,hImage,pm,coordinates.(f_n{f}).(i_n{i}).original_x{j},coordinates.(f_n{f}).(i_n{i}).original_y{j})
-        set(slider,'Limits',[1 nframes],'UserData',framestack,...
-            'Value',1,'MajorTicks', 1:200:nframes,'ValueChangingFcn',...
-            @(src,event) updateImage(src,event,displaycurrentframeButton,hImage,pm,coordinates.(f_n{f}).(i_n{i}).original_x{j},coordinates.(f_n{f}).(i_n{i}).original_y{j}))
+        [hImage,nframes,framestack] = loadExp;
     end
 
     function [pc,pf,pm,pt] = plotData(pc,pf,pm,pt)
@@ -126,7 +122,7 @@ function imageJ_emu(coordinates)
         uiresume(fig)
     end
     
-    function [framestack,hImage,nframes] = loadExp 
+    function [hImage,nframes,framestack] = loadExp
         frameDir = uigetdir('C:\Users\JoseC\Desktop\Doctorado\Publicaciones\Papers sin nucleo\frames', ...
             ['Please, load ' f_n{f} ' ' i_n{i} ' frames']);
         experimentName = strsplit(frameDir,'\');
@@ -147,7 +143,7 @@ function imageJ_emu(coordinates)
         end
         toc
         close(bar1)
-        hImage = imshow(framestack{1},'Parent',ax);
+        hImage=imshow(framestack{1},'Parent',ax);
         uistack(hImage,'bottom')
     end
     
