@@ -6,9 +6,9 @@ function imageJ_emu(coordinates)
     slider = uislider(fig, 'Orientation','vertical','Value', 1,...
         'Position',[1135 30 1 690]);
     displaycurrentframeButton = uibutton('state','Parent',fig, ...
-        'Position',[1175 650 80 20],'ValueChangedFcn',@(src,event) stateButtonClicked(src,event,slider));
+        'Position',[1170 650 80 20],'ValueChangedFcn',@(src,event) stateButtonClicked(src,event,slider));
     uibutton('push','Parent',fig,'Text','Load frames',...
-        'Position',[1175 600 90 20],'ButtonPushedFcn', @loadframesButton);
+        'Position',[1170 600 90 20],'ButtonPushedFcn', @loadframesButton);
     uibutton('push','Parent',fig,'Text','Next',...
         'Position',[110 5 90 30],'ButtonPushedFcn', @nextButton);
     uibutton('push','Parent',fig,'Text','Previous',...
@@ -124,9 +124,9 @@ function imageJ_emu(coordinates)
     
     function [hImage,nframes,framestack] = loadExp
         frameDir = uigetdir('C:\Users\JoseC\Desktop\Doctorado\Publicaciones\Papers sin nucleo\frames', ...
-            ['Please, load ' f_n{f} ' ' i_n{i} ' frames']);
+            ['Please load ' f_n{f} ' ' i_n{i}]);
         experimentName = strsplit(frameDir,'\');
-        set(fig,'Name',strcat('Frames',string(experimentName(11))))
+        set(fig,'Name',strcat('Frames', string(experimentName(11))))
         bar1 = waitbar(0,'1','Name',sprintf('Loading %s...',string(experimentName(11))), ...
             'Units', 'Normalized', 'Position', [0.1 0.25 0.8 0.25]);
         tmp = findall(bar1);
