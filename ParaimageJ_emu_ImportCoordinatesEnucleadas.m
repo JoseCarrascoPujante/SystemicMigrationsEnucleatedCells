@@ -57,9 +57,9 @@ ratio_list1 = [38.6252,38.6252,38.6252,11.63,11.63,38.6252,38.6252,38.6252,38.62
 % Custom pixel/mm ratio list for chemotaxis cells
 ratio_list2 = [38.6252,38.6252,38.6252,38.6252,38.6252,38.6252,38.6252,38.6252,38.6252,38.6252,38.6252,11.63] ;
 
-bar1 = waitbar(0,'In progress...','Name','Reading scenario_condition files in:') ;
+bar1 = waitbar(0,'In progress...','Name','Scenario') ;
 bar1.Children.Title.Interpreter = 'none';
-bar2 = waitbar(0,'In progress...','Name','Reading file nº:') ;
+bar2 = waitbar(0,'In progress...','Name','Excel file') ;
 bar2.Children.Title.Interpreter = 'none';
 
 
@@ -232,7 +232,7 @@ close(bar1,bar2)
 tImportSec = num2str(toc(tImportSec)) ;
 
 % Save data
-save(strcat(destination_folder, 'ParaImageJ_emu_', run_date, '_coordinates.mat'),...
+save(strcat(destination_folder, '\ParaImageJ_emu_', run_date, '_coordinates.mat'),...
     'coordinates','figures','stat_names','shuffles','tImportSec','destination_folder') ;
 
 ['Coordinate section FINISHED in ', tImportSec, ' seconds']
