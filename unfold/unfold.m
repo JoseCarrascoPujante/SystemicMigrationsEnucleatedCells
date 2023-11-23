@@ -1,4 +1,4 @@
-function unfold(SC,varargin)
+function namearray = unfold(SC,varargin)
 %UNFOLD Unfolds a structure.
 %   UNFOLD(SC) displays the content of a variable. If SC is a structure it
 %   recursively shows the name of SC and the fieldnames of SC and their
@@ -11,13 +11,13 @@ function unfold(SC,varargin)
 
 %R.F. Tap
 %15-6-2005, 7-12-2005, 5-1-2006, 3-4-2006
-
 % check input
 switch nargin
-    case 1
+    case 2
         Name = inputname(1);
         show = true;
-    case 2
+        namearray = varargin{3};
+    case 3
         if islogical(varargin{1})
             Name = inputname(1);
             show = varargin{1};
@@ -27,7 +27,8 @@ switch nargin
         else
             error('Second input argument must be a string or a logical')
         end
-    case 3
+        namearray = varargin{3};
+    case 4
         if ischar(varargin{1})
             if islogical(varargin{2})
                 Name = varargin{1};
@@ -38,6 +39,7 @@ switch nargin
         else
             error('Second input argument must be a string')
         end
+        namearray = varargin{3};
     otherwise
         error('Invalid number of input arguments')
 end
@@ -68,7 +70,7 @@ if isstruct(SC)
                 Namei = [Name '.' F{i}];
             end
             if isstruct(SC(h).(F{i}))
-                unfold(SC(h).(F{i}),Namei,show);
+                namearray = unfold(SC(h).(F{i}),Namei,show,namearray);
             else
                 if iscell(SC(h).(F{i}))
                     siz = size(SC(h).(F{i}));
@@ -90,6 +92,7 @@ if isstruct(SC)
                         end
                     end
                 else
+                    namearray = [namearray Namei];
                     disp(Namei)
                     if show
                         disp(SC(h).(F{i}))
