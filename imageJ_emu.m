@@ -100,19 +100,19 @@ function imageJ_emu(coordinates)
     function prevButton(~,~)
         if j ~= 1
             j = j - 1;
+        elseif (j == 1) && (i ~= 1)
+            i = i - 1;
+            j = size(coordinates.(f_n{f}).(i_n{i}).scaled_x,2) ;
+        elseif (j == 1) && (i == 1) && (f ~= 1)
+            f = f - 1;
+            i_n = fieldnames(coordinates.(f_n{f}));
+            i = length(i_n);
+            j = size(coordinates.(f_n{f}).(i_n{i}).scaled_x,2) ;            
         elseif (j == 1) && (i == 1) && (f == 1)
             f = length(f_n);
             i_n = fieldnames(coordinates.(f_n{f}));
             i = length(i_n);
             j = size(coordinates.(f_n{f}).(i_n{i}).scaled_x,2);
-        elseif (j == 1) && (i == 1) && (f ~= 1)
-            f = f - 1;
-            i_n = fieldnames(coordinates.(f_n{f}));
-            i = length(i_n);
-            j = size(coordinates.(f_n{f}).(i_n{i}).scaled_x,2) ;
-        elseif (j == 1) && (i ~= 1)
-            i = i - 1;
-            j = size(coordinates.(f_n{f}).(i_n{i}).scaled_x,2) ;
         end
         uiresume(fig)
     end
