@@ -1,125 +1,78 @@
-function imageJ_emu(coordinates)
+function imageJ_emu(tracks)
     % Create ui elements
     fig = uifigure('Position', [0 0 1200 700]);
-    ax = uiaxes(fig,'Position', fig.Position);
-    hold(ax, "on")
-    slider = uislider(fig, 'Orientation','vertical','Value', 1,...
-        'Position',[1140 30 1 690]);
-    displaycurrentframeButton = uibutton('state','Parent',fig, ...
-        'Position',[1175 650 80 20],'ValueChangedFcn',@(src,event) stateButtonClicked(src,event,slider));
-    uibutton('push','Parent',fig,'Text','Load frames',...
-        'Position',[1175 600 90 20],'ButtonPushedFcn', @loadframesButton);
-    uibutton('push','Parent',fig,'Text','Next',...
-        'Position',[110 5 90 30],'ButtonPushedFcn', @nextButton);
-    uibutton('push','Parent',fig,'Text','Previous',...
-        'Position',[10 5 90 30],'ButtonPushedFcn', @prevButton);    
+    g = uigridlayout(fig);
+    g.RowHeight = {200,22,'1x'};
+    g.ColumnWidth = {300,'1x'};
     
-    % Track iteration while loop
-    f_n = fieldnames(coordinates);
+    slider = uislider(g, 'Orientation','vertical','Value', 1);
+    slider.Layout.Row = 3;
+    slider.Layout.Column = 1;
+
+    displaycurrentframeButton = uibutton('state','Parent',g,'Text','Slider position display', ...
+        'ValueChangedFcn',@(src,event) stateButtonClicked(src,event,slider));
+    displaycurrentframeButton.Layout.Row = 2;
+    displaycurrentframeButton.Layout.Column = 1;
+    ax = uiaxes(g);
+    ax.Layout.Row = [1 3];
+    ax.Layout.Column = 2;
+    hold(ax, "on")    
+        
+    % Optional listbox to choose scenario->experiment->track to plot
+    trackList = {};
+    trackList = unfold(tracks,'tracks',false,trackList);
     
-    % Optional dropdown menu to choose scenario->experiment->track to plot
-    % dd = uidropdown(fig,'Editable','off','Position',[320 5 200 30],...
-    %     'DropDownOpeningFcn',@dropdownUpdate,'ValueChangedFcn',@dropdownPlot);
-    
-    f = 1; % f scenario
-    i = 1; % i experiments in scenario
-    j = 1; % j tracks in experiment
-    
-    [pc,pf,pm,pt] = deal('');
-    while (f > 0) && (f <= length(f_n))
-        i_n = fieldnames(coordinates.(f_n{f}));        
-        while (i > 0) && (i <= size(i_n,1))
-            selection = uiconfirm(fig,["Load experiment's" i_n{i} "frames?"],...
-                'Confirm import',"Options",["Yes","No"],...
-                "DefaultOption",2,"CancelOption",2);
-            switch selection
-                case 'Yes'
-                    [hImage,nframes,framestack] = loadExp;
-                case 'No'
-            end                                
-            
-            while (j > 0) && (j <= size(coordinates.(f_n{f}).(i_n{i}).original_x,2))   
-                [pc,pf,pm,pt] = plotData(pc,pf,pm,pt); % Plot track
-                if exist('hImage','var')
-                    setup_scroll_wheel(slider,displaycurrentframeButton,hImage,pm,coordinates.(f_n{f}).(i_n{i}).original_x{j},coordinates.(f_n{f}).(i_n{i}).original_y{j})
-                    set(slider,'Limits',[1 nframes],'UserData',framestack,'Value',1,'MajorTicks', 1:200:nframes,...
-                        'ValueChangingFcn',@(src,event) updateImage(src,event,displaycurrentframeButton,hImage,pm,coordinates.(f_n{f}).(i_n{i}).original_x{j},coordinates.(f_n{f}).(i_n{i}).original_y{j}))
-                end
-                uiwait(fig) % Wait for user input
-            end
-            i = i + 1;
-            j = 1;
-        end
-        i = 1;
-        f = f + 1;
+    myCoords = cell(1,numel(trackList));
+    for v = 1:length(trackList)
+        myCoords{v} = eval(trackList{v});
     end
     
-    function loadframesButton(~,~)
-        % choose experiment to display in the background &
-        % update slider accordingly
-        [hImage,nframes,framestack] = loadExp;
+    lb = uilistbox(g,'Items',cellfun(@(S) S(11:end), trackList, 'Uniform', 0),...
+        'ItemsData',myCoords,'FontSize',11.1,'ValueChangedFcn',@listBox);
+    lb.Layout.Row = 1;
+    lb.Layout.Column = 1;
+    [pc,pf,pm,pt] = deal('');
+
+    function listBox(src,event)
+        [pc,pf,pm,pt] = plotData(pc,pf,pm,pt); % Plot track
+        [~,y,~] = fileparts(string(lb.Items(event.PreviousValueIndex)));        
+        [~,w,~] = fileparts(string(lb.Items(lb.ValueIndex)));
+        if w ~= y
+            [hImage,framestack] = loadExp;
+            set(slider,'UserData',framestack, 'ValueChangingFcn', ...
+                @(src,event) updateImage(src,event,displaycurrentframeButton,hImage,pm,lb.Value(:,1),lb.Value(:,2)))            
+            setup_scroll_wheel(slider,displaycurrentframeButton,hImage,pm, ...
+                src.Value(:,1),src.Value(:,2))
+        end
+        set(slider, 'Limits', [1 length(lb.Value)], 'Value', 1, 'MajorTicks', 1:100:length(lb.Value))
     end
 
     function [pc,pf,pm,pt] = plotData(pc,pf,pm,pt)
         switch all(arrayfun(@isempty, [pc,pf,pm,pt]))
             case 1
                 % Plot track, pointer & text
-                pc = plot(ax,coordinates.(f_n{f}).(i_n{i}).original_x{j}, ...
-                    coordinates.(f_n{f}).(i_n{i}).original_y{j},'Color','r');                
-                pf = plot(ax,coordinates.(f_n{f}).(i_n{i}).original_x{j}(end), ...
-                    coordinates.(f_n{f}).(i_n{i}).original_y{j}(end), ...
+                pc = plot(ax,lb.Value(:,1), lb.Value(:,2),'Color','r');                
+                pf = plot(ax,lb.Value(end,1), lb.Value(end,2), ...
                     'pentagram','MarkerFaceColor','g','MarkerEdgeColor','g','MarkerSize', 3.5);             
-                pm = plot(ax,coordinates.(f_n{f}).(i_n{i}).original_x{j}(1), ...
-                    coordinates.(f_n{f}).(i_n{i}).original_y{j}(1), ...
-                    'o','MarkerFaceColor','none','MarkerEdgeColor','g','MarkerSize', 8);                
-                pt = text(ax,.03,1.03,[f_n{f} ' ' i_n{i} ' nº' num2str(j)], ...
-                    'Units','normalized','Interpreter','none','Color','k','FontSize',16);
+                pm = plot(ax,lb.Value(1,1), lb.Value(1,2),'o','MarkerFaceColor', ...
+                    'none','MarkerEdgeColor','g','MarkerSize', 8);                
+                pt = text(ax,.25,.05,string(lb.Items(lb.ValueIndex)), ...
+                    'Units','normalized','Interpreter','none','Color','m','FontSize',17);
             case 0
-                pc.XData = coordinates.(f_n{f}).(i_n{i}).original_x{j};
-                pc.YData = coordinates.(f_n{f}).(i_n{i}).original_y{j};
-                pf.XData = coordinates.(f_n{f}).(i_n{i}).original_x{j}(end);
-                pf.YData = coordinates.(f_n{f}).(i_n{i}).original_y{j}(end);
-                pm.XData = coordinates.(f_n{f}).(i_n{i}).original_x{j}(1);
-                pm.YData = coordinates.(f_n{f}).(i_n{i}).original_y{j}(1);
-                pt.String = [f_n{f} ' ' i_n{i} ' nº' num2str(j)];
+                pc.XData = lb.Value(:,1);
+                pc.YData = lb.Value(:,2);
+                pf.XData = lb.Value(end,1);
+                pf.YData = lb.Value(end,2);
+                pm.XData = lb.Value(1,1);
+                pm.YData = lb.Value(1,2);
+                pt.String = string(lb.Items(lb.ValueIndex));
         end
-    end
-
-    function nextButton(~,~)
-        if (f == length(f_n)) && (i == length(i_n)) && (j == size(coordinates.(f_n{f}).(i_n{i}).scaled_x,2))
-            f = 1;
-            i_n = fieldnames(coordinates.(f_n{f}));
-            i = 1;
-            j = 1;
-        else
-            j = j + 1;
-        end
-        uiresume(fig)
     end
     
-    function prevButton(~,~)
-        if j ~= 1
-            j = j - 1;
-        elseif (j == 1) && (i ~= 1)
-            i = i - 1;
-            j = size(coordinates.(f_n{f}).(i_n{i}).scaled_x,2) ;
-        elseif (j == 1) && (i == 1) && (f ~= 1)
-            f = f - 1;
-            i_n = fieldnames(coordinates.(f_n{f}));
-            i = length(i_n);
-            j = size(coordinates.(f_n{f}).(i_n{i}).scaled_x,2) ;            
-        elseif (j == 1) && (i == 1) && (f == 1)
-            f = length(f_n);
-            i_n = fieldnames(coordinates.(f_n{f}));
-            i = length(i_n);
-            j = size(coordinates.(f_n{f}).(i_n{i}).scaled_x,2);
-        end
-        uiresume(fig)
-    end
-    
-    function [hImage,nframes,framestack] = loadExp
+    function [hImage,framestack] = loadExp
+        videoName = string(lb.Items(lb.ValueIndex));
         frameDir = uigetdir('C:\Users\JoseC\Desktop\Doctorado\Publicaciones\Papers sin nucleo\frames', ...
-            ['Please load ' f_n{f} ' ' i_n{i}]);
+            sprintf('Please retrieve %s frames', videoName(1:end-4)));
         experimentName = strsplit(frameDir,'\');
         set(fig,'Name',strcat('Frames', string(experimentName(11))))
         bar1 = waitbar(0,'1','Name',sprintf('Loading %s...',string(experimentName(11))), ...
@@ -131,9 +84,8 @@ function imageJ_emu(coordinates)
         nframes = numel(frameList) ;
         framestack = cell(1,nframes);
         tic
-        for n=1:nframes
-            % Update waitbar and message
-            waitbar(n/nframes,bar1,sprintf('%1d',n))       
+        for n=1:nframes            
+            waitbar(n/nframes,bar1,sprintf('%1d',n)) % Update waitbar
             framestack{n} = rgb2gray(imread(string(strcat(frameDir,'\',frameList(n))))) ;
         end
         toc
@@ -144,7 +96,8 @@ function imageJ_emu(coordinates)
     end
     
     function setup_scroll_wheel(slider,~,hImage,pm,~,~)
-        set(fig, 'WindowScrollWheelFcn', @(src,event) scroll_wheel_callback(src,event,slider,displaycurrentframeButton,hImage,pm,coordinates.(f_n{f}).(i_n{i}).original_x{j},coordinates.(f_n{f}).(i_n{i}).original_y{j}))
+        set(fig, 'WindowScrollWheelFcn', @(src,event) ...
+            scroll_wheel_callback(src,event,slider,displaycurrentframeButton,hImage,pm,lb.Value(:,1),lb.Value(:,2)))
     end
     
     function scroll_wheel_callback(~,event,slider,dispframeButton,hImage,pm,coordsX,coordsY)
@@ -157,8 +110,10 @@ function imageJ_emu(coordinates)
         if (slider.Limits(1) <= current_slider_value) && (current_slider_value <= slider.Limits(2))
             set(slider, 'Value', current_slider_value);
             hImage.CData = slider.UserData{current_slider_value}(:,:);
-            pm.XData = coordsX(current_slider_value);
-            pm.YData = coordsY(current_slider_value);
+            if current_slider_value <= length(coordsX)
+                pm.XData = coordsX(current_slider_value);
+                pm.YData = coordsY(current_slider_value);
+            end
             if dispframeButton.Value == 1
                 dispframeButton.Text = num2str(current_slider_value);
             end
@@ -177,7 +132,7 @@ function imageJ_emu(coordinates)
 
     function stateButtonClicked(src,event,slider)
         if event.PreviousValue == 0
-            src.Text = num2str(slider.Value);
+            src.Text = num2str(round(slider.Value));
         end
     end
 
