@@ -31,10 +31,10 @@ function imageJ_emu(tracks)
         'ItemsData',myCoords,'FontSize',11.1,'ValueChangedFcn',@listBox);
     lb.Layout.Row = 1;
     lb.Layout.Column = 1;
-    [pc,pf,pm] = deal('');
+    [pc,pf,pm,pt] = deal('');
 
     function listBox(src,event)
-        [pc,pf,pm] = plotData(pc,pf,pm); % Plot track
+        [pc,pf,pm,pt] = plotData(pc,pf,pm,pt); % Plot track
         [~,y,~] = fileparts(string(lb.Items(event.PreviousValueIndex)));        
         [~,w,~] = fileparts(string(lb.Items(lb.ValueIndex)));
         if w ~= y
@@ -47,8 +47,8 @@ function imageJ_emu(tracks)
         set(slider, 'Limits', [1 length(lb.Value)], 'Value', 1, 'MajorTicks', 1:100:length(lb.Value))
     end
 
-    function [pc,pf,pm] = plotData(pc,pf,pm)
-        switch all(arrayfun(@isempty, [pc,pf,pm]))
+    function [pc,pf,pm,pt] = plotData(pc,pf,pm,pt)
+        switch all(arrayfun(@isempty, [pc,pf,pm,pt]))
             case 1
                 % Plot track, pointer & text
                 pc = plot(ax,lb.Value(:,1), lb.Value(:,2),'Color','r');                
@@ -56,6 +56,8 @@ function imageJ_emu(tracks)
                     'pentagram','MarkerFaceColor','g','MarkerEdgeColor','g','MarkerSize', 3.5);             
                 pm = plot(ax,lb.Value(1,1), lb.Value(1,2),'o','MarkerFaceColor', ...
                     'none','MarkerEdgeColor','g','MarkerSize', 8);                
+                pt = text(ax,.25,.05,string(lb.Items(lb.ValueIndex)), ...
+                    'Units','normalized','Interpreter','none','Color','b','FontSize',20);
             case 0
                 pc.XData = lb.Value(:,1);
                 pc.YData = lb.Value(:,2);
@@ -63,6 +65,7 @@ function imageJ_emu(tracks)
                 pf.YData = lb.Value(end,2);
                 pm.XData = lb.Value(1,1);
                 pm.YData = lb.Value(1,2);
+                pt.String = string(lb.Items(lb.ValueIndex));
         end
     end
     
@@ -71,6 +74,7 @@ function imageJ_emu(tracks)
         frameDir = uigetdir('C:\Users\JoseC\Desktop\Doctorado\Publicaciones\Papers sin nucleo\frames', ...
             sprintf('Please retrieve %s frames', videoName));
         experimentName = strsplit(frameDir,'\');
+        set(fig,'Name',strcat('Frames', string(experimentName(11))))
         bar1 = waitbar(0,'1','Name',sprintf('Loading %s...',string(experimentName(11))), ...
             'Units', 'Normalized', 'Position', [0.1 0.25 0.8 0.25]);
         tmp = findall(bar1);

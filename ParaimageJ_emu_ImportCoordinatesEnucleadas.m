@@ -9,13 +9,8 @@ run_date = char(datetime('now','Format','yyyy-MM-dd_HH.mm''''ss''''''''')) ;
 % Select dir containing .xlsx track files
 topLevelFolder = uigetdir('C:\Users\pc\Desktop\Doctorado\Publicaciones\Papers sin nucleo\mov.sist.enucleadas') ;
 
-% Number of times Rho(s) will be randomly permuted to test against the
-% null hypothesis that results are random
-shuffles = 200000;
-
 % Create destination folder
-destination_folder = strcat(fileparts(topLevelFolder), '\ParaImagejEmu_', run_date, '_', ...
-    num2str(shuffles), '_shuffles') ;
+destination_folder = strcat(fileparts(topLevelFolder), '\ParaImagejEmu_', run_date, '_') ;
 mkdir(destination_folder) ;
 
 % Initialize log
