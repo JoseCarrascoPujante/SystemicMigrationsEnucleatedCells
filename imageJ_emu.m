@@ -34,17 +34,20 @@ function imageJ_emu(tracks)
     [pc,pf,pm] = deal('');
 
     function listBox(src,event)
-        [pc,pf,pm] = plotData(pc,pf,pm); % Plot track
         [~,y,~] = fileparts(string(lb.Items(event.PreviousValueIndex)));        
         [~,w,~] = fileparts(string(lb.Items(lb.ValueIndex)));
         if w ~= y
             [hImage,framestack] = loadExp;
-            set(slider,'UserData',framestack, 'ValueChangingFcn', ...
+            [pc,pf,pm] = plotData(pc,pf,pm); % Plot track        
+            set(slider,'UserData',framestack, 'Limits', [1 length(lb.Value)], ...
+                'Value', 1, 'MajorTicks', 1:100:length(lb.Value),'ValueChangingFcn', ...
                 @(src,event) updateImage(src,event,displaycurrentframeButton,hImage,pm,lb.Value(:,1),lb.Value(:,2)))            
             setup_scroll_wheel(slider,displaycurrentframeButton,hImage,pm, ...
                 src.Value(:,1),src.Value(:,2))
+        else
+            [pc,pf,pm] = plotData(pc,pf,pm); % Plot track
+            set(slider, 'Limits', [1 length(lb.Value)], 'Value', 1, 'MajorTicks', 1:100:length(lb.Value))
         end
-        set(slider, 'Limits', [1 length(lb.Value)], 'Value', 1, 'MajorTicks', 1:100:length(lb.Value))
     end
 
     function [pc,pf,pm] = plotData(pc,pf,pm)
