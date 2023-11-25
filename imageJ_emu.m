@@ -2,8 +2,11 @@ function imageJ_emu(tracks)
     % Create ui elements
     fig = uifigure('Position', [0 0 1200 700]);
     g = uigridlayout(fig);
+    g.Padding = [5 5 5 5]; % Reduce padding to 5 pixels on all sides
     g.RowHeight = {200,22,'1x'};
     g.ColumnWidth = {300,'1x'};
+    g.ColumnSpacing = 5; % Reduce column spacing to 5 pixels
+    g.RowSpacing = 5; % Reduce row spacing to 5 pixels
     
     slider = uislider(g, 'Orientation','vertical','Value', 1);
     slider.Layout.Row = 3;
@@ -18,7 +21,7 @@ function imageJ_emu(tracks)
     ax.Layout.Column = 2;
     hold(ax, "on")    
         
-    % Optional listbox to choose scenario->experiment->track to plot
+    % Listbox to choose scenario->experiment->track to plot
     trackList = {};
     trackList = unfold(tracks,'tracks',false,trackList);
     
@@ -28,15 +31,16 @@ function imageJ_emu(tracks)
     end
     
     lb = uilistbox(g,'Items',cellfun(@(S) S(11:end), trackList, 'Uniform', 0),...
-        'ItemsData',myCoords,'FontSize',11.1,'ValueChangedFcn',@listBox);
+        'ItemsData',myCoords,'FontSize',12.5,'ValueChangedFcn',@listBox);
     lb.Layout.Row = 1;
     lb.Layout.Column = 1;
     [pc,pf,pm] = deal('');
 
     function listBox(src,event)
-        [~,y,~] = fileparts(string(lb.Items(event.PreviousValueIndex)));        
-        [~,w,~] = fileparts(string(lb.Items(lb.ValueIndex)));
-        if w ~= y
+        [~,w,~] = fileparts(string(lb.Items(event.PreviousValueIndex)));        
+        [~,y,~] = fileparts(string(lb.Items(lb.ValueIndex)));
+        if y ~= w
+            % disp(y)
             [hImage,framestack] = loadExp;
             [pc,pf,pm] = plotData(pc,pf,pm); % Plot track        
             set(slider,'UserData',framestack, 'Limits', [1 length(lb.Value)], ...
@@ -73,21 +77,21 @@ function imageJ_emu(tracks)
         [~,videoName,~] = fileparts(char(lb.Items(lb.ValueIndex)));
         frameDir = uigetdir('C:\Users\JoseC\Desktop\Doctorado\Publicaciones\Papers sin nucleo\frames', ...
             sprintf('Please retrieve %s frames', videoName));
-        experimentName = strsplit(frameDir,'\');
-        bar1 = waitbar(0,'1','Name',sprintf('Loading %s...',string(experimentName(11))), ...
-            'Units', 'Normalized', 'Position', [0.1 0.25 0.8 0.25]);
-        tmp = findall(bar1);
-        set(tmp(2), 'Units', 'Normalized', 'Position', [0.1 0.3 0.8 0.2])
-        set(tmp(4), 'Units', 'Normalized', 'Position', [0.1 0.3 0.8 0.25])
         frameList = extractfield(dir(strcat(frameDir,'\*.jpg')),'name') ;
         nframes = numel(frameList) ;
+        experimentName = strsplit(frameDir,'\');
+        bar1 = waitbar(0,'1','Name',sprintf('Loading %s',string(experimentName(11))));
+            % 'Units', 'Normalized', 'Position', [0.1 0.25 0.8 0.25]);
+        % tmp = findall(bar1);
+        % set(tmp(2), 'Units', 'Normalized', 'Position', [0.1 0.3 0.8 0.2])
+        % set(tmp(4), 'Units', 'Normalized', 'Position', [0.1 0.3 0.8 0.25])        
         framestack = cell(1,nframes);
         tic
         for n=1:nframes            
-            waitbar(n/nframes,bar1,sprintf('%1d',n)) % Update waitbar
+            waitbar(n/nframes,bar1,sprintf('%1d/%1d',n,nframes)) % Update waitbar
             framestack{n} = rgb2gray(imread(string(strcat(frameDir,'\',frameList(n))))) ;
         end
-        toc
+        fprintf('%s elapsed time = %.2f seconds.\n', videoName, toc);
         close(bar1)
         delete(findall(ax.Children, 'type', 'Image'))
         hImage=imshow(framestack{1},'Parent',ax);

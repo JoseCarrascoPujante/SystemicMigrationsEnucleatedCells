@@ -10,7 +10,7 @@ run_date = char(datetime('now','Format','yyyy-MM-dd_HH.mm''''ss''''''''')) ;
 topLevelFolder = uigetdir('C:\Users\pc\Desktop\Doctorado\Publicaciones\Papers sin nucleo\mov.sist.enucleadas') ;
 
 % Create destination folder
-destination_folder = strcat(fileparts(topLevelFolder), '\ParaImagejEmu_', run_date, '_') ;
+destination_folder = strcat(fileparts(topLevelFolder), '\ParaImagejEmu_', run_date) ;
 mkdir(destination_folder) ;
 
 % Initialize log
