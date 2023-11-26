@@ -22,12 +22,12 @@ function imageJ_emu(tracks)
     hold(ax, "on")    
     
     displaycurrentcoordsbutton = uibutton('state','Parent',g,'Text','Mouse position coords');
-    displaycurrentcoordsbutton.Layout.Row = 2;
+    displaycurrentcoordsbutton.Layout.Row = 3;
     displaycurrentcoordsbutton.Layout.Column = 1;
 
     % set up callbacks for figure
     fig.WindowButtonMotionFcn = {@mouseMove,ax,displaycurrentcoordsbutton};
-    % fig.WindowButtonDownFcn = @stopTracking;
+    fig.WindowButtonDownFcn = @stopTracking;
 
     % Listbox to choose scenario->experiment->track to plot
     trackList = {};
@@ -148,18 +148,18 @@ function imageJ_emu(tracks)
         end
     end
 
-    function mouseMove(~,~,ax,coordsbutton)
+    function mouseMove(~,~,ax,txt)
         % get x and y position of cursor
         xPos = ax.CurrentPoint(1,1);
         yPos = ax.CurrentPoint(1,2);
         % display coordinates in textbox
-        if coordsbutton.Value == 1
-            coordsbutton.Text = "x: "+xPos+" y: "+yPos;
+        if dispcoordsButton.Value == 1
+            dispcoordsButton.Text = "x: "+xPos+" y: "+yPos;
         end    
     end
     % function stopTracking(f,~)
-    %     % stop callback to mouseMove
-    %     f.WindowButtonMotionFcn = "";
+    % % stop callback to mouseMove
+    % f.WindowButtonMotionFcn = "";
     % end
 
 end
