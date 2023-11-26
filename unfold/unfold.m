@@ -86,16 +86,16 @@ if isstruct(SC)
                         else
                             Namej = [Namei '{' ind2str(siz,NC) '}'];
                         end
-                        disp(Namej)
+                        % disp(Namej)
                         if show
-                            disp(SC(h).(F{i}){j})
+                            % disp(SC(h).(F{i}){j})
                         end
                     end
                 else
                     namearray = [namearray Namei];
-                    disp(Namei)
+                    % disp(Namei)
                     if show
-                        disp(SC(h).(F{i}))
+                        % disp(SC(h).(F{i}))
                     end
                 end
             end
@@ -109,9 +109,9 @@ elseif iscell(SC)
         unfold(SC{i},Namei,show);
     end
 else
-    disp(Name)
+    % disp(Name)
     if show
-        disp(SC)
+        % disp(SC)
     end
 end
 

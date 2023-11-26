@@ -12,7 +12,7 @@ function imageJ_emu(tracks)
     slider.Layout.Row = 4;
     slider.Layout.Column = 1;
 
-    displaycurrentframeButton = uibutton('state','Parent',g,'Text','Slider position display', ...
+    displaycurrentframeButton = uibutton('state','Parent',g,'Text','Slider position', ...
         'ValueChangedFcn',@(src,event) stateButtonClicked(src,event,slider));
     displaycurrentframeButton.Layout.Row = 3;
     displaycurrentframeButton.Layout.Column = 1;
@@ -21,7 +21,7 @@ function imageJ_emu(tracks)
     ax.Layout.Column = 2;
     hold(ax, "on")    
     
-    displaycurrentcoordsbutton = uibutton('state','Parent',g,'Text','Mouse position coords');
+    displaycurrentcoordsbutton = uibutton('state','Parent',g,'Text','Mouse coords');
     displaycurrentcoordsbutton.Layout.Row = 2;
     displaycurrentcoordsbutton.Layout.Column = 1;
 
