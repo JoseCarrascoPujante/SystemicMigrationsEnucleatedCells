@@ -21,7 +21,7 @@ logging.basicConfig(
     format="[%(asctime)s] %(message)s",
     datefmt='%d-%b-%y %H:%M:%S',
     handlers=[
-        logging.FileHandler(fr'C:\Users\pc\Desktop\Doctorado\Publicaciones\Papers enucleadas\mov.sist.enucleadas\Tracks válidas\Track_info_{datetime.now().strftime("%d.%m.%Y_%H.%M.%S")}.txt'),
+        logging.FileHandler(fr'C:\Users\JoseC\Desktop\Doctorado\Publicaciones\Papers sin nucleo\mov.sist.enucleadas\Tracks pulidas\Track_info_{datetime.now().strftime("%d.%m.%Y_%H.%M.%S")}.txt'),
         logging.StreamHandler(sys.stdout)
     ])
 
@@ -29,7 +29,7 @@ logging.basicConfig(
 t = time.time()
 
 
-walk_dir = r'C:\Users\pc\Desktop\Doctorado\Publicaciones\Papers enucleadas\mov.sist.enucleadas\Tracks válidas'
+walk_dir = r'C:\Users\JoseC\Desktop\Doctorado\Publicaciones\Papers sin nucleo\mov.sist.enucleadas\Tracks pulidas'
 
 
 logging.info('\n\n\nwalk_dir = ' + walk_dir)
@@ -106,7 +106,7 @@ logging.info(f'{elapsed} seconds elapsed')
 
 # Count "leaf" folders (videos) in the supp. material directory
 
-supp_material = r'E:\Doctorado\Amebas\Papers enucleadas TODO\frames enucleadas completos'
+supp_material = r'C:\Users\JoseC\Desktop\Doctorado\Publicaciones\Papers sin nucleo\frames'
 
 logging.info(f'{chr(10)}{chr(10)}Now counting videos in Supp. Material and xlsx files in \
 "tracks válidas" folder...{chr(10)}{chr(10)}')

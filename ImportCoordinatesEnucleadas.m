@@ -11,7 +11,7 @@ topLevelFolder = uigetdir('C:\Users\pc\Desktop\Doctorado\Publicaciones\Papers si
 
 % Number of times Rho(s) will be randomly permuted to test against the
 % null hypothesis that results are random
-shuffles = 200000;
+shuffles = 2;
 
 % Create destination folder
 destination_folder = strcat(fileparts(topLevelFolder), '\', run_date, '_', ...
@@ -154,36 +154,36 @@ for f = 1:length(UsefulSubFolderNames)
                 coordinates.(conditionValidName).centered_y{i}/39.6252 ;
         end
         
-        % % Shuffle X and Y trajectories
-        % 
-        % % initialize shuffled X
-        % coordinates.(conditionValidName).shuffled_x{i} = ...
-        %     coordinates.(conditionValidName).scaled_x{i} ; 
-        % % initialize shuffled Y
-        % coordinates.(conditionValidName).shuffled_y{i} = ...
-        %     coordinates.(conditionValidName).scaled_y{i} ;
-        % XYshufftime = tic;
-        % for k=1:shuffles
-        %   coordinates.(conditionValidName).shuffled_x{i} = ...
-        %       shuff(coordinates.(conditionValidName).shuffled_x{i}) ;
-        % 
-        %   coordinates.(conditionValidName).shuffled_y{i} = ...
-        %       shuff(coordinates.(conditionValidName).shuffled_y{i}) ;
-        % end
-        % [A{i} ' XY shuffling runtime was ' num2str(toc(XYshufftime)) ' seconds']
-        % 
-        % % Shuffle Scaled_Rho
-        %
-        % % Initialize shuffled_rho
-        % coordinates.(conditionValidName).shuffled_rho{i} = ...
-        %     coordinates.(conditionValidName).scaled_rho{i} ;
-        %
-        % rhoShufftime = tic
-        % for k=1:shuffles
-        %   coordinates.(conditionValidName).shuffled_rho{i} = ...
-        %       shuff(coordinates.(conditionValidName).shuffled_rho{i}) ;
-        % end
-        % [A{i} ' RHO shuffling runtime was ' num2str(toc(rhoShufftime)) ' seconds']
+        % Shuffle X and Y trajectories
+
+        % initialize shuffled X
+        coordinates.(conditionValidName).shuffled_x{i} = ...
+            coordinates.(conditionValidName).scaled_x{i} ; 
+        % initialize shuffled Y
+        coordinates.(conditionValidName).shuffled_y{i} = ...
+            coordinates.(conditionValidName).scaled_y{i} ;
+        XYshufftime = tic;
+        for k=1:shuffles
+          coordinates.(conditionValidName).shuffled_x{i} = ...
+              shuff(coordinates.(conditionValidName).shuffled_x{i}) ;
+
+          coordinates.(conditionValidName).shuffled_y{i} = ...
+              shuff(coordinates.(conditionValidName).shuffled_y{i}) ;
+        end
+        [A{i} ' XY shuffling runtime was ' num2str(toc(XYshufftime)) ' seconds']
+
+        % Shuffle Scaled_Rho
+
+        % Initialize shuffled_rho
+        coordinates.(conditionValidName).shuffled_rho{i} = ...
+            coordinates.(conditionValidName).scaled_rho{i} ;
+
+        rhoShufftime = tic;
+        for k=1:shuffles
+          coordinates.(conditionValidName).shuffled_rho{i} = ...
+              shuff(coordinates.(conditionValidName).shuffled_rho{i}) ;
+        end
+        [A{i} ' RHO shuffling runtime was ' num2str(toc(rhoShufftime)) ' seconds']
         
         % Add current track to the "condition" tracks plot and place black dot marker at its tip      
         plot(hTracks,coordinates.(conditionValidName).scaled_x{i},...
