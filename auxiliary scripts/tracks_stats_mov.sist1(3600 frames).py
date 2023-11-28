@@ -21,7 +21,7 @@ logging.basicConfig(
     format="[%(asctime)s] %(message)s",
     datefmt='%d-%b-%y %H:%M:%S',
     handlers=[
-        logging.FileHandler(fr'C:\Users\JoseC\Desktop\Doctorado\Publicaciones\Papers sin nucleo\mov.sist.enucleadas\Tracks def\Track_info_{datetime.now().strftime("%d.%m.%Y_%H.%M.%S")}.txt'),
+        logging.FileHandler(fr'C:\Users\pc\Desktop\Doctorado\Publicaciones\mov.sist\valid_tracks_707\Track_info_{datetime.now().strftime("%d.%m.%Y_%H.%M.%S")}.txt'),
         logging.StreamHandler(sys.stdout)
     ])
 
@@ -29,7 +29,7 @@ logging.basicConfig(
 t = time.time()
 
 
-walk_dir = r'C:\Users\JoseC\Desktop\Doctorado\Publicaciones\Papers sin nucleo\mov.sist.enucleadas\Tracks def'
+walk_dir = r'C:\Users\pc\Desktop\Doctorado\Publicaciones\mov.sist\valid_tracks_707'
 
 
 logging.info('\n\n\nwalk_dir = ' + walk_dir)
@@ -106,10 +106,10 @@ logging.info(f'{elapsed} seconds elapsed')
 
 # Count "leaf" folders (videos) in the supp. material directory
 
-supp_material = r'C:\Users\JoseC\Desktop\Doctorado\Publicaciones\Papers sin nucleo\frames'
+supp_material = r'C:\Users\pc\Desktop\Doctorado\Publicaciones\mov.sist\Supp_mat con vídeos mov sist'
 
 logging.info(f'{chr(10)}{chr(10)}Now counting videos in Supp. Material and xlsx files in \
-"tracks válidas" folder...{chr(10)}{chr(10)}')
+{supp_material}{chr(10)}{chr(10)}')
 folders = []
 for root, dirs, files in os.walk(supp_material):
     for file in files:
@@ -118,8 +118,5 @@ for root, dirs, files in os.walk(supp_material):
             img = Image.open(os.path.join(root, file))
             wid, hgt = img.size
             logging.info(f'{chr(10)}File {root.split(chr(92),6)[-1]} has {str(wid) + "x" + str(hgt)} resolution')
-            # if wid != 1280 or hgt!= 960:
-            #     raise SystemExit(f'\t {root.rsplit({chr(92)},1)[1]} resolution not 1280x960')
-            break # This break ensures only the first frame from each experiment/folder is read, thus speeding up experiment-resolution assessment
+            break
 logging.info(f'There are {len(folders)} videos in "{supp_material}" and {len(excelfiles)} xlsx files in "{walk_dir}"{chr(10)}')
-

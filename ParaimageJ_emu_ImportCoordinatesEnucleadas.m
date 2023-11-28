@@ -7,7 +7,7 @@ close all
 run_date = char(datetime('now','Format','yyyy-MM-dd_HH.mm''''ss''''''''')) ;
 
 % Select dir containing .xlsx track files
-topLevelFolder = uigetdir('C:\Users\pc\Desktop\Doctorado\Publicaciones\Papers sin nucleo\mov.sist.enucleadas') ;
+topLevelFolder = uigetdir('C:\Users') ;
 
 % Create destination folder
 destination_folder = strcat(fileparts(topLevelFolder), '\ParaImagejEmu_', run_date) ;

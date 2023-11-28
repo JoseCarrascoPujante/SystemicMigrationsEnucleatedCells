@@ -7,11 +7,11 @@ close all
 run_date = char(datetime('now','Format','yyyy-MM-dd_HH.mm''''ss''''''''')) ;
 
 % Select dir containing .xlsx track files
-topLevelFolder = uigetdir('C:\Users\pc\Desktop\Doctorado\Publicaciones\Papers sin nucleo\mov.sist.enucleadas') ;
+topLevelFolder = uigetdir('C:\Users') ;
 
 % Number of times Rho(s) will be randomly permuted to test against the
 % null hypothesis that results are random
-shuffles = 2;
+shuffles = 200000;
 
 % Create destination folder
 destination_folder = strcat(fileparts(topLevelFolder), '\', run_date, '_', ...
@@ -43,7 +43,7 @@ end
 
 % List the parameters to be calculated by the script
 stat_names = {'RMSF_alpha', 'sRMSF_alpha', 'RMSF_R2', 'sRMSF_R2', 'RMSFCorrelationTime', ...
-    'sRMSFCorrelationTime', 'DFA_gamma', 'sDFA_gamma', 'MSD_beta', 'sMSD_beta', 'ApEn', ...
+    'DFA_gamma', 'sDFA_gamma', 'MSD_beta', 'sMSD_beta', 'ApEn', ...
     'sApEn','Intensity','sIntensity','DR','sDR','AvgSpeed','sAvgSpeed','DisplacementCosines'} ;
 
 % Initialize bulk data structures
@@ -57,9 +57,9 @@ ratio_list1 = [38.6252,38.6252,38.6252,11.63,11.63,38.6252,38.6252,38.6252,38.62
 % Custom pixel/mm ratio list for chemotaxis cells
 ratio_list2 = [38.6252,38.6252,38.6252,38.6252,38.6252,38.6252,38.6252,38.6252,38.6252,38.6252,38.6252,11.63] ;
 
-bar1 = waitbar(0,'In progress...','Name','Reading scenario_condition files in:') ;
+bar1 = waitbar(0,'In progress...','Name','Scenario') ;
 bar1.Children.Title.Interpreter = 'none';
-bar2 = waitbar(0,'In progress...','Name','Reading file nº:') ;
+bar2 = waitbar(0,'In progress...','Name','Track') ;
 bar2.Children.Title.Interpreter = 'none';
 
 
@@ -81,7 +81,7 @@ for f = 1:length(UsefulSubFolderNames)
     conditionValidName = matlab.lang.makeValidName(condition) ;
     
     % update condition/subfolder progress bar
-    bar1 = waitbar(f/length(UsefulSubFolderNames), bar1, condition) ;
+    waitbar(f/length(UsefulSubFolderNames), bar1, condition) ;
 
     % Sort file names in natural order 
     files = natsortfiles(files) ;
@@ -104,7 +104,7 @@ for f = 1:length(UsefulSubFolderNames)
             scenario_cell_count = scenario_cell_count + 1;            
             tracks.(conditionValidName).(genvarname(num2str(scenario_cell_count))) = series{s};
         end
-        waitbar(l/length(files), bar2, genvarname(num2str(scenario_cell_count))) ;
+        waitbar(l/length(files), bar2, sprintf('%s %s',thisxlsx,genvarname(num2str(scenario_cell_count)))) ;
     end
 
     % Loop for track importing and processing
@@ -112,7 +112,7 @@ for f = 1:length(UsefulSubFolderNames)
     for i = 1:length(A)
             
         % update track progress bar
-        bar2 = waitbar(i/length(A), bar2, A{i}) ;
+        waitbar(i/length(A), bar2, A{i}) ;
              
         % Save original X and Y coordinates as x(i) and y(i)
         coordinates.(conditionValidName).original_x{i} = tracks.(conditionValidName).(A{i})(:,1) ;
@@ -170,7 +170,7 @@ for f = 1:length(UsefulSubFolderNames)
           coordinates.(conditionValidName).shuffled_y{i} = ...
               shuff(coordinates.(conditionValidName).shuffled_y{i}) ;
         end
-        [A{i} ' XY shuffling runtime was ' num2str(toc(XYshufftime)) ' seconds']
+        ['Track nº' A{i} ' XY shuffling elapsed time was ' num2str(toc(XYshufftime)) ' seconds']
 
         % Shuffle Scaled_Rho
 
@@ -183,7 +183,7 @@ for f = 1:length(UsefulSubFolderNames)
           coordinates.(conditionValidName).shuffled_rho{i} = ...
               shuff(coordinates.(conditionValidName).shuffled_rho{i}) ;
         end
-        [A{i} ' RHO shuffling runtime was ' num2str(toc(rhoShufftime)) ' seconds']
+        ['Track nº' A{i} ' RHO shuffling elapsed time was ' num2str(toc(rhoShufftime)) ' seconds']
         
         % Add current track to the "condition" tracks plot and place black dot marker at its tip      
         plot(hTracks,coordinates.(conditionValidName).scaled_x{i},...
@@ -220,7 +220,7 @@ for f = 1:length(UsefulSubFolderNames)
     set(hTracks, 'YDir','reverse')
     hold off
     
-    [condition ' runtime was ' num2str(toc(thisfoldertic)) ' seconds']
+    [condition ' elapsed time was ' num2str(toc(thisfoldertic)) ' seconds']
     
     % %Save figure as a jpg file
     % exportgraphics(hTracks,strcat(destination_folder, strcat('\Tracks_',condition),'.jpg'), ...
@@ -229,12 +229,12 @@ for f = 1:length(UsefulSubFolderNames)
 end
 
 tImportSec = num2str(toc(tImportSec)) ;
-
+close(bar1,bar2)
 % Save data
-save(strcat(destination_folder, '\', run_date, '_coordinates.mat'),...
-    'coordinates','figures','stat_names','shuffles','tImportSec','destination_folder') ;
+save(strcat(destination_folder, '\', run_date, '_trajectories.mat'),...
+    'coordinates','figures','stat_names','tImportSec','destination_folder','run_date') ;
 
-['Coordinate section FINISHED in ', tImportSec, ' seconds']
+['Track loading and shuffling section elapsed time ', tImportSec, ' seconds']
 
 clear thisfoldertic tImportSec
 
@@ -251,3 +251,152 @@ for iFig = 1:length(FigList)
 end
 
 diary off
+
+%% Calculations
+
+close all
+clear all
+load("2023-11-27_22.46'27''_trajectories.mat")
+tCalcSec=tic;
+
+field_names = fieldnames(coordinates) ;
+
+bar3 = waitbar(0,'In progress...','Name','Condition') ;
+bar3.Children.Title.Interpreter = 'none';
+bar4 = waitbar(0,'In progress...','Name','Track number') ;
+bar4.Children.Title.Interpreter = 'none';
+
+for i = 1:length(field_names)
+    
+    bar3 = waitbar(i/length(field_names), bar3, field_names{i}) ;
+    
+    foldertime = tic;
+
+    figures.(field_names{i}).msd = figure('Name',strcat('MSD_',field_names{i}),...
+        'Visible','off','NumberTitle','off') ;
+    xlabel('Log(MSD(\tau))');
+    ylabel('Log(\tau(s))');
+    msdhandleOr = gca;
+
+    figures.(field_names{i}).msd_shuff = figure('Name',strcat('MSD_Shuffled_',...
+        field_names{i}),'Visible','off','NumberTitle','off') ;
+    xlabel('Log(MSD(\tau))');
+    ylabel('Log(\tau(s))');
+    msdhandleShuff = gca;
+    
+    N = length(coordinates.(field_names{i}).original_x); % Trajectories in condition
+    for j = 1:N 
+        
+        tic
+
+        bar4 = waitbar(j/N, bar4, strcat('Track number', ' ', num2str(j))) ;
+
+        % RMSFalpha
+		figures.(field_names{i}).rmsf.(strcat('number', num2str(j))) = ...
+		figure('Name',strcat(field_names{i}, '_amoeba_number_',...
+		num2str(j)),'NumberTitle','off','Visible','off');
+		
+		rmsfhandle = gca;
+        set(rmsfhandle,'xscale','log')
+        set(rmsfhandle,'yscale','log')
+		
+        [results.(field_names{i})(j,strcmp(stat_names(:), 'RMSF_alpha')),...
+            results.(field_names{i})(j,strcmp(stat_names(:), 'RMSF_R2')),...
+            results.(field_names{i})(j,strcmp(stat_names(:), 'RMSFCorrelationTime')), tc2] = ...
+            amebas5(coordinates.(field_names{i}).scaled_rho{j}, rmsfhandle) ;
+        
+        % Shuffled RMSFalpha
+        [results.(field_names{i})(j,strcmp(stat_names(:), 'sRMSF_alpha')),...
+            results.(field_names{i})(j,strcmp(stat_names(:), 'sRMSF_R2')),...
+            ~, ~] = ...
+            amebas5(coordinates.(field_names{i}).shuffled_rho{j}, rmsfhandle) ;
+
+        legend('Original RMSF','Shuffled RMSF','Location','best')
+
+        % DFAgamma
+        figures.(field_names{i}).dfa_original.(strcat('number', num2str(j))) = ...
+            figure('Name',strcat('DFA_', field_names{i}, '_cell_no_', num2str(j)),...
+            'NumberTitle','off','Visible','off') ;
+
+        dfahandle = gca;
+
+        [results.(field_names{i})(j,strcmp(stat_names(:), 'DFA_gamma'))] = ...
+            DFA_main2(coordinates.(field_names{i}).scaled_rho{j},...
+            'Original_DFA_', dfahandle) ;
+
+        % Shuffled DFAgamma
+        [results.(field_names{i})(j,strcmp(stat_names(:), 'sDFA_gamma'))] = ...
+            DFA_main2(coordinates.(field_names{i}).shuffled_rho{j},...
+            'Shuffled_DFA_', dfahandle) ;
+
+        legend('Original data','Shuffled data (Gaussian noise)',...
+            'Original DFA \gamma','Shuffled DFA \gamma',...
+            'Location','northwest')
+
+        % MSDbeta
+        [results.(field_names{i})(j,strcmp(stat_names(:), 'MSD_beta'))] = ...
+            msd(coordinates.(field_names{i}).scaled_x{j},...
+            coordinates.(field_names{i}).scaled_y{j},msdhandleOr) ;
+        
+        % Shuffled MSDbeta
+        [results.(field_names{i})(j,strcmp(stat_names(:), 'sMSD_beta'))] = ...
+            msd(coordinates.(field_names{i}).shuffled_x{j},...
+            coordinates.(field_names{i}).shuffled_y{j},msdhandleShuff) ;
+
+        % Approximate entropy (Kolmogorov-Sinai entropy)
+        results.(field_names{i})(j,strcmp(stat_names(:), 'ApEn')) = ...
+            ApEn(2, 0.2*std(coordinates.(field_names{i}).scaled_rho{j}),...
+            coordinates.(field_names{i}).scaled_rho{j}) ;
+
+        % Shuffled Approximate entropy (Kolmogorov-Sinai entropy)
+        results.(field_names{i})(j,strcmp(stat_names(:), 'sApEn')) = ...
+            ApEn(2, 0.2*std(coordinates.(field_names{i}).shuffled_rho{j}),...
+            coordinates.(field_names{i}).shuffled_rho{j}) ;
+
+        % Intensity of response (mm)
+        [results.(field_names{i})(j,strcmp(stat_names(:), 'Intensity'))] = ...
+            norm([coordinates.(field_names{i}).scaled_x{j}(end) coordinates.(field_names{i}).scaled_y{j}(end)]...
+            - [coordinates.(field_names{i}).scaled_x{j}(1) coordinates.(field_names{i}).scaled_y{j}(1)]);
+
+        % Shuffled intensity of response (mm)
+        [results.(field_names{i})(j,strcmp(stat_names(:), 'sIntensity'))] = ...
+            norm([coordinates.(field_names{i}).shuffled_x{j}(1) coordinates.(field_names{i}).shuffled_y{j}(1)]...
+            - [coordinates.(field_names{i}).shuffled_x{j}(end) coordinates.(field_names{i}).shuffled_y{j}(end)]);
+
+        % Directionality ratio (straightness)
+        d = hypot(diff(coordinates.(field_names{i}).scaled_x{j}), diff(coordinates.(field_names{i}).scaled_y{j})) ;
+        distTrav = sum(d);
+        [results.(field_names{i})(j,strcmp(stat_names(:), 'DR'))] = ...
+            results.(field_names{i})(j,strcmp(stat_names(:), 'Intensity'))/distTrav;
+        
+        % Shuffled Directionality ratio (straightness)
+        d = hypot(diff(coordinates.(field_names{i}).shuffled_x{j}), diff(coordinates.(field_names{i}).shuffled_y{j})) ;
+        SdistTrav = sum(d);
+        [results.(field_names{i})(j,strcmp(stat_names(:), 'sDR'))] = ...
+            results.(field_names{i})(j,strcmp(stat_names(:), 'sIntensity'))/SdistTrav;
+
+        % Average speed (mm/s)
+        [results.(field_names{i})(j,strcmp(stat_names(:), 'AvgSpeed'))] = ...
+            distTrav/2050;
+
+        % Shuffled average speed (mm/s)
+        [results.(field_names{i})(j,strcmp(stat_names(:), 'sAvgSpeed'))] = ...
+            SdistTrav/2050;
+
+
+        [field_names{i} ' amoeba ' num2str(j) ' runtime was ' num2str(toc) ' seconds']
+
+    end
+
+    [field_names{i} ' runtime was ' num2str(toc(foldertime)) ' seconds']
+
+end
+
+%# Save data
+
+tCalcSec = num2str(toc(tCalcSec)) ;
+
+['Calculations section runtime FINISHED in ' tCalcSec ' seconds']
+
+save(strcat(destination_folder, '\', run_date ,'_numerical_results.mat'),...
+    'tCalcSec', 'results', 'field_names') ;
