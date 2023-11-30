@@ -1,5 +1,5 @@
 
-function [dev1,dev2,dev3,tc2]=amebas5(u_all, rmsfhandle, type)
+function [dev1,dev2,dev3,maxgoodness]=RMSFgoodnessdisp(u_all)
 
 scale_time=0.5; %time between frames (seconds)
 
@@ -15,7 +15,7 @@ exponents=zeros(tc,numseries);
 goodness=zeros(tc,numseries);
 ks=zeros(tc,numseries);
  
-clear title xlabel ylabel;
+% clear title xlabel ylabel;
 tc2=tc*step;
 zz=1;
 
@@ -66,7 +66,7 @@ for time_max=step:step:tc2   % plot one graph every "step" data points
     % alpha=slope;
     % v=time.^(alpha);
     % k=power(10,intercept/slope);
-    k=F(1);
+    % k=F(1);
 
     exponents(zz,1)=slope;
     goodness(zz,1)=Rsq;
@@ -74,47 +74,17 @@ for time_max=step:step:tc2   % plot one graph every "step" data points
     junto(zz,:)=[slope Rsq time_max];  
 
     % Return only one row depending on R2 value (goodness of fit)
-    B=goodness>0.98;
-    res=junto(B,:);
-    dev=res(end,:);
+    % B=goodness>0.98;
+    % res=junto(B,:);
+    dev=junto(end,:);
     dev1=dev(:,1);
     dev2=dev(:,2);
-    dev3=dev(:,3); 
+    dev3=dev(:,3);
     % umin=umin+nu;
 
-    %%%%%%%%%%%%
-    % Plotting %
-    %%%%%%%%%%%%
-
-    % loglog plot of rmsf F versus l step non-shuffled coordinates
-    if time_max == tc2
-        max_corr = res(end,3); % Use max tc2 when R2>0.99   
-        hold(rmsfhandle, 'on')
-        if strcmp(type,'orig')
-            loglog(time(1:max_corr), F(1:max_corr), 'or', 'MarkerSize', 2);
-        elseif strcmp(type,'shuff')
-            loglog(time(1:max_corr), F(1:max_corr), 'ob', 'MarkerSize', 2);
-        end
-        xlabel('Log({\itl}(s))');
-        ylabel('Log(F({\itl}))');
-        
-        % Plot regression fit line for the original data
-        vmax=time.^(res(end,1));
-        loglog(time(1:max_corr),(k/vmax(1))*vmax(1:max_corr),'k--',...
-            'LineWidth',1);
-        text(time(7),(k/vmax(1))*vmax(200),strcat('\alpha=',...
-            num2str(round(res(end,1),3))))
-    
-        % Plot alpha=0.5 line with the original data
-        v2 = time.^(.5);
-        loglog(time(1:max_corr),(k/v2(1))*v2(1:max_corr),'k--','LineWidth',1);
-        text(time(4),(k/v2(1))*v2(2),'\alpha=0.5, uncorrelated')
-        set(rmsfhandle,'xscale','log')
-        set(rmsfhandle,'yscale','log')
-        % disp(goodness(1))
-    end
     % medias(zz)=mean(exponents(zz,:));
     % standard(zz)=std(exponents(zz,:));
     zz=zz+1;
 end
+maxgoodness = goodness(1);
 end

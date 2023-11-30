@@ -21,7 +21,7 @@ logging.basicConfig(
     format="[%(asctime)s] %(message)s",
     datefmt='%d-%b-%y %H:%M:%S',
     handlers=[
-        logging.FileHandler(fr'C:\Users\JoseC\Desktop\Doctorado\Publicaciones\Papers sin nucleo\mov.sist.enucleadas\Tracks def\Track_info_{datetime.now().strftime("%d.%m.%Y_%H.%M.%S")}.txt'),
+        logging.FileHandler(fr'C:\Users\JoseC\Desktop\Doctorado\Publicaciones\Papers sin nucleo\mov.sist.enucleadas\Trayectorias\Tracks def\Track_info_{datetime.now().strftime("%d.%m.%Y_%H.%M.%S")}.txt'),
         logging.StreamHandler(sys.stdout)
     ])
 
@@ -29,7 +29,7 @@ logging.basicConfig(
 t = time.time()
 
 
-walk_dir = r'C:\Users\JoseC\Desktop\Doctorado\Publicaciones\Papers sin nucleo\mov.sist.enucleadas\Tracks def'
+walk_dir = r'C:\Users\JoseC\Desktop\Doctorado\Publicaciones\Papers sin nucleo\mov.sist.enucleadas\Trayectorias\Tracks def'
 
 
 logging.info('\n\n\nwalk_dir = ' + walk_dir)

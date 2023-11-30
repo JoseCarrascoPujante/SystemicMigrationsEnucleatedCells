@@ -4,7 +4,7 @@ function [Alpha1,D,F_n,z1,z2]=DFA_main2(DATA, input_type, axeshandle)
 %A is the alpha in the paper
 %D is the dimension of the time series
 %n can be changed to your interest
-n=[ 158 251 398 631 1000 1585 2512 ];% 3981 6310 10000 15849 25119 39811 63096 100000]; % % (tamaño óptimo, desde 100 hasta tamaño de la muestra entre 10 aproximadamente)
+n=[ 158 251 398 631 1000 1585 2512 3981];% 6310 10000 15849 25119 39811 63096 100000]; % % (tamaño óptimo, desde 100 hasta tamaño de la muestra entre 10 aproximadamente)
 %n=[100 126 158 200 251 316 398 501 631 794 1000]; % de 0.1 en 0.1 en vez de 0.2 como arriba
 %%elegimos n para que haga ventanas desde el 2 hasta el 4 en escala
 %%logarítmica, separados de 0.2 en 0.2 (redondeados para ser un tamaño de

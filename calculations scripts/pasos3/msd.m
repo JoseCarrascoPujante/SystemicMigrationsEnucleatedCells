@@ -1,5 +1,5 @@
 function [slope,deltat] = msd(x, y, axis)
-% msd - calculates the msd curve for 2-D dissusion 
+% msd - calculates the msd curve for 2-D diffusion 
 %   x: vector of x positions
 %   y: vector of y positions
 

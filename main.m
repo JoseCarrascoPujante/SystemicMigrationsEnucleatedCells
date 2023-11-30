@@ -42,9 +42,9 @@ for k = 1 : length(UsefulSubFolderNames)
 end
 
 % List the parameters to be calculated by the script
-stat_names = {'RMSF_alpha', 'sRMSF_alpha', 'RMSF_R2', 'sRMSF_R2', 'RMSFCorrelationTime', ...
-    'DFA_gamma', 'sDFA_gamma', 'MSD_beta', 'sMSD_beta', 'ApEn', ...
-    'sApEn','Intensity','sIntensity','DR','sDR','AvgSpeed','sAvgSpeed','DisplacementCosines'} ;
+stat_names = {'RMSF_alpha', 'sRMSF_alpha', 'RMSF_R2', 'RMSFCorrelationTime', ...
+    'DFA_gamma', 'sDFA_gamma', 'MSD_beta', 'sMSD_beta', 'ApEn', 'sApEn', ...
+    'Intensity','sIntensity','DR','sDR','AvgSpeed','sAvgSpeed','DisplacementCosines'} ;
 
 % Initialize bulk data structures
 tracks = struct ;
@@ -271,13 +271,15 @@ for i = 1:length(field_names)
     bar3 = waitbar(i/length(field_names), bar3, field_names{i}) ;
     
     foldertime = tic;
-
+    
+    % MSDbeta figure init
     figures.(field_names{i}).msd = figure('Name',strcat('MSD_',field_names{i}),...
         'Visible','off','NumberTitle','off') ;
     xlabel('Log(MSD(\tau))');
     ylabel('Log(\tau(s))');
     msdhandleOr = gca;
 
+    % Shuff MSDbeta init
     figures.(field_names{i}).msd_shuff = figure('Name',strcat('MSD_Shuffled_',...
         field_names{i}),'Visible','off','NumberTitle','off') ;
     xlabel('Log(MSD(\tau))');
@@ -291,7 +293,7 @@ for i = 1:length(field_names)
 
         bar4 = waitbar(j/N, bar4, strcat('Track number', ' ', num2str(j))) ;
 
-        % RMSFalpha
+        % RMSFalpha figure init
 		figures.(field_names{i}).rmsf.(strcat('number', num2str(j))) = ...
 		figure('Name',strcat(field_names{i}, '_amoeba_number_',...
 		num2str(j)),'NumberTitle','off','Visible','off');
@@ -300,31 +302,31 @@ for i = 1:length(field_names)
         set(rmsfhandle,'xscale','log')
         set(rmsfhandle,'yscale','log')
 		
+        % RMSFalpha calc
         [results.(field_names{i})(j,strcmp(stat_names(:), 'RMSF_alpha')),...
             results.(field_names{i})(j,strcmp(stat_names(:), 'RMSF_R2')),...
-            results.(field_names{i})(j,strcmp(stat_names(:), 'RMSFCorrelationTime')), tc2] = ...
-            amebas5(coordinates.(field_names{i}).scaled_rho{j}, rmsfhandle) ;
+            results.(field_names{i})(j,strcmp(stat_names(:), 'RMSFCorrelationTime')), ~] = ...
+            amebas5(coordinates.(field_names{i}).scaled_rho{j}, rmsfhandle,'orig') ;
         
-        % Shuffled RMSFalpha
-        [results.(field_names{i})(j,strcmp(stat_names(:), 'sRMSF_alpha')),...
-            results.(field_names{i})(j,strcmp(stat_names(:), 'sRMSF_R2')),...
-            ~, ~] = ...
-            amebas5(coordinates.(field_names{i}).shuffled_rho{j}, rmsfhandle) ;
+        % Shuffl RMSFalpha calc
+        [results.(field_names{i})(j,strcmp(stat_names(:), 'sRMSF_alpha')),~,~,~] = ...
+            amebas5(coordinates.(field_names{i}).shuffled_rho{j}, rmsfhandle,'shuff') ;
 
         legend('Original RMSF','Shuffled RMSF','Location','best')
 
-        % DFAgamma
+        % DFAgamma figure init
         figures.(field_names{i}).dfa_original.(strcat('number', num2str(j))) = ...
             figure('Name',strcat('DFA_', field_names{i}, '_cell_no_', num2str(j)),...
             'NumberTitle','off','Visible','off') ;
 
         dfahandle = gca;
-
+        
+        % DFAgamma calc
         [results.(field_names{i})(j,strcmp(stat_names(:), 'DFA_gamma'))] = ...
             DFA_main2(coordinates.(field_names{i}).scaled_rho{j},...
             'Original_DFA_', dfahandle) ;
 
-        % Shuffled DFAgamma
+        % Shuff DFAgamma calc
         [results.(field_names{i})(j,strcmp(stat_names(:), 'sDFA_gamma'))] = ...
             DFA_main2(coordinates.(field_names{i}).shuffled_rho{j},...
             'Shuffled_DFA_', dfahandle) ;
@@ -333,12 +335,12 @@ for i = 1:length(field_names)
             'Original DFA \gamma','Shuffled DFA \gamma',...
             'Location','northwest')
 
-        % MSDbeta
+        % MSDbeta calc
         [results.(field_names{i})(j,strcmp(stat_names(:), 'MSD_beta'))] = ...
             msd(coordinates.(field_names{i}).scaled_x{j},...
             coordinates.(field_names{i}).scaled_y{j},msdhandleOr) ;
         
-        % Shuffled MSDbeta
+        % Shuffled MSDbeta calc
         [results.(field_names{i})(j,strcmp(stat_names(:), 'sMSD_beta'))] = ...
             msd(coordinates.(field_names{i}).shuffled_x{j},...
             coordinates.(field_names{i}).shuffled_y{j},msdhandleShuff) ;
