@@ -36,11 +36,6 @@ for k = 1 : length(UsefulSubFolderNames)
 	fprintf('Sub folder #%d = %s\n', k, UsefulSubFolderNames{k}) ;
 end
 
-% List the parameters to be calculated by the script
-stat_names = {'RMSF_alpha', 'sRMSF_alpha', 'RMSF_R2', 'sRMSF_R2', 'RMSFCorrelationTime', ...
-    'sRMSFCorrelationTime', 'DFA_gamma', 'sDFA_gamma', 'MSD_beta', 'sMSD_beta', 'ApEn', ...
-    'sApEn','Intensity','sIntensity','DR','sDR','AvgSpeed','sAvgSpeed','DisplacementCosines'} ;
-
 % Initialize bulk data structures
 tracks = struct ;
 

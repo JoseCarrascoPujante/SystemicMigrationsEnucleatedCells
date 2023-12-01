@@ -1,4 +1,4 @@
-%% Preprocessing
+%% Track extraction and plotting
 
 clear all
 close all
@@ -62,9 +62,6 @@ bar1.Children.Title.Interpreter = 'none';
 bar2 = waitbar(0,'In progress...','Name','Track') ;
 bar2.Children.Title.Interpreter = 'none';
 
-
-%% Track extraction and plotting
-
 tImportSec = tic;
 
 for f = 1:length(UsefulSubFolderNames)
@@ -91,109 +88,73 @@ for f = 1:length(UsefulSubFolderNames)
         'Visible','off','NumberTitle','off') ;
     hTracks = gca;
     
-    % Retrieve tracks from scenario's xlsx files
-    scenario_cell_count = 0 ;
+    % Retrieve tracks from usefulsubfolder xlsx files
     for l = 1:length(files)
         thisxlsx = files(l).name ;
+        A = matlab.lang.makeValidName(thisxlsx(1:end-5));
+        
         % opts = detectImportOptions(thisxlsx);
         % opts.SelectedVariableNames = ["Var5" "Var6" "Var8"]; % (columns) XY-coordinates and data point sequence
         temp_xlsx = readmatrix(thisxlsx, 'Range','E:H');
         ix = cumsum(temp_xlsx(:,4) < circshift(temp_xlsx(:,4),1,1));
         series = splitapply(@(x1){x1},temp_xlsx(:,1:2),ix);
         for s = 1:length(series)
-            scenario_cell_count = scenario_cell_count + 1;            
-            tracks.(conditionValidName).(genvarname(num2str(scenario_cell_count))) = series{s};
-        end
-        waitbar(l/length(files), bar2, sprintf('%s %s',thisxlsx,genvarname(num2str(scenario_cell_count)))) ;
-    end
+            waitbar(l/length(files), bar2, strcat(A,num2str(s))) ;         
+            B = genvarname(num2str(s));
+            tracks.(conditionValidName).(A).original.(B) = series{s};
 
-    % Loop for track importing and processing
-    A = fieldnames(tracks.(conditionValidName)) ;
-    for i = 1:length(A)
+            % Center X and Y coordinates (substract first value to all series)
+            tracks.(conditionValidName).(A).centered.(B) = ...
+                tracks.(conditionValidName).(A).original.(B) - tracks.(conditionValidName).(A).original.(B)(1,:) ;
             
-        % update track progress bar
-        waitbar(i/length(A), bar2, A{i}) ;
-             
-        % Save original X and Y coordinates as x(i) and y(i)
-        coordinates.(conditionValidName).original_x{i} = tracks.(conditionValidName).(A{i})(:,1) ;
-        coordinates.(conditionValidName).original_y{i} = tracks.(conditionValidName).(A{i})(:,2) ;
-        
-        % Center X and Y coordinates (substract first value to all series)
-        coordinates.(conditionValidName).centered_x{i} = ...
-            coordinates.(conditionValidName).original_x{i} - coordinates.(conditionValidName).original_x{i}(1) ;
-        coordinates.(conditionValidName).centered_y{i} = ...
-            coordinates.(conditionValidName).original_y{i} - coordinates.(conditionValidName).original_y{i}(1) ;
-        
-        % Polar coordinate conversion
-        [coordinates.(conditionValidName).theta{i},...
-            coordinates.(conditionValidName).rho{i}] = ...
-            cart2pol(coordinates.(conditionValidName).centered_x{i},...
-            coordinates.(conditionValidName).centered_y{i}) ;
-        
-        % Scale Rho, X, and Y
-        if contains(condition, 'Galvanotaxis_Cells')
-            coordinates.(conditionValidName).scaled_rho{i} = ...
-                coordinates.(conditionValidName).rho{i}/ratio_list1(i) ;
-            coordinates.(conditionValidName).scaled_x{i} = ...
-                coordinates.(conditionValidName).centered_x{i}/ratio_list1(i) ;
-            coordinates.(conditionValidName).scaled_y{i} = ...
-                coordinates.(conditionValidName).centered_y{i}/ratio_list1(i) ;
-        elseif contains(condition, 'Chemotaxis_Cells')
-            coordinates.(conditionValidName).scaled_rho{i} = ...
-                coordinates.(conditionValidName).rho{i}/ratio_list2(i) ;
-            coordinates.(conditionValidName).scaled_x{i} = ...
-                coordinates.(conditionValidName).centered_x{i}/ratio_list2(i) ;
-            coordinates.(conditionValidName).scaled_y{i} = ...
-                coordinates.(conditionValidName).centered_y{i}/ratio_list2(i) ;
-        else
-            coordinates.(conditionValidName).scaled_rho{i} = ...
-                coordinates.(conditionValidName).rho{i}/39.6252 ;
-            coordinates.(conditionValidName).scaled_x{i} = ...
-                coordinates.(conditionValidName).centered_x{i}/39.6252 ;
-            coordinates.(conditionValidName).scaled_y{i} = ...
-                coordinates.(conditionValidName).centered_y{i}/39.6252 ;
+            % Polar coordinate conversion
+            [tracks.(conditionValidName).(A).theta.(B),...
+                tracks.(conditionValidName).(A).rho.(B)] = ...
+                cart2pol(tracks.(conditionValidName).(A).centered.(B)(:,1),...
+                tracks.(conditionValidName).(A).centered.(B)(:,2)) ;
+            
+            % Scale Rho, X, and Y
+            if contains(conditionValidName, 'galvanotaxis_Cells')
+                tracks.(conditionValidName).(A).scaled_rho.(B) = ...
+                    tracks.(conditionValidName).(A).rho.(B)/ratio_list1(l) ;
+                tracks.(conditionValidName).(A).scaled.(B) = ...
+                    tracks.(conditionValidName).(A).centered.(B)/ratio_list1(l) ;
+            elseif contains(conditionValidName, 'chemotaxis_Cells')
+                tracks.(conditionValidName).(A).scaled_rho.(B) = ...
+                    tracks.(conditionValidName).(A).rho.(B)/ratio_list2(l) ;
+                tracks.(conditionValidName).(A).scaled.(B) = ...
+                    tracks.(conditionValidName).(A).centered.(B)/ratio_list2(l) ;
+            else
+                tracks.(conditionValidName).(A).scaled_rho.(B) = ...
+                    tracks.(conditionValidName).(A).rho.(B)/39.6252 ;
+                tracks.(conditionValidName).(A).scaled.(B) = ...
+                    tracks.(conditionValidName).(A).centered.(B)/39.6252 ;                
+            end
+            
+            % % Shuffling
+            % toShuffle = [tracks.(conditionValidName).(A).scaled.(B),tracks.(conditionValidName).(A).scaled_rho.(B)];
+            % 
+            % XYshufftime = tic;
+            % for k=1:shuffles
+            %       toShuffle = shuff(toShuffle);
+            % end
+            % 
+            % tracks.(conditionValidName).(A).shuffled.(B) = toShuffle(:,1:2);
+            % 
+            % tracks.(conditionValidName).(A).shuffled_rho.(B) = toShuffle(:,3);
+            % 
+            % ['Track ' A 'nº' B ' XY and RHO time elapsed shuffling ' num2str(toc(XYshufftime)) ' seconds']
+            
+            % Add current track to the "condition" tracks plot and place black dot marker at its tip      
+            plot(hTracks,tracks.(conditionValidName).(A).scaled.(B)(:,1),...
+                tracks.(conditionValidName).(A).scaled.(B)(:,2), 'Color', 'k') ;
+            hold on;
+            plot(hTracks,tracks.(conditionValidName).(A).scaled.(B)(end,1),...
+                tracks.(conditionValidName).(A).scaled.(B)(end,2),...
+                'ko',  'MarkerFaceColor',  'k', 'MarkerSize', 2) ;
         end
-        
-        % Shuffle X and Y trajectories
-
-        % initialize shuffled X
-        coordinates.(conditionValidName).shuffled_x{i} = ...
-            coordinates.(conditionValidName).scaled_x{i} ; 
-        % initialize shuffled Y
-        coordinates.(conditionValidName).shuffled_y{i} = ...
-            coordinates.(conditionValidName).scaled_y{i} ;
-        XYshufftime = tic;
-        for k=1:shuffles
-          coordinates.(conditionValidName).shuffled_x{i} = ...
-              shuff(coordinates.(conditionValidName).shuffled_x{i}) ;
-
-          coordinates.(conditionValidName).shuffled_y{i} = ...
-              shuff(coordinates.(conditionValidName).shuffled_y{i}) ;
-        end
-        ['Track nº' A{i} ' XY shuffling elapsed time was ' num2str(toc(XYshufftime)) ' seconds']
-
-        % Shuffle Scaled_Rho
-
-        % Initialize shuffled_rho
-        coordinates.(conditionValidName).shuffled_rho{i} = ...
-            coordinates.(conditionValidName).scaled_rho{i} ;
-
-        rhoShufftime = tic;
-        for k=1:shuffles
-          coordinates.(conditionValidName).shuffled_rho{i} = ...
-              shuff(coordinates.(conditionValidName).shuffled_rho{i}) ;
-        end
-        ['Track nº' A{i} ' RHO shuffling elapsed time was ' num2str(toc(rhoShufftime)) ' seconds']
-        
-        % Add current track to the "condition" tracks plot and place black dot marker at its tip      
-        plot(hTracks,coordinates.(conditionValidName).scaled_x{i},...
-            coordinates.(conditionValidName).scaled_y{i}, 'Color', [0, 0, 0]) ;
-        hold on;
-        plot(hTracks,coordinates.(conditionValidName).scaled_x{i}(end),...
-            coordinates.(conditionValidName).scaled_y{i}(end),...
-            'ko',  'MarkerFaceColor',  [0, 0, 0], 'MarkerSize', 2) ;
-        
     end
+
     % Adjust track plot axes' proportions
     hold on
     box on
@@ -222,19 +183,21 @@ for f = 1:length(UsefulSubFolderNames)
     
     [condition ' elapsed time was ' num2str(toc(thisfoldertic)) ' seconds']
     
-    % %Save figure as a jpg file
-    % exportgraphics(hTracks,strcat(destination_folder, strcat('\Tracks_',condition),'.jpg'), ...
+    % %Save track plot as jpg
+    % exportgraphics(hTracks,strcat(destination_folder, strcat('\Tracks',condition),'.jpg'), ...
     % "Resolution",300)
     
 end
 
 tImportSec = num2str(toc(tImportSec)) ;
+['Track loading and shuffling section elapsed time ', tImportSec, ' seconds']
+
+
 close(bar1,bar2)
 % Save data
 save(strcat(destination_folder, '\', run_date, '_trajectories.mat'),...
-    'coordinates','figures','stat_names','tImportSec','destination_folder','run_date') ;
+    'tracks','figures','stat_names','tImportSec','destination_folder','run_date') ;
 
-['Track loading and shuffling section elapsed time ', tImportSec, ' seconds']
 
 clear thisfoldertic tImportSec
 
