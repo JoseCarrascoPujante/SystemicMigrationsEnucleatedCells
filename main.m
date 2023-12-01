@@ -99,7 +99,8 @@ for f = 1:length(UsefulSubFolderNames)
         ix = cumsum(temp_xlsx(:,4) < circshift(temp_xlsx(:,4),1,1));
         series = splitapply(@(x1){x1},temp_xlsx(:,1:2),ix);
         for s = 1:length(series)
-            waitbar(l/length(files), bar2, strcat(A,num2str(s))) ;         
+            tracktime = tic;
+            waitbar(l/length(files), bar2, strcat(A,'nº',num2str(s))) ;         
             B = genvarname(num2str(s));
             tracks.(conditionValidName).(A).original.(B) = series{s};
 
@@ -131,19 +132,16 @@ for f = 1:length(UsefulSubFolderNames)
                     tracks.(conditionValidName).(A).centered.(B)/39.6252 ;                
             end
             
-            % % Shuffling
-            % toShuffle = [tracks.(conditionValidName).(A).scaled.(B),tracks.(conditionValidName).(A).scaled_rho.(B)];
-            % 
-            % XYshufftime = tic;
-            % for k=1:shuffles
-            %       toShuffle = shuff(toShuffle);
-            % end
-            % 
-            % tracks.(conditionValidName).(A).shuffled.(B) = toShuffle(:,1:2);
-            % 
-            % tracks.(conditionValidName).(A).shuffled_rho.(B) = toShuffle(:,3);
-            % 
-            % ['Track ' A 'nº' B ' XY and RHO time elapsed shuffling ' num2str(toc(XYshufftime)) ' seconds']
+            % Shuffling
+            toShuffle = [tracks.(conditionValidName).(A).scaled.(B),tracks.(conditionValidName).(A).scaled_rho.(B)];
+
+            for k=1:shuffles
+                  toShuffle = shuff(toShuffle);
+            end
+
+            tracks.(conditionValidName).(A).shuffled.(B) = toShuffle(:,1:2);
+
+            tracks.(conditionValidName).(A).shuffled_rho.(B) = toShuffle(:,3);
             
             % Add current track to the "condition" tracks plot and place black dot marker at its tip      
             plot(hTracks,tracks.(conditionValidName).(A).scaled.(B)(:,1),...
@@ -152,6 +150,7 @@ for f = 1:length(UsefulSubFolderNames)
             plot(hTracks,tracks.(conditionValidName).(A).scaled.(B)(end,1),...
                 tracks.(conditionValidName).(A).scaled.(B)(end,2),...
                 'ko',  'MarkerFaceColor',  'k', 'MarkerSize', 2) ;
+            ['Track ' A 'nº' B ' time elapsed ' num2str(toc(tracktime)) ' seconds']
         end
     end
 
@@ -219,7 +218,7 @@ diary off
 
 close all
 clear all
-load("2023-11-27_22.46'27''_trajectories.mat")
+load("_trajectories.mat")
 tCalcSec=tic;
 
 field_names = fieldnames(coordinates) ;
