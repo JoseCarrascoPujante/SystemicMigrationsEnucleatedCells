@@ -27,4 +27,6 @@ for i = 1:length(scenarios)
     end
 end
 
+f = sortrows(entries(e),2,'descend');
+
 toc
