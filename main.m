@@ -51,10 +51,10 @@ tracks = struct ;
 coordinates = struct ;
 results = struct ;
 
-% Custom pixel/mm ratio list for galvanotaxis cells
+% Custom pixel/mm ratio list for galvanotaxis_cells
 ratio_list1 = [38.6252,38.6252,38.6252,11.63,11.63,38.6252,38.6252,38.6252,38.6252,38.6252,38.6252] ;
 
-% Custom pixel/mm ratio list for chemotaxis cells
+% Custom pixel/mm ratio list for chemotaxis_cells
 ratio_list2 = [38.6252,38.6252,38.6252,38.6252,38.6252,38.6252,38.6252,38.6252,38.6252,38.6252,38.6252,11.63] ;
 
 bar1 = waitbar(0,'In progress...','Name','Scenario') ;
@@ -84,7 +84,7 @@ for f = 1:length(UsefulSubFolderNames)
     files = natsortfiles(files) ;
     
     % Initialize condition track figure
-    figures.(conditionValidName).tracks = figure('Name',strcat('Tracks_',condition),...
+    figures.(conditionValidName).tracks = figure('Name',strcat('Tracks',condition),...
         'Visible','off','NumberTitle','off') ;
     hTracks = gca;
     

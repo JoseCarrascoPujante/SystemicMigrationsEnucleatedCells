@@ -4,7 +4,7 @@ function imageJ_emu(tracks)
     g = uigridlayout(fig);
     g.Padding = [5 5 5 5]; % Reduce padding to 5 pixels on all sides
     g.RowHeight = {200,22,22,'1x'};
-    g.ColumnWidth = {300,'1x'};
+    g.ColumnWidth = {350,'1x'};
     g.ColumnSpacing = 5; % Reduce column spacing to 5 pixels
     g.RowSpacing = 5; % Reduce row spacing to 5 pixels
     
@@ -32,14 +32,14 @@ function imageJ_emu(tracks)
     % Listbox to choose scenario->experiment->track to plot
     trackList = {};
     trackList = unfold(tracks,'tracks',false,trackList);
-    
+    trackList = trackList(contains(trackList,'original'));
     myCoords = cell(1,numel(trackList));
     for v = 1:length(trackList)
         myCoords{v} = eval(trackList{v});
     end
     
     lb = uilistbox(g,'Items',cellfun(@(S) S(11:end), trackList, 'Uniform', 0),...
-        'ItemsData',myCoords,'FontSize',12.5,'ValueChangedFcn',@listBox);
+        'ItemsData',myCoords,'FontSize',12,'ValueChangedFcn',@listBox);
     lb.Layout.Row = 1;
     lb.Layout.Column = 1;
     [pc,pf,pm] = deal('');

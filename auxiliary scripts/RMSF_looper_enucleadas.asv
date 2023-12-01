@@ -22,7 +22,7 @@ for i = 1:length(scenarios)
             
             % Print RMSF values
             e([scenarios{i} l{j} 'nº' num2str(k)]) = ...
-                results.(scenarios{i}).(l{j}).(m{k})(1)
+                results.(scenarios{i}).(l{j}).(m{k})(1);
         end
     end
 end

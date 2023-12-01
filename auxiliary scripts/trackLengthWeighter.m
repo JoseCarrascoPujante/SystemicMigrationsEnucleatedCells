@@ -1,21 +1,19 @@
-function trackLengthViewer(coordinates)
+function e = trackLengthWeighter(tracks,xnumber)
     a={};
-    a=unfold(coordinates,'coordinates',false,a);
-    a=a(contains(a,'original_x'));
-    a = extractBetween(a,'.','.');
+    a=unfold(tracks,'',false,a);
+    a=a(contains(a,'original'));
+    p = split(a,'.');
     
     trackLengths = dictionary;
     for i = 1:length(a)
-        for j = 1:length(coordinates.(a{i}).original_x)
-            trackLengths([a{i} ' ' num2str(j)]) = length(coordinates.(a{i}).original_x{j});
-        end
+        trackLengths(a{i}) = size(tracks.(p{1,i,2}).(p{1,i,3}).(p{1,i,4}).(p{1,i,5}),1);
     end
     
     e = sortrows(entries(trackLengths),2,'descend');
     
     figure
-    idx1 = find(e{:,2} >= 1800);
-    idx2 = find(e{:,2} < 1800);
+    idx1 = find(e{:,2} >= xnumber);
+    idx2 = find(e{:,2} < xnumber);
     fill([1,1:idx1(end),idx1(end)+1],[min(e{:,2}); e{:,2}(idx1); min(e{:,2})],[1:-.3/idx1(end):0.7,0.7], ...
         [idx2(1),idx2(1):idx2(end)],[min(e{:,2}); e{:,2}(idx2)],[-.3:.3/(idx2(end)-idx2(1)):0,0], ...
         [1,1:idx2(end),idx2(end)+1],[1; repmat(min(e{:,2}),length(e{:,2}),1);1],[.45:-.2/length(e{:,2}):0.25,0.25])
@@ -33,7 +31,7 @@ function trackLengthViewer(coordinates)
         strcat(num2str((min(e{:,2})*length(e{:,2})/sum(e{:,2}))*100),'%'),'HorizontalAlignment', 'right', ...
          'VerticalAlignment', 'bottom')
     
-    text(max(idx1), min(e{:,2}(idx1))+100, strcat('y=',num2str(1800),'\newlinex=', ...
+    text(max(idx1), min(e{:,2}(idx1))+100, strcat('y=',num2str(xnumber),'\newlinex=', ...
         num2str(length(idx1)),'\newline\downarrow'),'HorizontalAlignment', ...
         'left', 'VerticalAlignment', 'bottom','FontSize',11)
     

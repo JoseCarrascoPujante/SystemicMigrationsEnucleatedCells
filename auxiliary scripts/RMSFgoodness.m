@@ -1,5 +1,5 @@
 
-function [dev1,dev2,dev3,maxgoodness]=RMSFgoodnessdisp(u_all)
+function maxgoodness=RMSFgoodness(u_all)
 
 scale_time=0.5; %time between frames (seconds)
 
@@ -76,10 +76,10 @@ for time_max=step:step:tc2   % plot one graph every "step" data points
     % Return only one row depending on R2 value (goodness of fit)
     % B=goodness>0.98;
     % res=junto(B,:);
-    dev=junto(end,:);
-    dev1=dev(:,1);
-    dev2=dev(:,2);
-    dev3=dev(:,3);
+    % dev=junto(end,:);
+    % dev1=dev(:,1);
+    % dev2=dev(:,2);
+    % dev3=dev(:,3);
     % umin=umin+nu;
 
     % medias(zz)=mean(exponents(zz,:));
