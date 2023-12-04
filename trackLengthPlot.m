@@ -1,4 +1,4 @@
-function e = trackLengthWeighter(tracks,xnumber)
+function e = trackLengthPlot(tracks,xnumber)
     a={};
     a=unfold(tracks,'',false,a);
     a=a(contains(a,'original'));

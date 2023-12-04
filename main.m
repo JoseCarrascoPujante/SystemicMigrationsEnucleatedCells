@@ -1,6 +1,6 @@
 %% Track extraction and plotting
 
-clear all
+clear
 close all
 
 % Run date & time
@@ -220,8 +220,9 @@ diary off
 %%%%%%EN OBRAS%%%%%%
 %%%%%%%%%%%%%%%%%%%%
 
+clear
 close all
-clear all
+
 load("_trajectories.mat")
 tCalcSec=tic;
 
