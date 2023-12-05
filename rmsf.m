@@ -41,7 +41,7 @@ for time_max=step:step:tc2   % plot one graph every "step" data points
             
     for j=1:dim
         
-        y(j)=compute_y(l,j);
+        y(j)=enu.compute_y(l,j);
         
     end
     
@@ -51,7 +51,7 @@ for time_max=step:step:tc2   % plot one graph every "step" data points
     
     for j=1:dim
         
-        F(j)=compute_F(y,j);
+        F(j)=enu.compute_F(y,j);
         
     end
    
@@ -61,7 +61,7 @@ for time_max=step:step:tc2   % plot one graph every "step" data points
      
     time=(1:dim)'.*scale_time*du;
     idx=find( time(1:time_max)>0 & F(1:time_max)>0 );
-    [Rsq,slope,intercept]=rsquare (log10(time(idx)),log10(F(idx)));
+    [Rsq,slope,intercept]=enu.rsquare(log10(time(idx)),log10(F(idx)));
     
     % alpha=slope;
     % v=time.^(alpha);
@@ -87,7 +87,7 @@ for time_max=step:step:tc2   % plot one graph every "step" data points
     %%%%%%%%%%%%
 
     % loglog plot of rmsf F versus l step non-shuffled coordinates
-    if time_max == tc2
+    if time_max == tc2 && isempty(rmsfhandle) == 0
         max_corr = res(end,3); % Use max tc2 when R2>0.99   
         hold(rmsfhandle, 'on')
         if strcmp(type,'orig')

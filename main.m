@@ -14,7 +14,7 @@ topLevelFolder = uigetdir('C:\Users') ;
 shuffles = 200000;
 
 % Create destination folder
-destination_folder = strcat(fileparts(topLevelFolder), '\', run_date, '_', ...
+destination_folder = strcat(fileparts(fileparts(topLevelFolder)), '\', run_date, '_', ...
     num2str(shuffles), '_shuffles') ;
 mkdir(destination_folder) ;
 

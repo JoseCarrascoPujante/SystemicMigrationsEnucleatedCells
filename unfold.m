@@ -70,7 +70,7 @@ if isstruct(SC)
                 Namei = [Name '.' F{i}];
             end
             if isstruct(SC(h).(F{i}))
-                namearray = unfold(SC(h).(F{i}),Namei,show,namearray);
+                namearray = enu.unfold(SC(h).(F{i}),Namei,show,namearray);
             else
                 if iscell(SC(h).(F{i}))
                     siz = size(SC(h).(F{i}));
@@ -107,7 +107,7 @@ elseif iscell(SC)
     siz = size(SC);
     for i=1:numel(SC)
         Namei = [Name '{' ind2str(siz,i) '}'];
-        unfold(SC{i},Namei,show);
+        enu.unfold(SC{i},Namei,show);
     end
 else
     % disp(Name)
