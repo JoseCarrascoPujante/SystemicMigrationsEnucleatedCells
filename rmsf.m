@@ -15,16 +15,16 @@ exponents=zeros(tc,numseries);
 goodness=zeros(tc,numseries);
 ks=zeros(tc,numseries);
  
-clear title xlabel ylabel;
+% clear title xlabel ylabel;
 tc2=tc*step;
 zz=1;
+umin=1;
 
 for time_max=step:step:tc2   % plot one graph every "step" data points
-        
-    umin=1;     
-    nu=trackLength-1;
+         
+    nu=trackLength; 
     du=1;
-    u=u_all(umin:du:umin+nu);
+    u=u_all(umin:du:nu);
    
     dim=size(u,1);
     l=zeros(dim,1);

@@ -37,8 +37,8 @@ AllsubFolderNames = {AllDirs.folder} ;
 UsefulSubFolderNames = unique(AllsubFolderNames, 'sorted') ;
 
 % Display subfolders' name on the console
-for k = 1 : length(UsefulSubFolderNames)
-	fprintf('Sub folder #%d = %s\n', k, UsefulSubFolderNames{k}) ;
+for ii = 1 : length(UsefulSubFolderNames)
+	fprintf('Sub folder #%d = %s\n', ii, UsefulSubFolderNames{ii}) ;
 end
 
 % List the parameters to be calculated by the script
@@ -46,10 +46,8 @@ stat_names = {'RMSF_alpha', 'sRMSF_alpha', 'RMSF_R2', 'RMSFCorrelationTime', ...
     'DFA_gamma', 'sDFA_gamma', 'MSD_beta', 'sMSD_beta', 'ApEn', 'sApEn', ...
     'Intensity','sIntensity','DR','sDR','AvgSpeed','sAvgSpeed','DisplacementCosines'} ;
 
-% Initialize bulk data structures
+% Initialize track struct
 tracks = struct ;
-coordinates = struct ;
-results = struct ;
 
 % Custom pixel/mm ratio list for galvanotaxis_cells
 ratio_list1 = [38.6252,38.6252,38.6252,11.63,11.63,38.6252,38.6252,38.6252,38.6252,38.6252,38.6252] ;
@@ -81,7 +79,7 @@ for f = 1:length(UsefulSubFolderNames)
     waitbar(f/length(UsefulSubFolderNames), bar1, condition) ;
 
     % Sort file names in natural order 
-    files = natsortfiles(files) ;
+    files = enu.natsortfiles(files) ;
     
     % Initialize condition track figure
     figures.(conditionValidName).tracks = figure('Name',strcat('Tracks',condition),...
@@ -114,7 +112,7 @@ for f = 1:length(UsefulSubFolderNames)
                 cart2pol(tracks.(conditionValidName).(A).centered.(B)(:,1),...
                 tracks.(conditionValidName).(A).centered.(B)(:,2)) ;
             
-            % Scale Rho, X, and Y
+            % Scale X, Y and Rho
             if contains(conditionValidName, 'galvanotaxis_Cells')
                 tracks.(conditionValidName).(A).scaled_rho.(B) = ...
                     tracks.(conditionValidName).(A).rho.(B)/ratio_list1(l) ;
@@ -135,8 +133,8 @@ for f = 1:length(UsefulSubFolderNames)
             % Shuffling
             toShuffle = [tracks.(conditionValidName).(A).scaled.(B),tracks.(conditionValidName).(A).scaled_rho.(B)];
 
-            for k=1:shuffles
-                  toShuffle = shuff(toShuffle);
+            for kk=1:shuffles
+                  toShuffle = enu.Shuffle(toShuffle,1);
             end
 
             tracks.(conditionValidName).(A).shuffled.(B) = toShuffle(:,1:2);
@@ -157,7 +155,8 @@ for f = 1:length(UsefulSubFolderNames)
     % Adjust track plot axes' proportions
     hold on
     box on
-    MaxX = max(abs(hTracks.XLim))+1;   MaxY = max(abs(hTracks.YLim))+1;
+    MaxX = max(abs(hTracks.XLim))+1;
+    MaxY = max(abs(hTracks.YLim))+1;
     % Add x-line
     x = 0; 
     xl = plot([x,x],ylim(hTracks), 'k-', 'LineWidth', .5);
@@ -208,8 +207,7 @@ for iFig = 1:length(FigList)
   FigName = get(FigHandle,'Name') ;
   set(0, 'CurrentFigure', FigHandle) ;
   annotation('textbox',[.3 .9 .8 .1],'String',FigName,'EdgeColor','none','Interpreter','none','FontSize',12)
-  exportgraphics(FigHandle,strcat(destination_folder,'\', FigName,'.jpg'), ...
-  "Resolution",300)
+  exportgraphics(FigHandle,strcat(destination_folder,'\', FigName,'.jpg'), "Resolution",300)
 end
 
 diary off
@@ -223,21 +221,22 @@ diary off
 clear
 close all
 
-load("_trajectories.mat")
+load("2023-12-07_22.09'53''_trajectories.mat")
 tCalcSec=tic;
 
-field_names = fieldnames(coordinates) ;
+results = struct ;
+field_names = fieldnames(tracks) ;
 
-bar3 = waitbar(0,'In progress...','Name','Condition') ;
+bar3 = waitbar(0,'In progress...','Name','Scenario') ;
 bar3.Children.Title.Interpreter = 'none';
-bar4 = waitbar(0,'In progress...','Name','Track number') ;
+bar4 = waitbar(0,'In progress...','Name','Track') ;
 bar4.Children.Title.Interpreter = 'none';
 
 for i = 1:length(field_names)
     
     bar3 = waitbar(i/length(field_names), bar3, field_names{i}) ;
     
-    foldertime = tic;
+    scenariotime = tic;
     
     % MSDbeta figure init
     figures.(field_names{i}).msd = figure('Name',strcat('MSD_',field_names{i}),...
@@ -253,7 +252,7 @@ for i = 1:length(field_names)
     ylabel('Log(\tau(s))');
     msdhandleShuff = gca;
     
-    N = length(coordinates.(field_names{i}).original_x); % Trajectories in condition
+    N = length(tracks.(field_names{i}).original_x); % Trajectories in condition
     for j = 1:N 
         
         tic
@@ -273,11 +272,11 @@ for i = 1:length(field_names)
         [results.(field_names{i})(j,strcmp(stat_names(:), 'RMSF_alpha')),...
             results.(field_names{i})(j,strcmp(stat_names(:), 'RMSF_R2')),...
             results.(field_names{i})(j,strcmp(stat_names(:), 'RMSFCorrelationTime')), ~] = ...
-            amebas5(coordinates.(field_names{i}).scaled_rho{j}, rmsfhandle,'orig') ;
+            amebas5(tracks.(field_names{i}).scaled_rho{j}, rmsfhandle,'orig') ;
         
         % Shuffl RMSFalpha calc
         [results.(field_names{i})(j,strcmp(stat_names(:), 'sRMSF_alpha')),~,~,~] = ...
-            amebas5(coordinates.(field_names{i}).shuffled_rho{j}, rmsfhandle,'shuff') ;
+            amebas5(tracks.(field_names{i}).shuffled_rho{j}, rmsfhandle,'shuff') ;
 
         legend('Original RMSF','Shuffled RMSF','Location','best')
 
@@ -290,12 +289,12 @@ for i = 1:length(field_names)
         
         % DFAgamma calc
         [results.(field_names{i})(j,strcmp(stat_names(:), 'DFA_gamma'))] = ...
-            DFA_main2(coordinates.(field_names{i}).scaled_rho{j},...
+            DFA_main2(tracks.(field_names{i}).scaled_rho{j},...
             'Original_DFA_', dfahandle) ;
 
         % Shuff DFAgamma calc
         [results.(field_names{i})(j,strcmp(stat_names(:), 'sDFA_gamma'))] = ...
-            DFA_main2(coordinates.(field_names{i}).shuffled_rho{j},...
+            DFA_main2(tracks.(field_names{i}).shuffled_rho{j},...
             'Shuffled_DFA_', dfahandle) ;
 
         legend('Original data','Shuffled data (Gaussian noise)',...
@@ -304,42 +303,42 @@ for i = 1:length(field_names)
 
         % MSDbeta calc
         [results.(field_names{i})(j,strcmp(stat_names(:), 'MSD_beta'))] = ...
-            msd(coordinates.(field_names{i}).scaled_x{j},...
-            coordinates.(field_names{i}).scaled_y{j},msdhandleOr) ;
+            msd(tracks.(field_names{i}).scaled_x{j},...
+            tracks.(field_names{i}).scaled_y{j},msdhandleOr) ;
         
         % Shuffled MSDbeta calc
         [results.(field_names{i})(j,strcmp(stat_names(:), 'sMSD_beta'))] = ...
-            msd(coordinates.(field_names{i}).shuffled_x{j},...
-            coordinates.(field_names{i}).shuffled_y{j},msdhandleShuff) ;
+            msd(tracks.(field_names{i}).shuffled_x{j},...
+            tracks.(field_names{i}).shuffled_y{j},msdhandleShuff) ;
 
         % Approximate entropy (Kolmogorov-Sinai entropy)
         results.(field_names{i})(j,strcmp(stat_names(:), 'ApEn')) = ...
-            ApEn(2, 0.2*std(coordinates.(field_names{i}).scaled_rho{j}),...
-            coordinates.(field_names{i}).scaled_rho{j}) ;
+            ApEn(2, 0.2*std(tracks.(field_names{i}).scaled_rho{j}),...
+            tracks.(field_names{i}).scaled_rho{j}) ;
 
         % Shuffled Approximate entropy (Kolmogorov-Sinai entropy)
         results.(field_names{i})(j,strcmp(stat_names(:), 'sApEn')) = ...
-            ApEn(2, 0.2*std(coordinates.(field_names{i}).shuffled_rho{j}),...
-            coordinates.(field_names{i}).shuffled_rho{j}) ;
+            ApEn(2, 0.2*std(tracks.(field_names{i}).shuffled_rho{j}),...
+            tracks.(field_names{i}).shuffled_rho{j}) ;
 
         % Intensity of response (mm)
         [results.(field_names{i})(j,strcmp(stat_names(:), 'Intensity'))] = ...
-            norm([coordinates.(field_names{i}).scaled_x{j}(end) coordinates.(field_names{i}).scaled_y{j}(end)]...
-            - [coordinates.(field_names{i}).scaled_x{j}(1) coordinates.(field_names{i}).scaled_y{j}(1)]);
+            norm([tracks.(field_names{i}).scaled_x{j}(end) tracks.(field_names{i}).scaled_y{j}(end)]...
+            - [tracks.(field_names{i}).scaled_x{j}(1) tracks.(field_names{i}).scaled_y{j}(1)]);
 
         % Shuffled intensity of response (mm)
         [results.(field_names{i})(j,strcmp(stat_names(:), 'sIntensity'))] = ...
-            norm([coordinates.(field_names{i}).shuffled_x{j}(1) coordinates.(field_names{i}).shuffled_y{j}(1)]...
-            - [coordinates.(field_names{i}).shuffled_x{j}(end) coordinates.(field_names{i}).shuffled_y{j}(end)]);
+            norm([tracks.(field_names{i}).shuffled_x{j}(1) tracks.(field_names{i}).shuffled_y{j}(1)]...
+            - [tracks.(field_names{i}).shuffled_x{j}(end) tracks.(field_names{i}).shuffled_y{j}(end)]);
 
         % Directionality ratio (straightness)
-        d = hypot(diff(coordinates.(field_names{i}).scaled_x{j}), diff(coordinates.(field_names{i}).scaled_y{j})) ;
+        d = hypot(diff(tracks.(field_names{i}).scaled_x{j}), diff(tracks.(field_names{i}).scaled_y{j})) ;
         distTrav = sum(d);
         [results.(field_names{i})(j,strcmp(stat_names(:), 'DR'))] = ...
             results.(field_names{i})(j,strcmp(stat_names(:), 'Intensity'))/distTrav;
         
         % Shuffled Directionality ratio (straightness)
-        d = hypot(diff(coordinates.(field_names{i}).shuffled_x{j}), diff(coordinates.(field_names{i}).shuffled_y{j})) ;
+        d = hypot(diff(tracks.(field_names{i}).shuffled_x{j}), diff(tracks.(field_names{i}).shuffled_y{j})) ;
         SdistTrav = sum(d);
         [results.(field_names{i})(j,strcmp(stat_names(:), 'sDR'))] = ...
             results.(field_names{i})(j,strcmp(stat_names(:), 'sIntensity'))/SdistTrav;
@@ -357,7 +356,7 @@ for i = 1:length(field_names)
 
     end
 
-    [field_names{i} ' runtime was ' num2str(toc(foldertime)) ' seconds']
+    [field_names{i} ' runtime was ' num2str(toc(scenariotime)) ' seconds']
 
 end
 

@@ -1,4 +1,4 @@
-function e = trackLengthPlot(tracks,xnumber)
+function trackLengthPlot(tracks,xnumber)
     a={};
     a=unfold(tracks,'',false,a);
     a=a(contains(a,'original'));

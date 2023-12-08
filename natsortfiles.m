@@ -244,9 +244,9 @@ ndx = 1:numel(fnm);
 %
 for k = nmr:-1:1
 	if nargout<3 % faster:
-		[~,idx] = natsort(mat(k,ndx),varargin{:});
+		[~,idx] = enu.natsort(mat(k,ndx),varargin{:});
 	else % for debugging:
-		[~,idx,trd] = natsort(mat(k,ndx),varargin{:});
+		[~,idx,trd] = enu.natsort(mat(k,ndx),varargin{:});
 		[~,idb] = sort(ndx);
 		dbg{k} = trd(idb,:);
 	end
