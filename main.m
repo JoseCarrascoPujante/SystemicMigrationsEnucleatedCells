@@ -196,7 +196,6 @@ close(bar1,bar2)
 save(strcat(destination_folder, '\', run_date, '_trajectories.mat'),...
     'tracks','figures','stat_names','tImportSec','destination_folder','run_date') ;
 
-
 clear thisfoldertic tImportSec
 
 % Export figures as .jpg

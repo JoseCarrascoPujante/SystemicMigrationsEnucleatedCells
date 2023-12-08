@@ -1,4 +1,4 @@
-function RMSFloop(tracks)
+function [Tcells,Tcytops] = RMSFloop(tracks)
     a={};
     a=enu.unfold(tracks,'tracks',false,a);
     a=a(contains(a,'scaled_rho'));
@@ -28,6 +28,6 @@ function RMSFloop(tracks)
     end
     toc
 
-    writetable(Tcells,'rmsfTable2.xlsx','Sheet','Cells');
-    writetable(Tcytops,'rmsfTable2.xlsx','Sheet','Cytoplasts');    
+    writetable(Tcells,'rmsfTable.xlsx','Sheet','Cells');
+    writetable(Tcytops,'rmsfTable.xlsx','Sheet','Cytoplasts');    
 end
