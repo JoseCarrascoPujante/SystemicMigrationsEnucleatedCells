@@ -213,149 +213,146 @@ diary off
 
 %% Calculations
 
-%%%%%%%%%%%%%%%%%%%%
-%%%%%%EN OBRAS%%%%%%
-%%%%%%%%%%%%%%%%%%%%
-
 clear
 close all
 
-load("2023-12-07_22.09'53''_trajectories.mat")
+load("2023-12-08_17.17'38''_trajectories.mat")
 tCalcSec=tic;
 
 results = struct ;
-field_names = fieldnames(tracks) ;
 
 bar3 = waitbar(0,'In progress...','Name','Scenario') ;
 bar3.Children.Title.Interpreter = 'none';
 bar4 = waitbar(0,'In progress...','Name','Track') ;
 bar4.Children.Title.Interpreter = 'none';
 
-for i = 1:length(field_names)
+C = fieldnames(tracks) ;
+for ii = 1:length(C) %for condition...
     
-    bar3 = waitbar(i/length(field_names), bar3, field_names{i}) ;
+    bar3 = waitbar(ii/length(C), bar3, C{ii}) ;
     
     scenariotime = tic;
     
     % MSDbeta figure init
-    figures.(field_names{i}).msd = figure('Name',strcat('MSD_',field_names{i}),...
-        'Visible','off','NumberTitle','off') ;
-    xlabel('Log(MSD(\tau))');
-    ylabel('Log(\tau(s))');
-    msdhandleOr = gca;
+    % figures.(C{ii}).msd = figure('Name',strcat('MSD_',C{ii}),...
+    %     'Visible','off','NumberTitle','off') ;
+    % xlabel('Log(MSD(\tau))');
+    % ylabel('Log(\tau(s))');
+    % msdhandleOr = gca;
 
     % Shuff MSDbeta init
-    figures.(field_names{i}).msd_shuff = figure('Name',strcat('MSD_Shuffled_',...
-        field_names{i}),'Visible','off','NumberTitle','off') ;
-    xlabel('Log(MSD(\tau))');
-    ylabel('Log(\tau(s))');
-    msdhandleShuff = gca;
+    % figures.(C{ii}).msd_shuff = figure('Name',strcat('MSD_Shuffled_',...
+    %     C{ii}),'Visible','off','NumberTitle','off') ;
+    % xlabel('Log(MSD(\tau))');
+    % ylabel('Log(\tau(s))');
+    % msdhandleShuff = gca;
     
-    N = length(tracks.(field_names{i}).original_x); % Trajectories in condition
-    for j = 1:N 
-        
-        tic
-
-        bar4 = waitbar(j/N, bar4, strcat('Track number', ' ', num2str(j))) ;
-
-        % RMSFalpha figure init
-		figures.(field_names{i}).rmsf.(strcat('number', num2str(j))) = ...
-		figure('Name',strcat(field_names{i}, '_amoeba_number_',...
-		num2str(j)),'NumberTitle','off','Visible','off');
-		
-		rmsfhandle = gca;
-        set(rmsfhandle,'xscale','log')
-        set(rmsfhandle,'yscale','log')
-		
-        % RMSFalpha calc
-        [results.(field_names{i})(j,strcmp(stat_names(:), 'RMSF_alpha')),...
-            results.(field_names{i})(j,strcmp(stat_names(:), 'RMSF_R2')),...
-            results.(field_names{i})(j,strcmp(stat_names(:), 'RMSFCorrelationTime')), ~] = ...
-            amebas5(tracks.(field_names{i}).scaled_rho{j}, rmsfhandle,'orig') ;
-        
-        % Shuffl RMSFalpha calc
-        [results.(field_names{i})(j,strcmp(stat_names(:), 'sRMSF_alpha')),~,~,~] = ...
-            amebas5(tracks.(field_names{i}).shuffled_rho{j}, rmsfhandle,'shuff') ;
-
-        legend('Original RMSF','Shuffled RMSF','Location','best')
-
-        % DFAgamma figure init
-        figures.(field_names{i}).dfa_original.(strcat('number', num2str(j))) = ...
-            figure('Name',strcat('DFA_', field_names{i}, '_cell_no_', num2str(j)),...
-            'NumberTitle','off','Visible','off') ;
-
-        dfahandle = gca;
-        
-        % DFAgamma calc
-        [results.(field_names{i})(j,strcmp(stat_names(:), 'DFA_gamma'))] = ...
-            DFA_main2(tracks.(field_names{i}).scaled_rho{j},...
-            'Original_DFA_', dfahandle) ;
-
-        % Shuff DFAgamma calc
-        [results.(field_names{i})(j,strcmp(stat_names(:), 'sDFA_gamma'))] = ...
-            DFA_main2(tracks.(field_names{i}).shuffled_rho{j},...
-            'Shuffled_DFA_', dfahandle) ;
-
-        legend('Original data','Shuffled data (Gaussian noise)',...
-            'Original DFA \gamma','Shuffled DFA \gamma',...
-            'Location','northwest')
-
-        % MSDbeta calc
-        [results.(field_names{i})(j,strcmp(stat_names(:), 'MSD_beta'))] = ...
-            msd(tracks.(field_names{i}).scaled_x{j},...
-            tracks.(field_names{i}).scaled_y{j},msdhandleOr) ;
-        
-        % Shuffled MSDbeta calc
-        [results.(field_names{i})(j,strcmp(stat_names(:), 'sMSD_beta'))] = ...
-            msd(tracks.(field_names{i}).shuffled_x{j},...
-            tracks.(field_names{i}).shuffled_y{j},msdhandleShuff) ;
-
-        % Approximate entropy (Kolmogorov-Sinai entropy)
-        results.(field_names{i})(j,strcmp(stat_names(:), 'ApEn')) = ...
-            ApEn(2, 0.2*std(tracks.(field_names{i}).scaled_rho{j}),...
-            tracks.(field_names{i}).scaled_rho{j}) ;
-
-        % Shuffled Approximate entropy (Kolmogorov-Sinai entropy)
-        results.(field_names{i})(j,strcmp(stat_names(:), 'sApEn')) = ...
-            ApEn(2, 0.2*std(tracks.(field_names{i}).shuffled_rho{j}),...
-            tracks.(field_names{i}).shuffled_rho{j}) ;
-
-        % Intensity of response (mm)
-        [results.(field_names{i})(j,strcmp(stat_names(:), 'Intensity'))] = ...
-            norm([tracks.(field_names{i}).scaled_x{j}(end) tracks.(field_names{i}).scaled_y{j}(end)]...
-            - [tracks.(field_names{i}).scaled_x{j}(1) tracks.(field_names{i}).scaled_y{j}(1)]);
-
-        % Shuffled intensity of response (mm)
-        [results.(field_names{i})(j,strcmp(stat_names(:), 'sIntensity'))] = ...
-            norm([tracks.(field_names{i}).shuffled_x{j}(1) tracks.(field_names{i}).shuffled_y{j}(1)]...
-            - [tracks.(field_names{i}).shuffled_x{j}(end) tracks.(field_names{i}).shuffled_y{j}(end)]);
-
-        % Directionality ratio (straightness)
-        d = hypot(diff(tracks.(field_names{i}).scaled_x{j}), diff(tracks.(field_names{i}).scaled_y{j})) ;
-        distTrav = sum(d);
-        [results.(field_names{i})(j,strcmp(stat_names(:), 'DR'))] = ...
-            results.(field_names{i})(j,strcmp(stat_names(:), 'Intensity'))/distTrav;
-        
-        % Shuffled Directionality ratio (straightness)
-        d = hypot(diff(tracks.(field_names{i}).shuffled_x{j}), diff(tracks.(field_names{i}).shuffled_y{j})) ;
-        SdistTrav = sum(d);
-        [results.(field_names{i})(j,strcmp(stat_names(:), 'sDR'))] = ...
-            results.(field_names{i})(j,strcmp(stat_names(:), 'sIntensity'))/SdistTrav;
-
-        % Average speed (mm/s)
-        [results.(field_names{i})(j,strcmp(stat_names(:), 'AvgSpeed'))] = ...
-            distTrav/2050;
-
-        % Shuffled average speed (mm/s)
-        [results.(field_names{i})(j,strcmp(stat_names(:), 'sAvgSpeed'))] = ...
-            SdistTrav/2050;
-
-
-        [field_names{i} ' amoeba ' num2str(j) ' runtime was ' num2str(toc) ' seconds']
-
+    S = fieldnames(tracks.(C{ii})); 
+    for jj = 1:length(S) % for serie...
+        T = fieldnames(tracks.(C{ii}).(S{jj}).scaled);
+        for kk = 1:length(T)
+            
+            tic
+    
+            bar4 = waitbar(kk/T, bar4, strcat(S{jj},'nº',T{kk})) ;
+    
+            % RMSFalpha figure init
+		    % figures.(C{ii}).rmsf.(strcat('number', num2str(jj))) = ...
+		    % figure('Name',strcat(C{ii}, '_amoeba_number_',...
+		    % num2str(jj)),'NumberTitle','off','Visible','off');
+            % 
+		    % rmsfhandle = gca;
+            % set(rmsfhandle,'xscale','log')
+            % set(rmsfhandle,'yscale','log')
+		    
+            % RMSFalpha calc
+            [results.(C{ii})(jj,strcmp(stat_names(:), 'RMSF_alpha')),...
+                results.(C{ii})(jj,strcmp(stat_names(:), 'RMSF_R2')),...
+                results.(C{ii})(jj,strcmp(stat_names(:), 'RMSFCorrelationTime')), ~] = ...
+                enu.rmsf(tracks.(C{ii}).scaled_rho{jj}, [],[]) ;
+            
+            % Shuffl RMSFalpha calc
+            [results.(C{ii})(jj,strcmp(stat_names(:), 'sRMSF_alpha')),~,~,~] = ...
+                enu.rmsf(tracks.(C{ii}).shuffled_rho{jj}, [],[]) ;
+    
+            legend('Original RMSF','Shuffled RMSF','Location','best')
+    
+            % DFAgamma figure init
+            % figures.(C{ii}).dfa_original.(strcat('number', num2str(jj))) = ...
+            %     figure('Name',strcat('DFA_', C{ii}, '_cell_no_', num2str(jj)),...
+            %     'NumberTitle','off','Visible','off') ;
+            % dfahandle = gca;
+            
+            % DFAgamma calc
+            [results.(C{ii})(jj,strcmp(stat_names(:), 'DFA_gamma'))] = ...
+                enu.DFA_main2(tracks.(C{ii}).scaled_rho{jj},...
+                'Original_DFA_', []) ;
+    
+            % Shuff DFAgamma calc
+            [results.(C{ii})(jj,strcmp(stat_names(:), 'sDFA_gamma'))] = ...
+                enu.DFA_main2(tracks.(C{ii}).shuffled_rho{jj},...
+                'Shuffled_DFA_', []) ;
+    
+            % legend('Original data','Shuffled data (Gaussian noise)',...
+            %     'Original DFA \gamma','Shuffled DFA \gamma',...
+            %     'Location','northwest')
+    
+            % MSDbeta calc
+            [results.(C{ii})(jj,strcmp(stat_names(:), 'MSD_beta'))] = ...
+                enu.msd(tracks.(C{ii}).scaled_x{jj},...
+                tracks.(C{ii}).scaled_y{jj},[]) ;
+            
+            % Shuffled MSDbeta calc
+            [results.(C{ii})(jj,strcmp(stat_names(:), 'sMSD_beta'))] = ...
+                enu.msd(tracks.(C{ii}).shuffled_x{jj},...
+                tracks.(C{ii}).shuffled_y{jj},[]) ;
+    
+            % Approximate entropy (Kolmogorov-Sinai entropy)
+            results.(C{ii})(jj,strcmp(stat_names(:), 'ApEn')) = ...
+                enu.ApEn(2, 0.2*std(tracks.(C{ii}).scaled_rho{jj}), ...
+                tracks.(C{ii}).scaled_rho{jj}) ;
+    
+            % Shuffled Approximate entropy (Kolmogorov-Sinai entropy)
+            results.(C{ii})(jj,strcmp(stat_names(:), 'sApEn')) = ...
+                enu.ApEn(2, 0.2*std(tracks.(C{ii}).shuffled_rho{jj}),...
+                tracks.(C{ii}).shuffled_rho{jj}) ;
+    
+            % Intensity of response (mm)
+            [results.(C{ii})(jj,strcmp(stat_names(:), 'Intensity'))] = ...
+                norm([tracks.(C{ii}).scaled_x{jj}(end) tracks.(C{ii}).scaled_y{jj}(end)]...
+                - [tracks.(C{ii}).scaled_x{jj}(1) tracks.(C{ii}).scaled_y{jj}(1)]);
+    
+            % Shuffled intensity of response (mm)
+            [results.(C{ii})(jj,strcmp(stat_names(:), 'sIntensity'))] = ...
+                norm([tracks.(C{ii}).shuffled_x{jj}(1) tracks.(C{ii}).shuffled_y{jj}(1)]...
+                - [tracks.(C{ii}).shuffled_x{jj}(end) tracks.(C{ii}).shuffled_y{jj}(end)]);
+    
+            % Directionality ratio (straightness)
+            d = hypot(diff(tracks.(C{ii}).scaled_x{jj}), diff(tracks.(C{ii}).scaled_y{jj})) ;
+            distTrav = sum(d);
+            [results.(C{ii})(jj,strcmp(stat_names(:), 'DR'))] = ...
+                results.(C{ii})(jj,strcmp(stat_names(:), 'Intensity'))/distTrav;
+            
+            % Shuffled Directionality ratio (straightness)
+            d = hypot(diff(tracks.(C{ii}).shuffled_x{jj}), diff(tracks.(C{ii}).shuffled_y{jj})) ;
+            SdistTrav = sum(d);
+            [results.(C{ii})(jj,strcmp(stat_names(:), 'sDR'))] = ...
+                results.(C{ii})(jj,strcmp(stat_names(:), 'sIntensity'))/SdistTrav;
+    
+            % Average speed (mm/s)
+            [results.(C{ii})(jj,strcmp(stat_names(:), 'AvgSpeed'))] = ...
+                distTrav/2050;
+    
+            % Shuffled average speed (mm/s)
+            [results.(C{ii})(jj,strcmp(stat_names(:), 'sAvgSpeed'))] = ...
+                SdistTrav/2050;
+    
+    
+            [C{ii} ' amoeba ' num2str(jj) ' runtime was ' num2str(toc) ' seconds']
+        end
     end
 
-    [field_names{i} ' runtime was ' num2str(toc(scenariotime)) ' seconds']
+    [C{ii} ' runtime was ' num2str(toc(scenariotime)) ' seconds']
 
 end
 
@@ -366,4 +363,4 @@ tCalcSec = num2str(toc(tCalcSec)) ;
 ['Calculations section runtime FINISHED in ' tCalcSec ' seconds']
 
 save(strcat(destination_folder, '\', run_date ,'_numerical_results.mat'),...
-    'tCalcSec', 'results', 'field_names') ;
+    'tCalcSec', 'results', 'C') ;
