@@ -1,6 +1,6 @@
 function trackLengthPlot(tracks,xnumber)
     a={};
-    a=unfold(tracks,'',false,a);
+    a=enu.unfold(tracks,'',false,a);
     a=a(contains(a,'original'));
     p = split(a,'.');
     
@@ -37,7 +37,7 @@ function trackLengthPlot(tracks,xnumber)
     
     text(max(idx2), min(e{:,2}), strcat('\leftarrow','y=',num2str(min(e{:,2})), ...
         '\newline    x=',num2str(length(e{:,2}))), 'HorizontalAlignment', ...
-        'left','VerticalAlignment', 'cap','FontSize',11)
+        'left','VerticalAlignment', 'baseline','FontSize',11)
     
     xlabel('Trayectorias en orden de longitud descendente')
     ylabel('Número de puntos')

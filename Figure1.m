@@ -153,8 +153,8 @@ for i = 1:length(panels)
             % pax.GridLineWidth = 2;
         else
             axh = nexttile(layouts.(strcat('x',num2str(i))),25+cn,[2,1]); %Initialize tile
-            b = histogram(axh,cos(coordinates.(field_names{speciesScenarioIdx(sp)}).theta(...
-                end,:)),10,"BinEdges",-1:.2:1,'FaceColor',colr);
+            b = histogram(axh,cos(coordinates.(field_names{speciesScenarioIdx(sp)}).theta(end,:)), ...
+                10,"BinEdges",-1:.2:1,'FaceColor',colr);
             xticks([-1 0 1])
             xlim([-1,1])
             yticks([min(b.Values) max(b.Values)])

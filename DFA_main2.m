@@ -4,12 +4,12 @@ function [Alpha1,D,F_n,z1,z2]=DFA_main2(DATA, input_type, axeshandle)
     %A is the alpha in the paper
     %D is the dimension of the time series
     %n can be changed to your interest
-    n=[158 251 398 631 1000 1585 2512 3981];% 6310 10000 15849 25119 39811 63096 100000]; % (tamaño óptimo, desde 100 hasta tamaño de la muestra entre 10 aproximadamente)
-    %n=[100 126 158 200 251 316 398 501 631 794 1000]; % de 0.1 en 0.1 en vez de 0.2 como arriba
+    n=[158 251 398 631 1000 1585 2512 3981];% 6310 10000 15849 25119 39811 63096 100000]; % tamaño óptimo es 100:~(length(DATA)/10)
+    %n=[100 126 158 200 251 316 398 501 631 794 1000 1259 1585 1995 2512 3162 3981]; % 100^n donde n aumenta de 0.05 en 0.05 en vez de 0.1 como arriba
     %%elegimos n para que haga ventanas desde el 2 hasta el 4 en escala
     %%logarítmica, separados de 0.2 en 0.2 (redondeados para ser un tamaño de
     %%ventana entero)
-    N1=length(n);
+    N1=length(n(n<length(DATA))); % use only n values smaller than track length
     F_n=zeros(N1,1);
     for i=1:N1
      F_n(i)=enu.DFA2(DATA,n(i),1);
@@ -36,9 +36,9 @@ function [Alpha1,D,F_n,z1,z2]=DFA_main2(DATA, input_type, axeshandle)
         xlabel('log10(n)','FontSize',10)
         ylabel('log10(F(n))','FontSize',10)
         
-        if contains(input_type, 'Original')
+        if strcmp(input_type, 'Original_DFA_')
             plot(axeshandle,log10(n(1:end)),A(1)*log10(n(1:end))+A(2), 'Color', [1 0 0], 'LineStyle','-')
-        elseif contains(input_type, 'Shuffled')
+        elseif strcmp(input_type, 'Shuffled_DFA_')
             plot(axeshandle,log10(n(1:end)),A(1)*log10(n(1:end))+A(2), 'Color', [0 0 1], 'LineStyle','-')
         end
     end
