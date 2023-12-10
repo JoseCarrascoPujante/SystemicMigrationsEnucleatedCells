@@ -14,6 +14,7 @@ function [Tcells,Tcytops] = RMSFloop(tracks)
     ixcytops = 0;
     tic
     for v = 1:length(a)
+        tic
         disp([a{v} ' ' '(' num2str(v) '/' num2str(length(a)) ')'])
         temp = tracks.(p{1,v,2}).(p{1,v,3}).scaled_rho.(p{1,v,5});
         temp2 = tracks.(p{1,v,2}).(p{1,v,3}).original.(p{1,v,5});
@@ -25,6 +26,7 @@ function [Tcells,Tcytops] = RMSFloop(tracks)
             ixcytops = ixcytops + 1;
             Tcytops(ixcytops,:) = { a{v} alpha r2 memory length(temp) temp2(1,1) temp2(1,2) };
         end
+        toc
     end
     toc
 
