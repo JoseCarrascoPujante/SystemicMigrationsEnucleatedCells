@@ -1,12 +1,12 @@
-function results2excel(results,stat_names)
+function results2excel(resultados,stat_names)
     a={};
-    a=enu.unfold(results,'results',false,a);
+    a=enu.unfold(resultados,'results',false,a);
     p = split(a,'.');
 
     for ii = 1:length(a)
         disp([a{ii} ' ' '(' num2str(ii) '/' num2str(length(a)) ')'])
-        zz = strcat( a{ii}," nº", string(1:size(results.(p{1,ii,2}).(p{1,ii,3}),1))' );
-        writecell([num2cell(zz) num2cell(results.(p{1,ii,2}).(p{1,ii,3}))],'resultsTable.xlsx','Sheet',p{1,ii,2},'WriteMode','append');
+        zz = strcat( a{ii}," nº", string(1:size(resultados.(p{1,ii,2}).(p{1,ii,3}),1))' );
+        writecell([num2cell(zz) num2cell(resultados.(p{1,ii,2}).(p{1,ii,3}))],'resultsTable.xlsx','Sheet',p{1,ii,2},'WriteMode','append');
     end
     
     excel = actxserver('Excel.Application');
