@@ -5,8 +5,8 @@ function [Alpha1,D,F_n,z1,z2]=DFA_main2(DATA, input_type, axeshandle)
     %D is the dimension of the time series
     %n can be changed to your interest (se pueden eliminar puntos que
     %salgan consistentemente mal como el 100)
-    cc=[158 251 398 631 1000 1585 2512 3981]; % 6310 10000 15849 25119 39811 63096 100000]; % tamaño de step óptimo es 100:~(length(DATA)/10)
-    % cc=[158 200 251 316 398 501 631 794 1000 1259 1585 1995 2512 3162 3981]; % 100^n donde n aumenta de 0.05 en 0.05 en vez de 0.1 como arriba
+    % cc=[158 251 398 631 1000 1585 2512 3981]; % 6310 10000 15849 25119 39811 63096 100000]; % tamaño de step óptimo es 100:~(length(DATA)/10)
+    cc=[158 200 251 316 398 501 631 794 1000 1259 1585 1995 2512 3162 3981]; % 100^n donde n aumenta de 0.05 en 0.05 en vez de 0.1 como arriba
     %%elegimos n para que haga ventanas desde el 2 hasta el 4 en escala
     %%logarítmica, separados de 0.2 en 0.2 (redondeados para ser un tamaño de
     %%ventana entero)

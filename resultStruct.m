@@ -7,7 +7,7 @@ function [resultados,errorList] = resultStruct(tracks)
     resultados = struct ;
     errorList = [];
     % List the parameters to be calculated by the script
-    stat_names = {'RMSF_alpha', 'sRMSF_alpha', 'RMSF_R2', 'RMSFCorrelationTime', ...
+    stat_names = {'Track length','RMSF_alpha', 'sRMSF_alpha', 'RMSF_R2', 'RMSFCorrelationTime', ...
         'DFA_gamma', 'sDFA_gamma', 'MSD_beta', 'sMSD_beta', 'ApEn', 'sApEn', ...
         'Intensity','sIntensity','DR','sDR','AvgSpeed','sAvgSpeed','dispCos'} ;
     
@@ -34,7 +34,9 @@ function [resultados,errorList] = resultStruct(tracks)
                 tic
         
                 bar3 = waitbar(kk/length(T), bar3, T{kk}) ;
-    		        
+    		    %Track length
+                resultados.(C{ii}).(S{jj})(kk,strcmp(stat_names(:), 'Track length')) = ...
+                    length(tracks.(C{ii}).(S{jj}).scaled_rho.(T{kk}));
                 % RMSF calc
                 [resultados.(C{ii}).(S{jj})(kk,strcmp(stat_names(:), 'RMSF_alpha')),...
                     resultados.(C{ii}).(S{jj})(kk,strcmp(stat_names(:), 'RMSF_R2')),...
@@ -102,11 +104,11 @@ function [resultados,errorList] = resultStruct(tracks)
         
                 % Average speed (mm/s)
                 [resultados.(C{ii}).(S{jj})(kk,strcmp(stat_names(:), 'AvgSpeed'))] = ...
-                    distTrav/2050;
+                    distTrav/length(tracks.(C{ii}).(S{jj}).scaled_rho.(T{kk}));
         
                 % Shuff average speed (mm/s)
                 [resultados.(C{ii}).(S{jj})(kk,strcmp(stat_names(:), 'sAvgSpeed'))] = ...
-                    SdistTrav/2050;
+                    SdistTrav/length(tracks.(C{ii}).(S{jj}).scaled_rho.(T{kk}));
     
                 %Displacement cosines
                 [resultados.(C{ii}).(S{jj})(kk,strcmp(stat_names(:), 'dispCos'))] = ...
