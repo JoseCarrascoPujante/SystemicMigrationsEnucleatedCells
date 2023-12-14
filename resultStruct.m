@@ -1,5 +1,5 @@
 
-function [resultados,errorList] = resultStruct(tracks)
+function [resultados,T,errorList] = resultStruct(tracks)
     
     % dbstop if error
     tCalcSec=tic;
@@ -18,107 +18,109 @@ function [resultados,errorList] = resultStruct(tracks)
     bar3 = waitbar(0,'','Name','Track') ;
     bar3.Children.Title.Interpreter = 'none';    
     
-    C = fieldnames(tracks) ;
-    for ii = 1:length(C) %for condition...
+    A = fieldnames(tracks) ;
+    for aa = 1:length(A) %for condition...
         
-        bar1 = waitbar(ii/length(C), bar1, C{ii}) ;
+        bar1 = waitbar(aa/length(A), bar1, A{aa}) ;
         
         scenariotime = tic;
            
-        S = fieldnames(tracks.(C{ii})); 
-        for jj = 1:length(S) % for serie...
-            bar2 = waitbar(jj/length(S), bar2, S{jj}) ;
-            T = fieldnames(tracks.(C{ii}).(S{jj}).scaled);
-            for kk = 1:length(T)
+        B = fieldnames(tracks.(A{aa})); 
+        for bb = 1:length(B) % for serie...
+            bar2 = waitbar(bb/length(B), bar2, B{bb}) ;
+            C = fieldnames(tracks.(A{aa}).(B{bb}));
+            for cc = 1:length(C)
                 
                 tic
         
-                bar3 = waitbar(kk/length(T), bar3, T{kk}) ;
-    		    %Track length
-                resultados.(C{ii}).(S{jj})(kk,strcmp(stat_names(:), 'Track length')) = ...
-                    length(tracks.(C{ii}).(S{jj}).scaled_rho.(T{kk}));
+                bar3 = waitbar(cc/length(C), bar3, C{cc}) ;
+    		    
+                %Track length
+                resultados.(A{aa}).(B{bb})(cc,strcmp(stat_names(:), 'Track length')) = ...
+                    length(tracks.(A{aa}).(B{bb}).(C{cc}).scaled_rho);
+                
                 % RMSF calc
-                [resultados.(C{ii}).(S{jj})(kk,strcmp(stat_names(:), 'RMSF_alpha')),...
-                    resultados.(C{ii}).(S{jj})(kk,strcmp(stat_names(:), 'RMSF_R2')),...
-                    resultados.(C{ii}).(S{jj})(kk,strcmp(stat_names(:), 'RMSFCorrelationTime')), ~,~] = ...
-                    enu.rmsf(tracks.(C{ii}).(S{jj}).scaled_rho.(T{kk}), [], []) ;
+                [resultados.(A{aa}).(B{bb})(cc,strcmp(stat_names(:), 'RMSF_alpha')),...
+                    resultados.(A{aa}).(B{bb})(cc,strcmp(stat_names(:), 'RMSF_R2')),...
+                    resultados.(A{aa}).(B{bb})(cc,strcmp(stat_names(:), 'RMSFCorrelationTime')), ~,~] = ...
+                    enu.rmsf(tracks.(A{aa}).(B{bb}).(C{cc}).scaled_rho, [], []) ;
                 
                 % Shuff RMSF calc
                 try
-                    [resultados.(C{ii}).(S{jj})(kk,strcmp(stat_names(:), 'sRMSF_alpha')),~,~,~,~] = ...
-                        enu.rmsf(tracks.(C{ii}).(S{jj}).shuffled_rho.(T{kk}), [], []) ;
+                    [resultados.(A{aa}).(B{bb})(cc,strcmp(stat_names(:), 'sRMSF_alpha')),~,~,~,~] = ...
+                        enu.rmsf(tracks.(A{aa}).(B{bb}).(C{cc}).shuffled_rho, [], []) ;
                 catch ME
                     disp(ME)
-                    errorList = [errorList; string(strcat(C{ii},S{jj},'shuffled_rho',T{kk}))];
+                    errorList = [errorList; string(strcat(A{aa},B{bb},'shuffled_rho',C{cc}))];
                 end
                        
                 % DFAgamma calc
-                [resultados.(C{ii}).(S{jj})(kk,strcmp(stat_names(:), 'DFA_gamma'))] = ...
-                    enu.DFA_main2(tracks.(C{ii}).(S{jj}).scaled_rho.(T{kk}),[], []) ;
+                [resultados.(A{aa}).(B{bb})(cc,strcmp(stat_names(:), 'DFA_gamma'))] = ...
+                    enu.DFA_main2(tracks.(A{aa}).(B{bb}).(C{cc}).scaled_rho,[], []) ;
         
                 % Shuff DFAgamma calc
-                [resultados.(C{ii}).(S{jj})(kk,strcmp(stat_names(:), 'sDFA_gamma'))] = ...
-                    enu.DFA_main2(tracks.(C{ii}).(S{jj}).shuffled_rho.(T{kk}),[], []) ;
+                [resultados.(A{aa}).(B{bb})(cc,strcmp(stat_names(:), 'sDFA_gamma'))] = ...
+                    enu.DFA_main2(tracks.(A{aa}).(B{bb}).(C{cc}).shuffled_rho,[], []) ;
             
                 % MSDbeta calc
-                [resultados.(C{ii}).(S{jj})(kk,strcmp(stat_names(:), 'MSD_beta'))] = ...
-                    enu.msd(tracks.(C{ii}).(S{jj}).scaled.(T{kk})(:,1), ...
-                            tracks.(C{ii}).(S{jj}).scaled.(T{kk})(:,2),[]) ;
+                [resultados.(A{aa}).(B{bb})(cc,strcmp(stat_names(:), 'MSD_beta'))] = ...
+                    enu.msd(tracks.(A{aa}).(B{bb}).(C{cc}).scaled(:,1), ...
+                            tracks.(A{aa}).(B{bb}).(C{cc}).scaled(:,2),[]) ;
                 
                 % Shuff MSDbeta calc
-                [resultados.(C{ii}).(S{jj})(kk,strcmp(stat_names(:), 'sMSD_beta'))] = ...
-                    enu.msd(tracks.(C{ii}).(S{jj}).shuffled.(T{kk})(:,1), ...
-                            tracks.(C{ii}).(S{jj}).shuffled.(T{kk})(:,2),[]) ;    
+                [resultados.(A{aa}).(B{bb})(cc,strcmp(stat_names(:), 'sMSD_beta'))] = ...
+                    enu.msd(tracks.(A{aa}).(B{bb}).(C{cc}).shuffled(:,1), ...
+                            tracks.(A{aa}).(B{bb}).(C{cc}).shuffled(:,2),[]) ;    
     
                 % Approximate entropy (Kolmogorov-Sinai entropy)
-                resultados.(C{ii}).(S{jj})(kk,strcmp(stat_names(:), 'ApEn')) = ...
-                    enu.ApEn(2, 0.2*std(tracks.(C{ii}).(S{jj}).scaled_rho.(T{kk})), ...
-                             tracks.(C{ii}).(S{jj}).scaled_rho.(T{kk})) ;
+                resultados.(A{aa}).(B{bb})(cc,strcmp(stat_names(:), 'ApEn')) = ...
+                    enu.ApEn(2, 0.2*std(tracks.(A{aa}).(B{bb}).(C{cc}).scaled_rho), ...
+                             tracks.(A{aa}).(B{bb}).(C{cc}).scaled_rho) ;
         
                 % Shuff Approximate entropy (Kolmogorov-Sinai entropy)
-                resultados.(C{ii}).(S{jj})(kk,strcmp(stat_names(:), 'sApEn')) = ...
-                    enu.ApEn(2, 0.2*std(tracks.(C{ii}).(S{jj}).shuffled_rho.(T{kk})), ...
-                             tracks.(C{ii}).(S{jj}).shuffled_rho.(T{kk})) ;
+                resultados.(A{aa}).(B{bb})(cc,strcmp(stat_names(:), 'sApEn')) = ...
+                    enu.ApEn(2, 0.2*std(tracks.(A{aa}).(B{bb}).(C{cc}).shuffled_rho), ...
+                             tracks.(A{aa}).(B{bb}).(C{cc}).shuffled_rho) ;
         
                 % Intensity of response (mm)
-                [resultados.(C{ii}).(S{jj})(kk,strcmp(stat_names(:), 'Intensity'))] = ...
-                    norm([tracks.(C{ii}).(S{jj}).scaled.(T{kk})(end,1) tracks.(C{ii}).(S{jj}).scaled.(T{kk})(end,2)]...
-                    - [tracks.(C{ii}).(S{jj}).scaled.(T{kk})(1,1) tracks.(C{ii}).(S{jj}).scaled.(T{kk})(1,2)]);
+                resultados.(A{aa}).(B{bb})(cc,strcmp(stat_names(:), 'Intensity')) = ...
+                    norm([tracks.(A{aa}).(B{bb}).(C{cc}).scaled(end,1) tracks.(A{aa}).(B{bb}).(C{cc}).scaled(end,2)]...
+                    - [tracks.(A{aa}).(B{bb}).(C{cc}).scaled(1,1) tracks.(A{aa}).(B{bb}).(C{cc}).scaled(1,2)]);
         
                 % Shuff intensity of response (mm)
-                [resultados.(C{ii}).(S{jj})(kk,strcmp(stat_names(:), 'sIntensity'))] = ...
-                    norm([tracks.(C{ii}).(S{jj}).shuffled.(T{kk})(end,1) tracks.(C{ii}).(S{jj}).shuffled.(T{kk})(end,2)]...
-                    - [tracks.(C{ii}).(S{jj}).shuffled.(T{kk})(1,1) tracks.(C{ii}).(S{jj}).shuffled.(T{kk})(1,2)]);
+                resultados.(A{aa}).(B{bb})(cc,strcmp(stat_names(:), 'sIntensity')) = ...
+                    norm([tracks.(A{aa}).(B{bb}).(C{cc}).shuffled(end,1) tracks.(A{aa}).(B{bb}).(C{cc}).shuffled(end,2)]...
+                    - [tracks.(A{aa}).(B{bb}).(C{cc}).shuffled(1,1) tracks.(A{aa}).(B{bb}).(C{cc}).shuffled(1,2)]);
         
                 % Directionality ratio (straightness)
-                d = hypot(diff(tracks.(C{ii}).(S{jj}).scaled.(T{kk})(:,1)), diff(tracks.(C{ii}).(S{jj}).scaled.(T{kk})(:,2))) ;
+                d = hypot(diff(tracks.(A{aa}).(B{bb}).(C{cc}).scaled(:,1)), diff(tracks.(A{aa}).(B{bb}).(C{cc}).scaled(:,2))) ;
                 distTrav = sum(d);
-                [resultados.(C{ii}).(S{jj})(kk,strcmp(stat_names(:), 'DR'))] = ...
-                    resultados.(C{ii}).(S{jj})(kk,strcmp(stat_names(:), 'Intensity'))/distTrav;
+                resultados.(A{aa}).(B{bb})(cc,strcmp(stat_names(:), 'DR')) = ...
+                    resultados.(A{aa}).(B{bb})(cc,strcmp(stat_names(:), 'Intensity'))/distTrav;
                 
                 % Shuff Directionality ratio (straightness)
-                d = hypot(diff(tracks.(C{ii}).(S{jj}).shuffled.(T{kk})(:,1)), diff(tracks.(C{ii}).(S{jj}).shuffled.(T{kk})(:,2))) ;
+                d = hypot(diff(tracks.(A{aa}).(B{bb}).(C{cc}).shuffled(:,1)), diff(tracks.(A{aa}).(B{bb}).(C{cc}).shuffled(:,2))) ;
                 SdistTrav = sum(d);
-                [resultados.(C{ii}).(S{jj})(kk,strcmp(stat_names(:), 'sDR'))] = ...
-                    resultados.(C{ii}).(S{jj})(kk,strcmp(stat_names(:), 'sIntensity'))/SdistTrav;
+                resultados.(A{aa}).(B{bb})(cc,strcmp(stat_names(:), 'sDR')) = ...
+                    resultados.(A{aa}).(B{bb})(cc,strcmp(stat_names(:), 'sIntensity'))/SdistTrav;
         
                 % Average speed (mm/s)
-                [resultados.(C{ii}).(S{jj})(kk,strcmp(stat_names(:), 'AvgSpeed'))] = ...
-                    distTrav/length(tracks.(C{ii}).(S{jj}).scaled_rho.(T{kk}));
+                resultados.(A{aa}).(B{bb})(cc,strcmp(stat_names(:), 'AvgSpeed')) = ...
+                    distTrav/length(tracks.(A{aa}).(B{bb}).(C{cc}).scaled_rho);
         
                 % Shuff average speed (mm/s)
-                [resultados.(C{ii}).(S{jj})(kk,strcmp(stat_names(:), 'sAvgSpeed'))] = ...
-                    SdistTrav/length(tracks.(C{ii}).(S{jj}).scaled_rho.(T{kk}));
+                resultados.(A{aa}).(B{bb})(cc,strcmp(stat_names(:), 'sAvgSpeed')) = ...
+                    SdistTrav/length(tracks.(A{aa}).(B{bb}).(C{cc}).scaled_rho);
     
                 %Displacement cosines
-                [resultados.(C{ii}).(S{jj})(kk,strcmp(stat_names(:), 'dispCos'))] = ...
-                    cos(tracks.(C{ii}).(S{jj}).theta.(T{kk})(end));
+                resultados.(A{aa}).(B{bb})(cc,strcmp(stat_names(:), 'dispCos')) = ...
+                    cos(tracks.(A{aa}).(B{bb}).(C{cc}).theta(end));
         
-                [C{ii} ' ' S{jj} 'nº' num2str(kk) ' runtime was ' num2str(toc) ' seconds']
+                [A{aa} ' ' B{bb} 'nº' num2str(cc) ' runtime was ' num2str(toc) ' seconds']
             end
         end
     
-        [C{ii} ' runtime was ' num2str(toc(scenariotime)) ' seconds']
+        [A{aa} ' runtime was ' num2str(toc(scenariotime)) ' seconds']
     
     end
     
@@ -126,9 +128,12 @@ function [resultados,errorList] = resultStruct(tracks)
 
     % Save results in .mat file    
     ['Calculations section runtime FINISHED in ' num2str(toc(tCalcSec)) ' seconds']
-        
-    save('numericalResults.mat','tCalcSec', 'resultados') ;
     
     %save results in .xlsx file
     enu.results2excel(resultados,stat_names)
+    save('numericalResults.mat', 'resultados', 'tCalcSec') ;
+    
+    %Create table with all results data
+    T=enu.unfoldresultstruct(resultados,stat_names);
+    save('numericalResults.mat', 'resultados','-append', 'T') ;
 end
