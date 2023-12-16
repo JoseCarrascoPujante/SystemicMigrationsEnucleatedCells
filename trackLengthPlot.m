@@ -5,8 +5,8 @@ function trackLengthPlot(tracks,xnumber)
     p = split(a,'.');
     
     trackLengths = dictionary;
-    for i = 1:length(a)
-        trackLengths(a{i}) = size(tracks.(p{1,i,2}).(p{1,i,3}).(p{1,i,4}).(p{1,i,5}),1);
+    for ii = 1:length(a)
+        trackLengths(a{i}) = size(tracks.(p{ii,2}).(p{ii,3}).(p{ii,4}).(p{ii,5}),1);
     end
     
     e = sortrows(entries(trackLengths),2,'descend');

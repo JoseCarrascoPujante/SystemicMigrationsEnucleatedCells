@@ -5,8 +5,8 @@ function results2excel(resultados,stat_names)
 
     for ii = 1:length(a)
         disp([a{ii} ' ' '(' num2str(ii) '/' num2str(length(a)) ')'])
-        zz = strcat( a{ii}," nº", string(1:size(resultados.(p{1,ii,2}).(p{1,ii,3}),1))' );
-        writecell([num2cell(zz) num2cell(resultados.(p{1,ii,2}).(p{1,ii,3}))],'resultsTable.xlsx','Sheet',p{1,ii,2},'WriteMode','append');
+        zz = strcat( a{ii}," nº", string(1:size(resultados.(p{ii,2}).(p{ii,3}),1))' );
+        writecell([num2cell(zz) num2cell(resultados.(p{ii,2}).(p{ii,3}))],'resultsTable.xlsx','Sheet',p{ii,2},'WriteMode','append');
     end
     
     excel = actxserver('Excel.Application');

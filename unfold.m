@@ -87,14 +87,14 @@ if isstruct(SC)
                             Namej = [Namei '{' ind2str(siz,NC) '}'];
                         end
                         % disp(Namej)
-                        namearray = [namearray Namej];
+                        namearray = [namearray; Namej];
                         if show
                             % disp(SC(h).(F{i}){j})
                         end
                     end
                 else
                     % disp(Namei)                    
-                    namearray = [namearray Namei];
+                    namearray = [namearray; Namei];
                     if show
                         % disp(SC(h).(F{i}))
                     end

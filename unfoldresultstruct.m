@@ -8,8 +8,8 @@ function T=unfoldresultstruct(resultados,stat_names)
 
     for ii = 1:length(a)
         disp([a{ii} ' ' '(' num2str(ii) '/' num2str(length(a)) ')'])
-        zz = strcat( a{ii}," nº", string(1:size(resultados.(p{1,ii,2}).(p{1,ii,3}),1))' );
-        b = [b; num2cell(zz) num2cell(resultados.(p{1,ii,2}).(p{1,ii,3}))];
+        zz = strcat( a{ii}," nº", string(1:size(resultados.(p{ii,2}).(p{ii,3}),1))' );
+        b = [b; num2cell(zz) num2cell(resultados.(p{ii,2}).(p{ii,3}))];
     end
     T=cell2table(b,'VariableNames',stat_names);
     save

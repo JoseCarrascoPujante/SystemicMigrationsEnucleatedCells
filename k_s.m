@@ -1,11 +1,11 @@
-function ks=kolsmirt(resultados)
+function ks=k_s(resultados)
     field_names=fieldnames(resultados);
     for field = 1:length(field_names)
         a={};a=enu.unfold(resultados.(field_names{field}),strcat('resultados.',field_names{field}),false,a);
         p = split(a,'.');
         b=[];
         for ii = 1:length(a)
-            b = [b; resultados.(p{1,ii,2}).(p{1,ii,3})];
+            b = [b; resultados.(p{ii,2}).(p{ii,3})];
         end        
         n_hypotheses = size(b,1) ; % N hypotheses being tested, needed by Bonferroni correction)
         

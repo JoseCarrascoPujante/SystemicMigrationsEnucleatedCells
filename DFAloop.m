@@ -21,14 +21,14 @@ function [Tcells,Tcytops,figures] = DFAloop(tracks)
         figures{v,2} = figure('Name',a{v},'NumberTitle','off','Visible','off') ;
         h = gca;
         
-        temp = tracks.(p{1,v,2}).(p{1,v,3}).scaled_rho.(p{1,v,5});
+        temp = tracks.(p{v,2}).(p{v,3}).scaled_rho.(p{v,5});
         
         gamma = enu.DFA_main2(temp,'original',h);
         figures{v,3}=figure('Name',strcat("shuffled ", a{v}),'NumberTitle','off','Visible','off') ;
         h = gca;
-        stemp = tracks.(p{1,v,2}).(p{1,v,3}).shuffled_rho.(p{1,v,5});
+        stemp = tracks.(p{v,2}).(p{v,3}).shuffled_rho.(p{v,5});
         sgamma = enu.DFA_main2(stemp,'shuffled',h);
-        temp2 = tracks.(p{1,v,2}).(p{1,v,3}).original.(p{1,v,5});
+        temp2 = tracks.(p{v,2}).(p{v,3}).original.(p{v,5});
         if contains(a{v},'_Cells')
             ixcells = ixcells + 1;
             Tcells(ixcells,:) = { a{v} gamma sgamma length(temp) temp2(1,1) temp2(1,2) };

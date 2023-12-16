@@ -17,8 +17,8 @@ function [Tcells,Tcytops] = RMSFloop(tracks)
     for v = 1:length(a)
 
         disp([a{v} ' ' '(' num2str(v) '/' num2str(length(a)) ')'])
-        temp = tracks.(p{1,v,2}).(p{1,v,3}).scaled_rho.(p{1,v,5});
-        temp2 = tracks.(p{1,v,2}).(p{1,v,3}).original.(p{1,v,5});
+        temp = tracks.(p{v,2}).(p{v,3}).scaled_rho.(p{v,5});
+        temp2 = tracks.(p{v,2}).(p{v,3}).original.(p{v,5});
         [alpha,r2,memory,~,~] = enu.rmsf(temp,[],[]);
         if contains(a{v},'_Cells')
             ixcells = ixcells + 1;
