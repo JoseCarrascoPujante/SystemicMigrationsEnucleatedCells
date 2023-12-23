@@ -10,13 +10,13 @@ function Figure1(tracks,folder)
     %% Panels 1-8
     
     A = {'x_1noStimuli_Cells'
-'x_2galvanotaxis_Cells'
-'x_3chemotaxis_Cells'
-'x_4doubleStimulus_Cells'
-'x_1noStimuli_Cytoplasts'
-'x_2galvanotaxis_Cytoplasts'
-'x_3chemotaxis_Cytoplasts'
-'x_4doubleStimulus_Cytoplasts'};
+    'x_2galvanotaxis_Cells'
+    'x_3chemotaxis_Cells'
+    'x_4doubleStimulus_Cells'
+    'x_1noStimuli_Cytoplasts'
+    'x_2galvanotaxis_Cytoplasts'
+    'x_3chemotaxis_Cytoplasts'
+    'x_4doubleStimulus_Cytoplasts'};
     panelabels = ["A" "B" "C" "D" "E" "F" "G" "H"];
     subpanelabels = ["A'" "B'" "C'" "D'" "E'" "F'" "G'" "H'"];
     rowlabels = ["Cells" "" "" "" "Cytoplasts"];
@@ -50,15 +50,15 @@ function Figure1(tracks,folder)
         if AA ~= 1 && AA ~= 5 % no-stimuli panels show no left-right percentages
             text(ax,.15, .18,...
                 [num2str(round((sum(listx<0)/length(listx))*100)),'%'],...
-                'Units','normalized','HorizontalAlignment','center','FontSize',6)
+                'Units','normalized','HorizontalAlignment','center','FontSize',7)
             text(ax,.85, .18,...
                 [num2str(round((sum(listx>0)/length(listx))*100)),'%'],...
-                'Units','normalized','HorizontalAlignment','center','FontSize',6)
+                'Units','normalized','HorizontalAlignment','center','FontSize',7)
         end
         axis padded
         axis square
         text(ax,.05,.88,["N=50","t=30'"],'Units','normalized',...
-            'HorizontalAlignment','left','FontSize',6)
+            'HorizontalAlignment','left','FontSize',7)
         ax.FontSize = 5;
         MaxX = max(abs(ax.XLim));    MaxY = max(abs(ax.YLim));
         % Add x-line
@@ -83,7 +83,7 @@ function Figure1(tracks,folder)
         if AA == 1 || AA == 5
             pax = polaraxes(layouts{AA});
             pax.Layout.Tile = 8; %Initialize tile
-            pax.Layout.TileSpan = [5 1];
+            pax.Layout.TileSpan = [4 1];
             thetaIn360 = mod(theta + 2*pi, 2*pi);
             pol = polarhistogram(pax,thetaIn360,'Normalization','probability','LineWidth',.5,...
                 'FaceColor','None','DisplayStyle','bar','BinEdges',linspace(-pi, pi, 9));
@@ -92,17 +92,17 @@ function Figure1(tracks,folder)
             y = pol.Values ;
             text(pax,x(1:end-1)+pi/9,zeros(length(y),1) + .1,...
                 strcat(num2str(round(y'*100,1)),'%'),'vert','bottom','horiz',...
-                'center','FontSize',5.5); %Add labels as percentages
+                'center','FontSize',6); %Add labels as percentages
             pax.RTickLabel = [];
             pax.ThetaTickLabel = [];
             pax.RGrid='off';
             thetaticks(0:45:360)
             pax.GridAlpha = 0;
             pax.LineWidth=.05;
-            title(pax,subpanelabels(AA),[],"Units","normalized","Position",[-0.15 .7], ...
-                "FontSize",11,"FontName",'Arial','FontWeight','normal')
+            title(pax,subpanelabels(AA),[],"Units","normalized","Position",[-0.15 .8], ...
+                "FontSize",10,"FontName",'Arial','FontWeight','normal')
             ylabel(ax,rowlabels(AA),"Units","normalized","Position",[-0.18 .15], ...
-                "Rotation",90,"FontSize",11,"FontName",'Arial','FontWeight','normal')
+                "Rotation",90,"FontSize",10,"FontName",'Arial','FontWeight','normal')
 
             % rticks([])            
             % thetaticks([])
@@ -116,14 +116,14 @@ function Figure1(tracks,folder)
             ylim([0 max(b.Values)])
             axh.FontSize = 5;
             pbaspect([1.2 1 1])
-            title(axh,subpanelabels(AA),[],"Units","normalized","Position",[-0.25 .75], ...
-                "FontSize",11,"FontName",'Arial','FontWeight','normal')
+            title(axh,subpanelabels(AA),[],"Units","normalized","Position",[-0.35 .75], ...
+                "FontSize",10,"FontName",'Arial','FontWeight','normal')
             axh.LineWidth=.25;
         end
 
         title(ax,panelabels(AA),[],"Units","normalized","Position",[-0.15 1.05], ...
-            "FontSize",11,"FontName",'Arial','FontWeight','normal')
-        text(ax,.5,1.2,columnlabels(AA),"Units","normalized","FontSize",11, ...
+            "FontSize",10,"FontName",'Arial','FontWeight','normal')
+        text(ax,.5,1.1,columnlabels(AA),"Units","normalized","FontSize",10, ...
             "FontName",'Arial','FontWeight','normal',"HorizontalAlignment","center")
         ax.LineWidth=.25;
 
@@ -233,7 +233,7 @@ function Figure1(tracks,folder)
     end
     
     disp(strcat(num2str(gabs-1),' Fig1 files found'))
-    
+
     print(fig,'-vector','-dsvg',[folder '\Figures\Fig1(',num2str(gabs),')' '.svg'])
     print(fig,'-image','-djpeg','-r400',[folder '\Figures\Fig1(',num2str(gabs),')' '.jpg'])
 
