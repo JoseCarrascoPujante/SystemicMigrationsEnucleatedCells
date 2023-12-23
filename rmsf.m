@@ -1,5 +1,5 @@
 
-function [dev1,dev2,dev3,tc2,goodness]=rmsf(u_all, rmsfhandle, type)
+function [dev1,dev2,dev3,tc2,goodness]=rmsf(u_all, rmsfhandle)
 
     scale_time=0.5; %time between frames (seconds)
     
@@ -93,11 +93,11 @@ function [dev1,dev2,dev3,tc2,goodness]=rmsf(u_all, rmsfhandle, type)
         if time_max == tc2 && isempty(rmsfhandle) == 0
             max_corr = res(end,3); % Use max tc2 when R2>0.99   
             hold(rmsfhandle, 'on')
-            if strcmp(type,'original')
-                loglog(time(1:max_corr), F(1:max_corr), 'ro', 'MarkerSize', 2);
-            elseif strcmp(type,'shuffled')
-                loglog(time(1:max_corr), F(1:max_corr), 'bo', 'MarkerSize', 2);
-            end
+            % if strcmp(type,'original')
+            loglog(time(1:max_corr), F(1:max_corr), 'ro', 'MarkerSize', 2);
+            % elseif strcmp(type,'shuffled')
+                % loglog(time(1:max_corr), F(1:max_corr), 'bo', 'MarkerSize', 2);
+            % end
             xlabel('Log({\itl}(s))');
             ylabel('Log(F({\itl}))');
             
@@ -105,15 +105,17 @@ function [dev1,dev2,dev3,tc2,goodness]=rmsf(u_all, rmsfhandle, type)
             vmax=time.^(res(end,1));
             loglog(time(1:max_corr),(k/vmax(1))*vmax(1:max_corr),'k--',...
                 'LineWidth',1);
-            text(time(7),(k/vmax(1))*vmax(200),strcat('\alpha=',...
-                num2str(round(res(end,1),3))))
+            text(time(15),(k/vmax(1))*vmax(150),strcat('\alpha=',...
+                num2str(round(res(end,1),3))),"HorizontalAlignment","left")
 
             % Plot alpha=0.5 line with the original data
             v2 = time.^(.5);
             loglog(time(1:max_corr),(k/v2(1))*v2(1:max_corr),'k--','LineWidth',1);
-            text(time(4),(k/v2(1))*v2(2),'\alpha=0.5, uncorrelated')
+            text(time(15),(k/v2(1))*v2(4),'\alpha=0.5, uncorrelated', ...
+                "HorizontalAlignment","left")
             set(rmsfhandle,'xscale','log')
             set(rmsfhandle,'yscale','log')
+            axis padded
         end
     end
 end

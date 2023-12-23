@@ -1,6 +1,6 @@
 function results2excel(resultados,stat_names)
     a={};
-    a=enu.unfold(resultados,'results',false,a);
+    a=enu.unfold(resultados,'tracks',false,a);
     p = split(a,'.');
 
     for ii = 1:length(a)
