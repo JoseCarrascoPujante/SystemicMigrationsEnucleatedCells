@@ -1,6 +1,6 @@
-function Figure1(tracks,folder)
+function Figure1(tracks,destination_folder)
     
-    fig = figure('NumberTitle','off','Visible','off');
+    fig = figure('NumberTitle','off','Visible','off','Position',[0 0 800 600]);
     
     %% Layouts
     
@@ -57,7 +57,7 @@ function Figure1(tracks,folder)
         end
         axis padded
         axis square
-        text(ax,.05,.88,["N=50","t=30'"],'Units','normalized',...
+        text(ax,.05,.88,["N=50","t=34'"],'Units','normalized',...
             'HorizontalAlignment','left','FontSize',7)
         ax.FontSize = 5;
         MaxX = max(abs(ax.XLim));    MaxY = max(abs(ax.YLim));
@@ -102,7 +102,7 @@ function Figure1(tracks,folder)
             title(pax,subpanelabels(AA),[],"Units","normalized","Position",[-0.15 .8], ...
                 "FontSize",10,"FontName",'Arial','FontWeight','normal')
             ylabel(ax,rowlabels(AA),"Units","normalized","Position",[-0.18 .15], ...
-                "Rotation",90,"FontSize",10,"FontName",'Arial','FontWeight','normal')
+                "Rotation",90,"FontSize",11,"FontName",'Arial','FontWeight','normal')
 
             % rticks([])            
             % thetaticks([])
@@ -220,11 +220,11 @@ function Figure1(tracks,folder)
     
     %% Export as jpg, tiff and vector graphics pdf
     
-    if ~exist(strcat(folder,'\Figures'), 'dir')
-       mkdir(strcat(folder,'\Figures'))
+    if ~exist(strcat(destination_folder,'\Figures'), 'dir')
+       mkdir(strcat(destination_folder,'\Figures'))
     end
     
-    versions = dir(strcat(folder,'\Figures\')) ;
+    versions = dir(strcat(destination_folder,'\Figures\')) ;
     gabs = 1 ;
     for v = 1:length(versions)
         if  contains(versions(v).name, 'Fig1'+wildcardPattern+'.svg')
@@ -234,7 +234,7 @@ function Figure1(tracks,folder)
     
     disp(strcat(num2str(gabs-1),' Fig1 files found'))
 
-    print(fig,'-vector','-dsvg',[folder '\Figures\Fig1(',num2str(gabs),')' '.svg'])
-    print(fig,'-image','-djpeg','-r400',[folder '\Figures\Fig1(',num2str(gabs),')' '.jpg'])
+    print(fig,'-vector','-dsvg',[destination_folder '\Figures\Fig1(',num2str(gabs),')' '.svg'])
+    print(fig,'-image','-djpeg','-r400',[destination_folder '\Figures\Fig1(',num2str(gabs),')' '.jpg'])
 
 end

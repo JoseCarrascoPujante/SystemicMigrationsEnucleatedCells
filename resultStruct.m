@@ -43,12 +43,12 @@ function [resultados,T,errorList] = resultStruct(tracks)
                 [resultados.(A{aa}).(B{bb})(cc,strcmp(stat_names(:), 'RMSF_alpha')),...
                     resultados.(A{aa}).(B{bb})(cc,strcmp(stat_names(:), 'RMSF_R2')),...
                     resultados.(A{aa}).(B{bb})(cc,strcmp(stat_names(:), 'RMSFCorrelationTime')), ~,~] = ...
-                    enu.rmsf(tracks.(A{aa}).(B{bb}).(C{cc}).scaled_rho, [], []) ;
+                    enu.rmsf(tracks.(A{aa}).(B{bb}).(C{cc}).scaled_rho, []) ;
                 
                 % Shuff RMSF calc
                 try
                     [resultados.(A{aa}).(B{bb})(cc,strcmp(stat_names(:), 'sRMSF_alpha')),~,~,~,~] = ...
-                        enu.rmsf(tracks.(A{aa}).(B{bb}).(C{cc}).shuffled_rho, [], []) ;
+                        enu.rmsf(tracks.(A{aa}).(B{bb}).(C{cc}).shuffled_rho, []) ;
                 catch ME
                     disp(ME)
                     errorList = [errorList; string(strcat(A{aa},B{bb},'shuffled_rho',C{cc}))];

@@ -80,39 +80,21 @@ function Figure2(tracks,T)
     
     %% Panel 3 - RMSF Violin plots
     ax=nexttile(layout3);
-    memory = {}; % one cell array per condition and one array per scenario
+    memory_violin = {}; % one cell array per condition and one array per scenario
 
     for ii=1:length(field_names)
-        memory{ii}=table2array(T(contains(T{:,1},field_names{ii}),'RMSFCorrelationTime'))/120;
-    end
-       
-    enu.superviolin(memory(1:4),'Parent',ax,'Xposition',1,'FaceAlpha',0.15,...
-        'Errorbars','ci','Centrals','mean','LineWidth',0.1)
-
-    colorgroups = [ones(length(memory{1}{1}),1);
-        repmat(2,length(memory{1}{2}),1);
-        repmat(3,length(memory{1}{3}),1);
-        repmat(4,length(memory{1}{4}),1);
-        ones(length(memory{2}{1}),1);
-        repmat(2,length(memory{2}{2}),1);
-        repmat(3,length(memory{2}{3}),1);
-        repmat(4,length(memory{2}{4}),1);
-        ones(length(memory{3}{1}),1);
-        repmat(2,length(memory{3}{2}),1);
-        repmat(3,length(memory{3}{3}),1);
-        repmat(4,length(memory{3}{4}),1)];
-    
-    rmsfs = {[],[],[]};
-    for ii=1:length(conditions) % species    
-        for f = find(contains(field_names(:), conditions(ii)))' % conditions
-            rmsfs{ii} = [rmsfs{ii}; results.(field_names{f})(:,5)/120];
-        end
+        memory_violin{ii}=table2array(T(contains(T{:,1},field_names{ii}),'RMSFCorrelationTime'))/120;
     end
     
-    boxChart_rmsf = cat(1, rmsfs{1}, rmsfs{2}, rmsfs{3});
-    boxchart([ones(length(rmsfs{1}), 1); repmat(2, length(rmsfs{2}), 1); ...
-        repmat(3, length(rmsfs{3}), 1)], boxChart_rmsf, 'Notch', 'off',...
-        'GroupByColor', colorgroups, 'BoxFaceAlpha',0) %Box charts whose notches do not overlap have different medians at the 5% significance level.
+    %mejores mapas de color: hsv,jet,
+    enu.superviolin(memory_violin(1:4),'Parent',ax,'FaceAlpha',0.15,...
+        'Errorbars','ci','Centrals','mean','LineWidth',0.01,'LUT','hsv')    
+    
+    colorgroups = [ones(50,1);repmat(2,50,1);repmat(3,50,1);repmat(4,50,1)];
+        
+    boxchart(ax,[ones(200,1)],[cat(1,memory_violin{1:4})], 'Notch', 'off',...
+        'GroupByColor', colorgroups, 'BoxFaceAlpha',0) %"Box charts whose notches do not overlap have different medians at the 5% significance level".
+        
     h=gca;
     xlim([.5 3.5])
     ylim([0 20])

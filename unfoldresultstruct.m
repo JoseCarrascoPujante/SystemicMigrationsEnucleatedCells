@@ -12,4 +12,3 @@ function T=unfoldresultstruct(resultados,stat_names)
         b = [b; num2cell(zz) num2cell(resultados.(p{ii,2}).(p{ii,3}))];
     end
     T=cell2table(b,'VariableNames',stat_names);
-    save
