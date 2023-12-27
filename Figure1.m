@@ -57,8 +57,8 @@ function Figure1(tracks,destination_folder)
         end
         axis padded
         axis square
-        text(ax,.05,.88,["N=50","t=34'"],'Units','normalized',...
-            'HorizontalAlignment','left','FontSize',7)
+        text(ax,.05,.88,[strcat("N=",string(length(listx))),"t=34'"], ...
+            'Units','normalized','HorizontalAlignment','left','FontSize',7)
         ax.FontSize = 5;
         MaxX = max(abs(ax.XLim));    MaxY = max(abs(ax.YLim));
         % Add x-line
