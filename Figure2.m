@@ -1,12 +1,12 @@
-function Figure2(tracks,T)
+function Figure2(tracks,T,destination_folder)
     
-    figure('Visible','on','Position',[0 0 1250 580]);
+    figure('Visible','off','Position',[0 0 1400 650]);
     layout0 = tiledlayout(1,3,'TileSpacing','loose','Padding','tight') ;
     layout1 = tiledlayout(layout0,2,1,'TileSpacing','loose','Padding','none') ;
     layout1.Layout.Tile = 1;
-    layout1_1 = tiledlayout(layout1,2,2,'TileSpacing','none','Padding','none') ;
+    layout1_1 = tiledlayout(layout1,2,2,'TileSpacing','tight','Padding','none') ;
     layout1_1.Layout.Tile = 1;
-    layout1_2 = tiledlayout(layout1,2,2,'TileSpacing','none','Padding','none') ;
+    layout1_2 = tiledlayout(layout1,2,2,'TileSpacing','tight','Padding','none') ;
     layout1_2.Layout.Tile = 2;        
     layout2 = tiledlayout(layout0,16,1,'TileSpacing','loose','Padding','none') ;
     layout2.Layout.Tile = 2;
@@ -16,16 +16,55 @@ function Figure2(tracks,T)
     %% Panel 1 - RMSF max_correlations
     
     % plot one cell rmsf for each scenario
+
+    %no stimuli cell
     nexttile(layout1_1)
     rmsfhandle = gca;
-    enu.rmsf(tracks.x_1noStimuli_Cells.x06_02_2303_02.x2.scaled_rho, rmsfhandle) ;
+    enu.rmsf(tracks.x_1noStimuli_Cells.x24_10_2214_12.x2.scaled_rho, rmsfhandle) ;
     title(rmsfhandle,"No stimuli","FontWeight","normal")
+
+    %galv cell
+    nexttile(layout1_1)
+    rmsfhandle = gca;
+    enu.rmsf(tracks.x_2galvanotaxis_Cells.x05_02_2320_38.x1.scaled_rho, rmsfhandle) ;
+    title(rmsfhandle,"Galvanotaxis","FontWeight","normal")
+
+    %chem cell
+    nexttile(layout1_1)
+    rmsfhandle = gca;
+    enu.rmsf(tracks.x_3chemotaxis_Cells.x07_01_2319_49.x3.scaled_rho, rmsfhandle) ;
+    title(rmsfhandle,"Chemotaxis","FontWeight","normal")
+
+    %double stimulus cell
+    nexttile(layout1_1)
+    rmsfhandle = gca;
+    enu.rmsf(tracks.x_4doubleStimulus_Cells.x22_01_2318_51.x1.scaled_rho, rmsfhandle) ;
+    title(rmsfhandle,"Double stimulus","FontWeight","normal")    
     
     % plot one cytoplast rmsf for each scenario
+    %no stimuli cyto
     nexttile(layout1_2)
     rmsfhandle = gca;
-    enu.rmsf(tracks.x_1noStimuli_Cytoplasts.x10_12_2218_56.x3.scaled_rho, rmsfhandle) ;
+    enu.rmsf(tracks.x_1noStimuli_Cytoplasts.x12_12_2216_57.x2.scaled_rho, rmsfhandle) ;
     title(rmsfhandle,"No stimuli","FontWeight","normal")
+    
+    %galvano cyto
+    nexttile(layout1_2)
+    rmsfhandle = gca;
+    enu.rmsf(tracks.x_2galvanotaxis_Cytoplasts.x30_01_2303_06.x3.scaled_rho, rmsfhandle) ;
+    title(rmsfhandle,"Galvanotaxis","FontWeight","normal")
+
+    %chem cyto
+    nexttile(layout1_2)
+    rmsfhandle = gca;
+    enu.rmsf(tracks.x_3chemotaxis_Cytoplasts.x20_12_2214_48.x4.scaled_rho, rmsfhandle) ;
+    title(rmsfhandle,"Chemotaxis","FontWeight","normal")
+
+    %double stimulus cyto
+    nexttile(layout1_2)
+    rmsfhandle = gca;
+    enu.rmsf(tracks.x_4doubleStimulus_Cytoplasts.x26_01_2311_04.x2.scaled_rho, rmsfhandle) ;
+    title(rmsfhandle,"Double stimulus","FontWeight","normal")    
     
     %% Panel 2 - RMSF \alpha
     
@@ -79,6 +118,8 @@ function Figure2(tracks,T)
     end
     
     %% Panel 3 - RMSF Violin plots
+
+    %cells superviolin
     ax=nexttile(layout3);
     memory_violin = {}; % one cell array per condition and one array per scenario
 
@@ -86,27 +127,45 @@ function Figure2(tracks,T)
         memory_violin{ii}=table2array(T(contains(T{:,1},field_names{ii}),'RMSFCorrelationTime'))/120;
     end
     
-    %mejores mapas de color: hsv,jet,
+    %mejores mapas de color: hsv,jet
     enu.superviolin(memory_violin(1:4),'Parent',ax,'FaceAlpha',0.15,...
         'Errorbars','ci','Centrals','mean','LineWidth',0.01,'LUT','hsv')    
     
     colorgroups = [ones(50,1);repmat(2,50,1);repmat(3,50,1);repmat(4,50,1)];
         
     boxchart(ax,[ones(200,1)],[cat(1,memory_violin{1:4})], 'Notch', 'off',...
-        'GroupByColor', colorgroups, 'BoxFaceAlpha',0) %"Box charts whose notches do not overlap have different medians at the 5% significance level".
-        
+        'GroupByColor', colorgroups, 'BoxFaceAlpha',0,'BoxMedianLineColor','b') %"Box charts whose notches do not overlap have different medians at the 5% significance level".
+    colororder(["red" "#00d400" "#0bb" "#800080"]); %select boxplot box colors
+    
     h=gca;
-    xlim([.5 3.5])
-    ylim([0 20])
-    % h.XAxisLocation = 'top';
+    h.XAxisLocation = 'top';
     box on
-    h.XTick = [1 2 3];
-    xticklabels(h,[{'\itAmoeba proteus'},{'\itMetamoeba leningradensis'},...
-        {'\itAmoeba borokensis'}])
-    h.XAxis.FontSize = 16;
+    h.XTick = [.84 .94 1.04 1.14];
+    xticklabels(h,[{'Sc1'},{'Sc2'},{'Sc3'},{'Sc4'}])
+    % h.XAxis.FontSize = 16;
     h.XAxis.TickLength = [0 0];
     ylabel('Memory persistence (min)')
     
+    % cytoplasts superviolin
+    ax=nexttile(layout3);
+    
+    enu.superviolin(memory_violin(5:8),'Parent',ax,'FaceAlpha',0.15,...
+    'Errorbars','ci','Centrals','mean','LineWidth',0.01,'LUT','hsv')    
+    
+    colorgroups = [ones(50,1);repmat(2,50,1);repmat(3,50,1);repmat(4,50,1)];
+        
+    boxchart(ax,[ones(200,1)],[cat(1,memory_violin{1:4})], 'Notch', 'off',...
+        'GroupByColor', colorgroups, 'BoxFaceAlpha',0,'BoxMedianLineColor','b') %"Box charts whose notches do not overlap have different medians at the 5% significance level".
+    colororder(["red" "#00d400" "#0bb" "#800080"]); %select boxplot box colors
+    
+    h=gca;
+    h.XAxisLocation = 'top';
+    box on
+    h.XTick = [.84 .94 1.04 1.14];
+    xticklabels(h,[{'Sc1'},{'Sc2'},{'Sc3'},{'Sc4'}])
+    % h.XAxis.FontSize = 16;
+    h.XAxis.TickLength = [0 0];
+    ylabel('Memory persistence (min)')
     
     
     %% Export figures as jpg and svg
@@ -129,13 +188,8 @@ function Figure2(tracks,T)
     FigList = findobj(allchild(0), 'flat', 'Type', 'figure') ;
     for iFig = length(FigList):-1:1
         FigHandle = FigList(iFig) ;
-        FigName = get(FigHandle, 'Name') ;
         set(0, 'CurrentFigure', FigHandle) ;
-        FigHandle.Units = 'centimeters';                % set figure units to cm
-        FigHandle.PaperUnits = 'centimeters';           % set pdf printing paper units to cm
-        FigHandle.PaperSize = FigHandle.Position(3:4);  % assign to the printing paper the size of the figure
-        FigHandle.PaperPosition = [0 0 FigHandle.Position(3:4)];
-        set(FigHandle, 'Renderer', 'painters');
-        saveas(FigHandle,strcat(destination_folder, '\Figures\Fig2(',num2str(iFig+gabs),')'),'svg')
+        print(FigHandle,'-vector','-dsvg',[destination_folder '\Figures\Fig2(',num2str(gabs),')' '.svg'])
+        print(FigHandle,'-image','-djpeg','-r400',[destination_folder '\Figures\Fig2(',num2str(gabs),')' '.jpg'])
     end
 end

@@ -104,7 +104,7 @@ function [dev1,dev2,dev3,tc2,goodness]=rmsf(u_all, rmsfhandle)
             % Plot regression fit line for the original data
             vmax=time.^(res(end,1));
             loglog(time(1:max_corr),(k/vmax(1))*vmax(1:max_corr),'k--',...
-                'LineWidth',1);
+                'LineWidth',.5);
             text(time(15),(k/vmax(1))*vmax(150),strcat('\alpha=',...
                 num2str(round(res(end,1),3))),"HorizontalAlignment","left")
 
