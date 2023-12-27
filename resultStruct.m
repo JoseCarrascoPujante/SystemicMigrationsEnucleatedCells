@@ -7,7 +7,7 @@ function [resultados,T,errorList] = resultStruct(tracks)
     resultados = struct ;
     errorList = [];
     % List the parameters to be calculated by the script
-    stat_names = {'Track length','RMSF_alpha', 'sRMSF_alpha', 'RMSF_R2', 'RMSFCorrelationTime', ...
+    stat_names = {'Side','Track length','RMSF_alpha', 'sRMSF_alpha', 'RMSF_R2', 'RMSFCorrelationTime', ...
         'DFA_gamma', 'sDFA_gamma', 'MSD_beta', 'sMSD_beta', 'ApEn', 'sApEn', ...
         'Intensity','sIntensity','DR','sDR','AvgSpeed','sAvgSpeed','dispCos'} ;
     
@@ -34,6 +34,11 @@ function [resultados,T,errorList] = resultStruct(tracks)
                 tic
         
                 bar3 = waitbar(cc/length(C), bar3, C{cc}) ;
+
+                %Left (0) or right (1) net displacement
+                resultados.(A{aa}).(B{bb})(cc,strcmp(stat_names(:), 'Side')) = ...
+                    double(tracks.(A{aa}).(B{bb}).(C{cc}).original(end,1)...
+                    > tracks.(A{aa}).(B{bb}).(C{cc}).original(1,1));                
     		    
                 %Track length
                 resultados.(A{aa}).(B{bb})(cc,strcmp(stat_names(:), 'Track length')) = ...
@@ -125,15 +130,16 @@ function [resultados,T,errorList] = resultStruct(tracks)
     end
     
     close(bar1,bar2,bar3)
-
-    % Save results in .mat file    
+  
     ['Calculations section runtime FINISHED in ' num2str(toc(tCalcSec)) ' seconds']
-    
-    %save results in .xlsx file
-    enu.results2excel(resultados,stat_names)
-    save('numericalResults.mat', 'resultados', 'tCalcSec') ;
-    
+
     %Create table with all results data
     T=enu.unfoldresultstruct(resultados,stat_names);
-    save('numericalResults.mat', 'resultados','-append', 'T') ;
+
+    %Export results to .xlsx file
+    enu.results2excel(resultados,stat_names)
+    
+    %Save data
+    save('numericalResults.mat', 'resultados', 'T') ;
+
 end

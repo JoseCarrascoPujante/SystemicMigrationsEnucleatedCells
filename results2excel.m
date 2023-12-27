@@ -14,8 +14,8 @@ function results2excel(resultados,stat_names)
     sn = sheetnames("resultsTable.xlsx");
     for ss = 1:numel(sn)
         ws = wb.Worksheets.Item(ss);
-        ws.Range('A1:S1').Insert;
-        ws.Range('A1:S1').Value = ['Cell trajectory ID' stat_names];
+        ws.Range('A1:T1').Insert;
+        ws.Range('A1:T1').Value = ['Track name' stat_names];
     end
     wb.Save;
     excel.Quit;
