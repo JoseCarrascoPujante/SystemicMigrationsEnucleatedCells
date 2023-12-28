@@ -94,25 +94,27 @@ function [dev1,dev2,dev3,tc2,goodness]=rmsf(u_all, rmsfhandle)
             max_corr = res(end,3); % Use max tc2 when R2>0.99   
             hold(rmsfhandle, 'on')
             % if strcmp(type,'original')
-            loglog(time(1:max_corr), F(1:max_corr), 'ro', 'MarkerSize', 2);
+            loglog(time(1:max_corr), F(1:max_corr), 'ro', 'MarkerSize', 1.5,'LineWidth', .2);
+            rmsfhandle.FontSize = 6.5;
             % elseif strcmp(type,'shuffled')
                 % loglog(time(1:max_corr), F(1:max_corr), 'bo', 'MarkerSize', 2);
             % end
-            xlabel('Log({\itl}(s))');
-            ylabel('Log(F({\itl}))');
+            xlabel('Log({\itl}(s))',"FontSize",8);
+            ylabel('Log(F({\itl}))',"FontSize",8);
             
             % Plot regression fit line for the original data
             vmax=time.^(res(end,1));
             loglog(time(1:max_corr),(k/vmax(1))*vmax(1:max_corr),'k--',...
                 'LineWidth',.5);
             text(time(15),(k/vmax(1))*vmax(150),strcat('\alpha=',...
-                num2str(round(res(end,1),3))),"HorizontalAlignment","left")
+                num2str(round(res(end,1),3))),"HorizontalAlignment","left", ...
+                "FontSize",7.5)
 
             % Plot alpha=0.5 line with the original data
             v2 = time.^(.5);
-            loglog(time(1:max_corr),(k/v2(1))*v2(1:max_corr),'k--','LineWidth',1);
+            loglog(time(1:max_corr),(k/v2(1))*v2(1:max_corr),'k--','LineWidth',.5);
             text(time(15),(k/v2(1))*v2(4),'\alpha=0.5, uncorrelated', ...
-                "HorizontalAlignment","left")
+                "HorizontalAlignment","left","FontSize",7.5)
             set(rmsfhandle,'xscale','log')
             set(rmsfhandle,'yscale','log')
             axis padded
