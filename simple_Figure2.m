@@ -1,13 +1,13 @@
-function Figure2(tracks,T,destination_folder)
+function simple_Figure2(tracks,T,destination_folder)
     
     figure('Visible','off','Position',[0 0 1400 680]);
     layout0 = tiledlayout(1,3,'TileSpacing','loose','Padding','tight') ;
     layout1 = tiledlayout(layout0,2,1,'TileSpacing','loose','Padding','none') ;
     layout1.Layout.Tile = 1;
-    layout1_1 = tiledlayout(layout1,2,2,'TileSpacing','tight','Padding','none') ;
-    layout1_1.Layout.Tile = 1;
-    layout1_2 = tiledlayout(layout1,2,2,'TileSpacing','tight','Padding','none') ;
-    layout1_2.Layout.Tile = 2;        
+    % layout1_1 = tiledlayout(layout1,2,2,'TileSpacing','tight','Padding','none') ;
+    % layout1_1.Layout.Tile = 1;
+    % layout1_2 = tiledlayout(layout1,2,2,'TileSpacing','tight','Padding','none') ;
+    % layout1_2.Layout.Tile = 2;        
     layout2 = tiledlayout(layout0,16,1,'TileSpacing','tight','Padding','none') ;
     layout2.Layout.Tile = 2;
     layout3 = tiledlayout(layout0,2,1,'TileSpacing','compact','Padding','none') ;
@@ -17,54 +17,18 @@ function Figure2(tracks,T,destination_folder)
     
     % plot one cell rmsf for each scenario
 
-    % no stimuli cell
-    nexttile(layout1_1)
+    % cell
+    nexttile(layout1)
     rmsfhandle = gca;
     enu.rmsf(tracks.x_1noStimuli_Cells.x24_10_2214_12.x2.scaled_rho, rmsfhandle) ;
-    title(rmsfhandle,"Sc1","FontWeight","normal","FontSize",9)
+    title(rmsfhandle,"No stimuli","FontWeight","normal","FontSize",9)
 
-    %galv cell
-    nexttile(layout1_1)
-    rmsfhandle = gca;
-    enu.rmsf(tracks.x_2galvanotaxis_Cells.x05_02_2320_38.x1.scaled_rho, rmsfhandle) ;
-    title(rmsfhandle,"Sc2","FontWeight","normal","FontSize",9)
-
-    %chem cell
-    nexttile(layout1_1)
-    rmsfhandle = gca;
-    enu.rmsf(tracks.x_3chemotaxis_Cells.x07_01_2319_49.x3.scaled_rho, rmsfhandle) ;
-    title(rmsfhandle,"Sc3","FontWeight","normal","FontSize",9)
-
-    %double stimulus cell
-    nexttile(layout1_1)
-    rmsfhandle = gca;
-    enu.rmsf(tracks.x_4doubleStimulus_Cells.x22_01_2318_51.x1.scaled_rho, rmsfhandle) ;
-    title(rmsfhandle,"Sc4","FontWeight","normal","FontSize",9)    
-    
-    % plot one cytoplast rmsf for each scenario
-    %no stimuli cyto
-    nexttile(layout1_2)
-    rmsfhandle = gca;
-    enu.rmsf(tracks.x_1noStimuli_Cytoplasts.x12_12_2216_57.x2.scaled_rho, rmsfhandle) ;
-    title(rmsfhandle,"Sc1","FontWeight","normal","FontSize",9)
-    
-    %galvano cyto
-    nexttile(layout1_2)
-    rmsfhandle = gca;
-    enu.rmsf(tracks.x_2galvanotaxis_Cytoplasts.x30_01_2303_06.x3.scaled_rho, rmsfhandle) ;
-    title(rmsfhandle,"Sc2","FontWeight","normal","FontSize",9)
-
-    %chem cyto
-    nexttile(layout1_2)
+    %cytoplast
+    nexttile(layout1)
     rmsfhandle = gca;
     enu.rmsf(tracks.x_3chemotaxis_Cytoplasts.x20_12_2214_48.x4.scaled_rho, rmsfhandle) ;
-    title(rmsfhandle,"Sc3","FontWeight","normal","FontSize",9)
+    title(rmsfhandle,"Chemotaxis","FontWeight","normal","FontSize",9)
 
-    %double stimulus cyto
-    nexttile(layout1_2)
-    rmsfhandle = gca;
-    enu.rmsf(tracks.x_4doubleStimulus_Cytoplasts.x26_01_2311_04.x2.scaled_rho, rmsfhandle) ;
-    title(rmsfhandle,"Sc4","FontWeight","normal","FontSize",9)    
     
     %% Panel 2 - RMSFalpha
     
@@ -86,10 +50,8 @@ function Figure2(tracks,T,destination_folder)
         hold on
         plot(table2array(T(contains(T{:,1},field_names{f}),'RMSF_alpha')),zeros(50), ...
             'ro','MarkerSize',7,'LineWidth',0.2)
-        plot(table2array(T(contains(T{:,1},field_names{f}),'sRMSF_alpha')),zeros(50), ...
-            'o','MarkerEdgeColor','#00c1d4','MarkerSize',7,'LineWidth',0.2)        
         ylim([0 eps]) % minimize y-axis height
-        xlim([.3 .9])
+        xlim([.5 1])
         t.XRuler.TickLabelGapOffset = 2.5;
         t.TickLength = [.006 .01];
         t.LineWidth = .25;
@@ -103,8 +65,6 @@ function Figure2(tracks,T,destination_folder)
         hold on
         datamean = mean(table2array(T(contains(T{:,1},field_names{f}),'RMSF_alpha')));
         datastd = std(table2array(T(contains(T{:,1},field_names{f}),'RMSF_alpha')));
-        sdatamean = mean(table2array(T(contains(T{:,1},field_names{f}),'sRMSF_alpha')));
-        sdatastd = std(table2array(T(contains(T{:,1},field_names{f}),'sRMSF_alpha')));        
 
         line([datamean-datastd datamean+datastd],[0 0],'Color','red',...
             'LineWidth',.5)
@@ -112,22 +72,11 @@ function Figure2(tracks,T,destination_folder)
             'LineWidth',5)
         line([datamean+datastd datamean+datastd+.001],[0 0],'Color','red',...
             'LineWidth',5)
-        text(t2,datamean,-.1,[num2str(round(datamean,2)) ' ' char(177) ' '...
+        text(t2,datamean,-.21,[num2str(round(datamean,2)) ' ' char(177) ' '...
             num2str(round(datastd,2))],'HorizontalAlignment','center', ...
             'FontSize',9,"FontWeight","normal")
-
-        line([sdatamean-sdatastd sdatamean+sdatastd],[0 0],'Color','#00c1d4',...
-            'LineWidth',.5)
-        line([sdatamean-sdatastd+.001 sdatamean-sdatastd],[0 0],'Color','#00c1d4',...
-            'LineWidth',5)
-        line([sdatamean+sdatastd sdatamean+sdatastd+.001],[0 0],'Color','#00c1d4',...
-            'LineWidth',5)
-        text(t2,sdatamean,-.1,[num2str(round(sdatamean,2)) ' ' char(177) ' '...
-            num2str(round(sdatastd,2))],'HorizontalAlignment','center', ...
-            'FontSize',9,"FontWeight","normal")        
-
         ylim([-0.2 0]) % minimize y-axis height
-        xlim([0.3 .9])
+        xlim([.5 1])
         t2.YAxis.Visible = 'off'; % hide y-axis
         t2.XAxis.Visible = 'off'; % hide y-axis
         t2.Color = 'None';

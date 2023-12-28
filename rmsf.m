@@ -94,7 +94,7 @@ function [dev1,dev2,dev3,tc2,goodness]=rmsf(u_all, rmsfhandle)
             max_corr = res(end,3); % Use max tc2 when R2>0.99   
             hold(rmsfhandle, 'on')
             % if strcmp(type,'original')
-            loglog(time(1:max_corr), F(1:max_corr), 'ro', 'MarkerSize', 1.5,'LineWidth', .2);
+            loglog(time(1:max_corr), F(1:max_corr), 'ro', 'MarkerSize', 1.75,'LineWidth', .25);
             rmsfhandle.FontSize = 6.5;
             % elseif strcmp(type,'shuffled')
                 % loglog(time(1:max_corr), F(1:max_corr), 'bo', 'MarkerSize', 2);
