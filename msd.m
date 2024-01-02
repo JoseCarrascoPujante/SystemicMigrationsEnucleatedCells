@@ -30,6 +30,6 @@ function [slope,deltat] = msd(x, y, axis)
 %PLOTS
     if ~isempty(axis)
         hold(axis, 'on')
-        plot(axis, log(deltat), log(msdpts),'color',rand(1,3))
+        plot(axis, log(deltat), log(msdpts))
     end
 end

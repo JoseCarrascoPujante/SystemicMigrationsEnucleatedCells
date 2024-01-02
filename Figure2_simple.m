@@ -1,4 +1,4 @@
-function simple_Figure2(tracks,T,destination_folder)
+function Figure2_simple(tracks,T,destination_folder)
     
     figure('Visible','off','Position',[0 0 1400 680]);
     layout0 = tiledlayout(1,3,'TileSpacing','loose','Padding','tight') ;

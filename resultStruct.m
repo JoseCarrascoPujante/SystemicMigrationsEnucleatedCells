@@ -1,5 +1,5 @@
 
-function [resultados,T,errorList] = resultStruct(tracks)
+function [resultados,T442,errorList] = resultStruct(tracks)
     
     % dbstop if error
     tCalcSec=tic;
@@ -134,12 +134,12 @@ function [resultados,T,errorList] = resultStruct(tracks)
     ['Calculations section runtime FINISHED in ' num2str(toc(tCalcSec)) ' seconds']
 
     %Create table with all results data
-    T=enu.unfoldresultstruct(resultados,stat_names);
+    T442=enu.resultstruct2table(resultados,stat_names);
 
     %Export results to .xlsx file
-    enu.results2excel(resultados,stat_names)
+    % enu.results2excel(resultados,stat_names)
     
     %Save data
-    save('numericalResults.mat', 'resultados', 'T') ;
+    save('numericalResults.mat', 'resultados', 'T442') ;
 
 end

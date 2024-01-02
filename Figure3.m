@@ -1,24 +1,30 @@
 %% Figure 3
-function Figure3(tracks,resultados)
-    fig = figure('Visible','off','Position', [0 0 1000 900]);
-    
-    layout0 = tiledlayout(3,1,'TileSpacing','loose','Padding','none') ;
-    layout1 = tiledlayout(layout0,1,3,'TileSpacing','compact','Padding','none') ;
+function Figure3(tracks,resultados,destination_folder)
+    figure('Visible','on','Position',[0 0 1300 640]);
+    layout0 = tiledlayout(1,3,'TileSpacing','loose','Padding','tight') ;
+    layout1 = tiledlayout(layout0,2,1,'TileSpacing','loose','Padding','none') ;
     layout1.Layout.Tile = 1;
-    layout2 = tiledlayout(layout0,8,3,'TileSpacing','compact','Padding','none') ;
+    layout2 = tiledlayout(layout0,16,1,'TileSpacing','tight','Padding','none') ;
     layout2.Layout.Tile = 2;
+    layout3 = tiledlayout(layout0,2,1,'TileSpacing','compact','Padding','none') ;
+    layout3.Layout.Tile = 3;
     
     %% Panel 1 - MSD \Beta plots
-    fields = {"SinEstimuloProteus11_63","SinEstimuloLeningradensis11_63","SinEstimuloBorokensis23_44"};
-    chosen = [1,2,4,5,8,13,27,29;3,8,19,28,37,44,46,50;2,3,4,5,32,35,36,45];
     
-    for i = 1:3
+    a={};
+    a = enu.unfold(tracks,'results',false,a);
+    a = a(endsWith(a,'scaled'));
+    a = strrep(a,'results','tracks');
+    a = [a(contains(a,'x_1noStimuli_Cells')) a(contains(a,'x_1noStimuli_Cytoplasts'))];
+    chosen = [2,5,14,34,41,46,48,50;5,6,18,27,32,34,35,49];
+
+    for ii = 1:length(a)
     
-        nexttile(layout1,i)
+        nexttile(layout1,ii)
         h = gca;
-        for j = chosen(i,:)
-            [~,deltat] = msd(tracks.(fields{i}).scaled_x(:,j),...
-              tracks.(fields{i}).scaled_y(:,j), h) ;
+        for jj = chosen(ii,:)
+            trac = eval(a{jj,ii});
+            [~,deltat] = enu.msd(trac(:,1),trac(:,2),h);
         end
         plot(h, log(deltat), log(deltat)-10, 'k--')
         plot(h, log(deltat), log(deltat.^2)-11, 'k--')
@@ -31,27 +37,7 @@ function Figure3(tracks,resultados)
         xlabel('Log(MSD(\tau))');
         ylabel('Log(\tau(s))');
         axis padded
-        xlim([-.8    6.11])
-        ylim([-14    2.2185])
-    
-        % nexttile(layout1,i+3)
-        % h = gca;
-        % for j=1:8
-        %     [~,deltat] = msd(tracks.(fields{i}).shuffled_x(:,j),...
-        %         tracks.(fields{i}).shuffled_y(:,j), h) ;
-        % end
-        % plot(h, log(deltat), log(deltat)-1.5, 'k--')
-        % plot(h, log(deltat), log(deltat.^2)-1.5, 'k--')
-        % text(h, log(deltat(5)),8,['\beta=2, ballistic' newline 'diffusion']...
-        %     ,'HorizontalAlignment', 'center','FontSize',8)
-        % text(h, log(deltat(5)),5,'Superdiffusion'...
-        %     ,'HorizontalAlignment', 'center','FontSize',8)
-        % text(h, log(deltat(5)),2,['\beta=1, normal' newline 'diffusion']...
-        %     ,'HorizontalAlignment', 'center','FontSize',8)
-        % xlabel('Log(MSD(\tau))');
-        % ylabel('Log(\tau(s))');
-        % xlim([-1 6.2])
-        % ylim([-2.3863    11.2185])
+        
     end
     
     %% Panel 2 - MSD \Beta circles
@@ -78,11 +64,11 @@ function Figure3(tracks,resultados)
     [3,9,15,21;6,12,18,24]
     };
     
-    for i = 1:length(species)
-        idx = find(contains(field_names(:),species{i}))';
+    for ii = 1:length(species)
+        idx = find(contains(field_names(:),species{ii}))';
         for f = 1:length(idx)
             disp(field_names{idx(f)})
-            t = nexttile(layout2,tiles{i}(1,f));
+            t = nexttile(layout2,tiles{ii}(1,f));
             hold on
             
             exes = zeros(size(resultados.(field_names{idx(f)}),1));
@@ -95,7 +81,7 @@ function Figure3(tracks,resultados)
             t.Color = 'None';
             hold off
     
-            t2 = nexttile(layout2,tiles{i}(2,f));
+            t2 = nexttile(layout2,tiles{ii}(2,f));
             hold on
             datamean = mean(resultados.(field_names{idx(f)})(:,9));
             datastd = std(resultados.(field_names{idx(f)})(:,9));
@@ -132,15 +118,15 @@ function Figure3(tracks,resultados)
     
     rmsf_conds = {{[],[],[],[]},{[],[],[],[]},{[],[],[],[]}};
     
-    for i=1:length(species) % main boxes (species)
-        f = find(contains(field_names(:),species(i)))'; % condition indexes
-        for j = 1:length(f) % secondary boxes (conditions)
-            rmsf_conds{i}{j} = resultados.(field_names{f(j)})(:,9);
+    for ii=1:length(species) % main boxes (species)
+        f = find(contains(field_names(:),species(ii)))'; % condition indexes
+        for jj = 1:length(f) % secondary boxes (conditions)
+            rmsf_conds{ii}{jj} = resultados.(field_names{f(jj)})(:,9);
         end
     end
     
-    for i=1:length(species) % main boxes (species)
-        superviolin(rmsf_conds{i},'Parent',ax,'Xposition',i,'FaceAlpha',0.15,...
+    for ii=1:length(species) % main boxes (species)
+        superviolin(rmsf_conds{ii},'Parent',ax,'Xposition',ii,'FaceAlpha',0.15,...
             'Errorbars','ci','Centrals','mean','LineWidth',0.1)
     end
     colorgroups = [ones(length(rmsf_conds{1}{1}),1);
@@ -157,9 +143,9 @@ function Figure3(tracks,resultados)
         repmat(4,length(rmsf_conds{3}{4}),1)];
     
     rmsfs = {[],[],[]};
-    for i=1:length(species) % species    
-        for f = find(contains(field_names(:),species(i)))' % conditions
-            rmsfs{i} = [rmsfs{i}; resultados.(field_names{f})(:,9)];
+    for ii=1:length(species) % species    
+        for f = find(contains(field_names(:),species(ii)))' % conditions
+            rmsfs{ii} = [rmsfs{ii}; resultados.(field_names{f})(:,9)];
         end
     end
     
@@ -194,8 +180,8 @@ function Figure3(tracks,resultados)
     end
     
     disp(strcat(num2str(gabs),' Fig3 files found'))
-    print(FigHandle,'-vector','-dsvg',[destination_folder '\Figures\Fig3(',num2str(gabs),')' '.svg'])
-    print(FigHandle,'-image','-djpeg','-r400',[destination_folder '\Figures\Fig3(',num2str(gabs),')' '.jpg'])
+    print(fig,'-vector','-dsvg',[destination_folder '\Figures\Fig3(',num2str(gabs),')' '.svg'])
+    print(fig,'-image','-djpeg','-r400',[destination_folder '\Figures\Fig3(',num2str(gabs),')' '.jpg'])
 
 end
 
