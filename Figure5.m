@@ -16,34 +16,34 @@ function Figure5(tracks,T,destination_folder)
     nexttile(layout2,1)
     box on
     dfahandle = gca;
-    gamma = enu.DFA_main2(tracks.x_1noStimuli_Cytoplasts.x12_12_2215_05.x3.scaled_rho,'original', dfahandle) ;
-    yl = ylim();
-    xl = xlim();
-    text(xl(1)+1,yl(1)+.25,strcat('\gamma=',num2str(round(gamma,2))))
-    axis padded
-    
-    nexttile(layout2,2)
-    box on
-    dfahandle = gca;
-    gamma = enu.DFA_main2(tracks.x_1noStimuli_Cytoplasts.x12_12_2215_05.x3.shuffled_rho,'shuffled', dfahandle) ;
-    yl = ylim();
-    xl = xlim();
-    text(xl(1)+1,yl(1)+.25,strcat('\gamma=',num2str(round(gamma,2))),"FontSize",10)
-    axis padded
-
-    nexttile(layout2,3)
-    box on
-    dfahandle = gca;
     gamma = enu.DFA_main2(tracks.x_1noStimuli_Cells.x21_11_2211_11.x2.scaled_rho,'original', dfahandle) ;
     yl = ylim();
     xl = xlim();
     text(xl(1)+1,yl(1)+.65,strcat('\gamma=',num2str(round(gamma,2))))
     axis padded
     
-    nexttile(layout2,4)
+    nexttile(layout2,2)
     box on
     dfahandle = gca;
     gamma = enu.DFA_main2(tracks.x_1noStimuli_Cells.x21_11_2211_11.x2.shuffled_rho,'shuffled', dfahandle) ;
+    yl = ylim();
+    xl = xlim();
+    text(xl(1)+1,yl(1)+.25,strcat('\gamma=',num2str(round(gamma,2))),"FontSize",10)
+    axis padded
+    
+    nexttile(layout2,3)
+    box on
+    dfahandle = gca;
+    gamma = enu.DFA_main2(tracks.x_1noStimuli_Cytoplasts.x12_12_2215_05.x3.scaled_rho,'original', dfahandle) ;
+    yl = ylim();
+    xl = xlim();
+    text(xl(1)+1,yl(1)+.25,strcat('\gamma=',num2str(round(gamma,2))))
+    axis padded
+    
+    nexttile(layout2,4)
+    box on
+    dfahandle = gca;
+    gamma = enu.DFA_main2(tracks.x_1noStimuli_Cytoplasts.x12_12_2215_05.x3.shuffled_rho,'shuffled', dfahandle) ;
     yl = ylim();
     xl = xlim();
     text(xl(1)+1,yl(1)+.25,strcat('\gamma=',num2str(round(gamma,2))),"FontSize",10)
@@ -54,7 +54,16 @@ function Figure5(tracks,T,destination_folder)
 
     %% Panel 2 - DFA \gamma original and shuffled
     
-    field_names = fieldnames(tracks) ;
+    field_names = {
+    'x_1noStimuli_Cells'
+    'x_2galvanotaxis_Cells'
+    'x_3chemotaxis_Cells'
+    'x_4doubleStimulus_Cells'
+    'x_1noStimuli_Cytoplasts'
+    'x_2galvanotaxis_Cytoplasts'
+    'x_3chemotaxis_Cytoplasts'
+    'x_4doubleStimulus_Cytoplasts'};  
+
     for f = 1:length(field_names)
         
         t = nexttile(layout3);
@@ -142,7 +151,7 @@ function Figure5(tracks,T,destination_folder)
     %% Panel 3B - DFA \gamma Violin plots shuffled
     
     h = nexttile(layout4,2);
-    colores = [.4,0,1; .4,.2,1; .4,.45,1; .4,.65,1; 0,1,.4; .2,1,.4; .45,1,.4; .65,1,.4];
+    colores = [.3,0,1; .3,.2,1; .3,.45,1; .3,.65,1; 0,1,.3; .2,1,.3; .45,1,.3; .65,1,.3];
     space = 0;
     c = 0;
     conditions = ["Cells" "Cytoplasts"];
