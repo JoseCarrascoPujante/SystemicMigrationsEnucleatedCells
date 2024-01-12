@@ -1,194 +1,191 @@
-%% Figure 5
-clear
-close all
-load('coordinates.mat')
-load('numerical_results.mat')
+function Figure5(tracks,T,destination_folder)
+    %% Layouts
+    fig = figure('Visible','on','Position',[0 0 1150 800]);
+    layout0 = tiledlayout(2,1,'TileSpacing','compact','Padding','none') ;
+    layout1 = tiledlayout(layout0,1,2,'TileSpacing','compact','Padding','none') ;
+    layout1.Layout.Tile = 1;
+    layout2 = tiledlayout(layout1,2,2,'TileSpacing','compact','Padding','none') ;
+    layout2.Layout.Tile = 1;
+    layout3 = tiledlayout(layout1,16,1,'TileSpacing','loose','Padding','none') ;
+    layout3.Layout.Tile = 2;
+    layout4 = tiledlayout(layout0,2,1,'TileSpacing','none','Padding','none') ;
+    layout4.Layout.Tile = 2;
+    
+    %% Panel 1 - DFA correlations
 
-%% Layouts
-set(groot,'defaultFigurePaperPositionMode','manual')
-fig = figure('Visible','off','Position',[0 0 900 1200]);
-layout0 = tiledlayout(4,1,'TileSpacing','compact','Padding','none') ;
-layout1 = tiledlayout(layout0,2,3,'TileSpacing','compact','Padding','none') ;
-layout1.Layout.Tile = 1;
-layout2 = tiledlayout(layout0,8,12,'TileSpacing','loose','Padding','none') ;
-layout2.Layout.Tile = 2;
-% layout3 = tiledlayout(layout0,2,1,'TileSpacing','compact','Padding','none') ;
-% layout3.Layout.Tile = 3;
-
-%% Panel 1 - DFA correlations
-scenarios = {"InduccionProteus11_63","QuimiotaxisLeningradensisVariosPpmm","GalvanotaxisBorokensis11_63"};
-amoebas = {39,10,48};
-for i=1:3 % subpanels (species)
-    nexttile(layout1,i)
+    nexttile(layout2,1)
     box on
     dfahandle = gca;
-    gamma = DFA_main2(coordinates.(scenarios{i}).scaled_rho(:,amoebas{i}),'Original_DFA_', dfahandle) ;
+    gamma = enu.DFA_main2(tracks.x_1noStimuli_Cytoplasts.x12_12_2215_05.x3.scaled_rho,'original', dfahandle) ;
     yl = ylim();
     xl = xlim();
     text(xl(1)+1,yl(1)+.25,strcat('\gamma=',num2str(round(gamma,2))))
-    nexttile(layout1,i+3)
+    axis padded
+    
+    nexttile(layout2,2)
     box on
     dfahandle = gca;
-    gamma = DFA_main2(coordinates.(scenarios{i}).shuffled_rho(:,amoebas{i}),'Shuffled_DFA_', dfahandle) ;
+    gamma = enu.DFA_main2(tracks.x_1noStimuli_Cytoplasts.x12_12_2215_05.x3.shuffled_rho,'shuffled', dfahandle) ;
     yl = ylim();
     xl = xlim();
     text(xl(1)+1,yl(1)+.25,strcat('\gamma=',num2str(round(gamma,2))),"FontSize",10)
-end
+    axis padded
 
-%% Panel 2 - DFA \gamma original vs shuffled
+    nexttile(layout2,3)
+    box on
+    dfahandle = gca;
+    gamma = enu.DFA_main2(tracks.x_1noStimuli_Cells.x21_11_2211_11.x2.scaled_rho,'original', dfahandle) ;
+    yl = ylim();
+    xl = xlim();
+    text(xl(1)+1,yl(1)+.65,strcat('\gamma=',num2str(round(gamma,2))))
+    axis padded
+    
+    nexttile(layout2,4)
+    box on
+    dfahandle = gca;
+    gamma = enu.DFA_main2(tracks.x_1noStimuli_Cells.x21_11_2211_11.x2.shuffled_rho,'shuffled', dfahandle) ;
+    yl = ylim();
+    xl = xlim();
+    text(xl(1)+1,yl(1)+.25,strcat('\gamma=',num2str(round(gamma,2))),"FontSize",10)
+    axis padded
+    
+    xlabel(layout2,'log10(n)','FontSize',10)
+    ylabel(layout2,'log10(F(n))','FontSize',10)
 
-field_names = fieldnames(results) ;
-species = {'Proteus','Leningradensis','Borokensis'};
-tiles = {
-[25,73,49,1;37,85,61,13]
-[29,77,53,5;41,89,65,17]
-[33,81,57,9;45,93,69,21]};
-for i = 1:length(species)
-    idx = find(contains(field_names(:),species{i}))';
-    for f = 1:length(idx)
-        disp(field_names{idx(f)})
-        t = nexttile(layout2,tiles{i}(1,f),[1,4]);
+    %% Panel 2 - DFA \gamma original and shuffled
+    
+    field_names = fieldnames(tracks) ;
+    for f = 1:length(field_names)
+        
+        t = nexttile(layout3);
         hold on
-        exes = zeros(size(results.(field_names{idx(f)}),1));
-        plot(results.(field_names{idx(f)})(:,7),exes,'ro','MarkerSize',7)
-        plot(results.(field_names{idx(f)})(:,8),exes,'bo','MarkerSize',7)
-        box off
+        plot(table2array(T(contains(T{:,1},field_names{f}),'DFA_gamma')),zeros(50), ...
+            'ro','MarkerSize',7,'LineWidth',0.3)
+        plot(table2array(T(contains(T{:,1},field_names{f}),'sDFA_gamma')),zeros(50), ...
+            'o','MarkerEdgeColor','blue','MarkerSize',7,'LineWidth',0.3)        
         ylim([0 eps]) % minimize y-axis height
         xlim([0 2])
-        t.XRuler.TickLabelGapOffset = 2;
+        t.XRuler.TickLabelGapOffset = 2.5;
+        t.TickLength = [.006 .01];
+        t.LineWidth = .25;
+        t.FontSize = 7.5;
         t.YAxis.Visible = 'off'; % hide y-axis
         t.Color = 'None';
+        % title(t,scenario(f),'FontSize',10,'FontWeight','normal','Interpreter','none', ...
+            % 'VerticalAlignment','bottom')
         hold off
-        
-        t2 = nexttile(layout2,tiles{i}(2,f),[1,4]);
+
+        t2 = nexttile(layout3);
         hold on
-        datamean = mean(results.(field_names{idx(f)})(:,7));
-        datastd = std(results.(field_names{idx(f)})(:,7));
-        datameanshuff = mean(results.(field_names{idx(f)})(:,8));
-        datastdshuff = std(results.(field_names{idx(f)})(:,8));
-        
-        % original
+        datamean = mean(table2array(T(contains(T{:,1},field_names{f}),'DFA_gamma')));
+        datastd = std(table2array(T(contains(T{:,1},field_names{f}),'DFA_gamma')));
+        sdatamean = mean(table2array(T(contains(T{:,1},field_names{f}),'sDFA_gamma')));
+        sdatastd = std(table2array(T(contains(T{:,1},field_names{f}),'sDFA_gamma')));        
+
         line([datamean-datastd datamean+datastd],[0 0],'Color','red',...
             'LineWidth',.5)
-        line([datamean-datastd+.005 datamean-datastd],[0 0],'Color','red',...
+        line([datamean-datastd+.002 datamean-datastd],[0 0],'Color','red',...
             'LineWidth',5)
-        line([datamean+datastd datamean+datastd+.005],[0 0],'Color','red',...
+        line([datamean+datastd datamean+datastd+.002],[0 0],'Color','red',...
             'LineWidth',5)
-        text(t2,datamean,-.22,[num2str(round(datamean,2)) ' ' char(177) ' '...
-            num2str(round(datastd,2))],'HorizontalAlignment', 'center','FontSize',9)
-        
-        % shuffled
-        line([datameanshuff-datastdshuff datameanshuff+datastdshuff],[0 0],'Color','blue',...
-            'LineWidth',.5)
-        line([datameanshuff-datastdshuff+.005 datameanshuff-datastdshuff],[0 0],'Color','blue',...
-            'LineWidth',5)
-        line([datameanshuff+datastdshuff datameanshuff+datastdshuff+.005],[0 0],'Color','blue',...
-            'LineWidth',5)
-        text(t2,datameanshuff,-.22,[num2str(round(datameanshuff,2)) ' ' char(177)...
-            ' ' num2str(round(datastdshuff,2))],'HorizontalAlignment',...
-            'center','FontSize',9)
+        text(t2,datamean,-.2,[num2str(round(datamean,2)) ' ' char(177) ' '...
+            num2str(round(datastd,2))],'HorizontalAlignment','center', ...
+            'FontSize',9,"FontWeight","normal")
 
-        ylim([-0.08 0]) % minimize y-axis height
+        line([sdatamean-sdatastd sdatamean+sdatastd],[0 0],'Color','blue',...
+            'LineWidth',.5)
+        line([sdatamean-sdatastd+.002 sdatamean-sdatastd],[0 0],'Color','blue',...
+            'LineWidth',5)
+        line([sdatamean+sdatastd sdatamean+sdatastd+.002],[0 0],'Color','blue',...
+            'LineWidth',5)
+        text(t2,sdatamean,-.2,[num2str(round(sdatamean,2)) ' ' char(177) ' '...
+            num2str(round(sdatastd,2))],'HorizontalAlignment','center', ...
+            'FontSize',9,"FontWeight","normal")        
+
+        ylim([-0.2 0]) % minimize y-axis height
         xlim([0 2])
         t2.YAxis.Visible = 'off'; % hide y-axis
         t2.XAxis.Visible = 'off'; % hide y-axis
         t2.Color = 'None';
         hold off
     end
-end
-
-
-%% Panel 3A - DFA \gamma Violin plots original
-
-field_names = ...
-    {'SinEstimuloProteus11_63'
-    'GalvanotaxisProteus11_63'
-    'QuimiotaxisProteus11_63'
-    'InduccionProteus11_63'
-    'SinEstimuloLeningradensis11_63'
-    'GalvanotaxisLeningradensis11_63'
-    'QuimiotaxisLeningradensisVariosPpmm'
-    'InduccionLeningradensis11_63'
-    'SinEstimuloBorokensis23_44'
-    'GalvanotaxisBorokensis11_63'
-    'QuimiotaxisBorokensis23_44'
-    'InduccionBorokensis11_63'
-    };
-
-h = nexttile(layout0,3);
-
-species = {'Proteus','Leningradensis','Borokensis'};
-col = [.1,.1,.1;.3,.3,.3;.5,.5,.5;.7,.7,.7;1,0,0;1,.25,.25;1,.5,.5; 1,.7,.7;0,0,1;.25,.25,1;.5,.5,1;.7,.7,1];
-
-count = 0;
-c = 0;
-for i=1:length(species) % main boxes (species)
-    count = count + 1;
-    f = find(contains(field_names(:),species(i)))'; % condition indexes
-    for j = 1:length(f) % secondary boxes (conditions)
-        c = c+1;
-        count = count+2;
-        disp(field_names{f(j)})
-        al_goodplot(results.(field_names{f(j)})(:,7), count, [], col(c,:),'bilateral', [], [], 0); %Shuffled
+    
+    
+    %% Panel 3A - DFA \gamma Violin plots original
+      
+    h = nexttile(layout4,1);
+    colores = [1,0,1;1,.2,1;1,.45,1; 1,.65,1;0,1,1;.2,1,1;.45,1,1;.65,1,1];
+    space = 0;
+    c = 0;
+    conditions = ["Cells" "Cytoplasts"];
+    scenarios = ["noStimuli" "galvanotaxis" "chemotaxis" "doubleStimulus"];
+    for ii=1:length(conditions)
+        for jj = 1:length(scenarios)
+            c = c+1;
+            enu.al_goodplot(table2array(T(contains(T.(1),scenarios(jj)+'_'+conditions(ii)),"DFA_gamma")), space, [], colores(c,:),'bilateral', [], [], 0);
+            if ii == 2 && jj == 1
+                space = space + 2.4;
+            elseif ii == 2 && jj == 2
+                space = space + 2.1;                
+            else
+                space = space + 1.8;
+            end
+        end
+        space = space + 1;
     end
-end
-xlim([1.5 28])
-xticklabels([])
-h.XAxis.TickLength = [0 0];
-h.YAxis.FontSize = 8;
-ylabel('DFA\gamma','FontSize',10)
-
-%% Panel 3B - DFA \gamma Violin plots shuffled
-
-h = nexttile(layout0,4);
-count = 0;
-c = 0;
-for i=1:length(species) % main boxes (species)
-    disp(species(i))
-    count = count + 1;
-    f = find(contains(field_names(:),species(i)))'; % condition indexes
-    for j = 1:length(f) % secondary boxes (conditions)
-        c = c+1;
-        count = count+2;
-        disp(field_names{f(j)})
-        al_goodplot(results.(field_names{f(j)})(:,8), count, [], col(c,:),'bilateral', [], [], 0); % original
+    xlim([-1.2 15.75])
+    xticklabels([])
+    h.XAxis.TickLength = [0 0];
+    h.YAxis.FontSize = 7;
+    ylabel('DFA\gamma','FontSize',10)
+    
+    %% Panel 3B - DFA \gamma Violin plots shuffled
+    
+    h = nexttile(layout4,2);
+    colores = [.4,0,1; .4,.2,1; .4,.45,1; .4,.65,1; 0,1,.4; .2,1,.4; .45,1,.4; .65,1,.4];
+    space = 0;
+    c = 0;
+    conditions = ["Cells" "Cytoplasts"];
+    scenarios = ["noStimuli" "galvanotaxis" "chemotaxis" "doubleStimulus"];
+    for ii=1:length(conditions)
+        for jj = 1:length(scenarios)
+            c = c+1;
+            enu.al_goodplot(table2array(T(contains(T.(1),scenarios(jj)+'_'+conditions(ii)),"sDFA_gamma")), space, [], colores(c,:),'bilateral', [], [], 0);
+            if ii == 2 && jj == 1
+                space = space + 2.4;
+            elseif ii == 2 && jj == 2
+                space = space + 2.1;
+            else
+                space = space + 1.8;
+            end
+        end
+        space = space + 1;
     end
-end
-xlim([1.5 28])
-xticks([5.9 15 24])
-h.XAxis.TickLength = [0 0];
-h.YAxis.FontSize = 8;
-ylabel('DFA\gamma (Shuffled)','FontSize',10)
-set(h,'XTickLabel',[{'\itAmoeba proteus'},{'\itMetamoeba leningradensis'},...
-    {'\itAmoeba borokensis'}])
-
-
-%% Export as jpg, tiff and vector graphics pdf
-
-if ~exist(strcat(destination_folder,'\Figures'), 'dir')
-   mkdir(strcat(destination_folder,'\Figures'))
-end
-
-versions = dir(strcat(destination_folder,'\Figures\')) ;
-gabs = 0 ;
-for v = 1:length(versions)
-    if  contains(versions(v).name, 'Fig5'+wildcardPattern+'.svg')
-        gabs = gabs + 1 ;
+    xlim([-1.2 15.75])
+    xticklabels([])
+    h.XAxis.TickLength = [0 0];
+    h.YAxis.FontSize = 7;
+    ylabel('DFA\gamma','FontSize',10)
+    
+    
+    %% Export as jpg, tiff and vector graphics pdf
+    
+    if ~exist(strcat(destination_folder,'\Figures'), 'dir')
+       mkdir(strcat(destination_folder,'\Figures'))
     end
+    
+    versions = dir(strcat(destination_folder,'\Figures\')) ;
+    gabs = 0 ;
+    for v = 1:length(versions)
+        if  contains(versions(v).name, 'Fig5'+wildcardPattern+'.svg')
+            gabs = gabs + 1 ;
+        end
+    end
+    
+    disp(strcat(num2str(gabs),' Fig5 files found'))
+    print(fig,'-vector','-dsvg',[destination_folder '\Figures\Fig5(',num2str(gabs),')' '.svg'])
+    print(fig,'-image','-djpeg','-r400',[destination_folder '\Figures\Fig5(',num2str(gabs),')' '.jpg'])    
+
+    
 end
-
-disp(strcat(num2str(gabs),' Fig5 files found'))
-
-fig.Units = 'centimeters';        % set figure units to cm
-fig.PaperUnits = 'centimeters';   % set pdf printing paper units to cm
-fig.PaperSize = fig.Position(3:4);  % assign to the pdf printing paper the size of the figure
-fig.PaperPosition = [0 0 fig.Position(3:4)];
-set(fig, 'Renderer', 'painters');
-saveas(fig,strcat(destination_folder, '\Figures\Fig5(',num2str(gabs),')'),'svg')
-% exportgraphics(gcf,strcat(destination_folder, '\Figures\Fig5(',num2str(gabs),').jpg') ...
-%   ,"Resolution",600)
-% exportgraphics(gcf,strcat(destination_folder, '\Figures\Fig5(',num2str(gabs),').tiff') ...
-%   ,"Resolution",600)
-% exportgraphics(gcf,strcat(destination_folder, '\Figures\Fig5(',num2str(gabs),').pdf'), ...
-%   'BackgroundColor','white', 'ContentType','vector')
 

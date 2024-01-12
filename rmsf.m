@@ -99,8 +99,8 @@ function [dev1,dev2,dev3,tc2,goodness]=rmsf(u_all, rmsfhandle)
             % elseif strcmp(type,'shuffled')
                 % loglog(time(1:max_corr), F(1:max_corr), 'bo', 'MarkerSize', 2);
             % end
-            xlabel('Log({\itl}(s))',"FontSize",8);
-            ylabel('Log(F({\itl}))',"FontSize",8);
+            % xlabel('Log({\itl}(s))',"FontSize",8);
+            % ylabel('Log(F({\itl}))',"FontSize",8);
             
             % Plot regression fit line for the original data
             vmax=time.^(res(end,1));

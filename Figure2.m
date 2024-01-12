@@ -4,9 +4,9 @@ function Figure2(tracks,T,destination_folder)
     layout0 = tiledlayout(1,3,'TileSpacing','loose','Padding','tight') ;
     layout1 = tiledlayout(layout0,2,1,'TileSpacing','loose','Padding','none') ;
     layout1.Layout.Tile = 1;
-    layout1_1 = tiledlayout(layout1,2,2,'TileSpacing','tight','Padding','none') ;
+    layout1_1 = tiledlayout(layout1,2,2,'TileSpacing','compact','Padding','none') ;
     layout1_1.Layout.Tile = 1;
-    layout1_2 = tiledlayout(layout1,2,2,'TileSpacing','tight','Padding','none') ;
+    layout1_2 = tiledlayout(layout1,2,2,'TileSpacing','compact','Padding','none') ;
     layout1_2.Layout.Tile = 2;        
     layout2 = tiledlayout(layout0,16,1,'TileSpacing','tight','Padding','none') ;
     layout2.Layout.Tile = 2;
@@ -64,8 +64,10 @@ function Figure2(tracks,T,destination_folder)
     nexttile(layout1_2)
     rmsfhandle = gca;
     enu.rmsf(tracks.x_4doubleStimulus_Cytoplasts.x26_01_2311_04.x2.scaled_rho, rmsfhandle) ;
-    title(rmsfhandle,"Sc4","FontWeight","normal","FontSize",9)    
-    
+    title(rmsfhandle,"Sc4","FontWeight","normal","FontSize",9)
+
+    xlabel(layout1_1,'Log({\itl}(s))',"FontSize",9);
+    ylabel(layout1_1,'Log(F({\itl}))',"FontSize",9);    
     %% Panel 2 - RMSFalpha
     
     field_names = {

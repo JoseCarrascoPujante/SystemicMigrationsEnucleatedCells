@@ -35,13 +35,14 @@ function [Alpha1,D,F_n,z1,z2]=DFA_main2(DATA, input_type, axeshandle)
         end
         
         hold on
-        xlabel('log10(n)','FontSize',10)
-        ylabel('log10(F(n))','FontSize',10)
+        % xlabel('log10(n)','FontSize',10)
+        % ylabel('log10(F(n))','FontSize',10)
         
         if strcmp(input_type, 'original')
             plot(axeshandle,log10(n(1:end)),A(1)*log10(n(1:end))+A(2), 'Color', [1 0 0], 'LineStyle','-')
         elseif strcmp(input_type, 'shuffled')
             plot(axeshandle,log10(n(1:end)),A(1)*log10(n(1:end))+A(2), 'Color', [0 0 1], 'LineStyle','-')
         end
+        axeshandle.YAxis.FontSize = 7;
     end
 end
