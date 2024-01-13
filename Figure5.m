@@ -1,12 +1,12 @@
 function Figure5(tracks,T,destination_folder)
     %% Layouts
-    fig = figure('Visible','on','Position',[0 0 1150 800]);
+    fig = figure('Visible','off','Position',[0 0 1150 800]);
     layout0 = tiledlayout(2,1,'TileSpacing','compact','Padding','none') ;
     layout1 = tiledlayout(layout0,1,2,'TileSpacing','compact','Padding','none') ;
     layout1.Layout.Tile = 1;
     layout2 = tiledlayout(layout1,2,2,'TileSpacing','compact','Padding','none') ;
     layout2.Layout.Tile = 1;
-    layout3 = tiledlayout(layout1,16,1,'TileSpacing','loose','Padding','none') ;
+    layout3 = tiledlayout(layout1,16,1,'TileSpacing','tight','Padding','none') ;
     layout3.Layout.Tile = 2;
     layout4 = tiledlayout(layout0,2,1,'TileSpacing','none','Padding','none') ;
     layout4.Layout.Tile = 2;
@@ -77,7 +77,7 @@ function Figure5(tracks,T,destination_folder)
         t.XRuler.TickLabelGapOffset = 2.5;
         t.TickLength = [.006 .01];
         t.LineWidth = .25;
-        t.FontSize = 7.5;
+        t.FontSize = 8;
         t.YAxis.Visible = 'off'; % hide y-axis
         t.Color = 'None';
         % title(t,scenario(f),'FontSize',10,'FontWeight','normal','Interpreter','none', ...

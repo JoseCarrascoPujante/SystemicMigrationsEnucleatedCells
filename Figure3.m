@@ -29,11 +29,11 @@ function Figure3(tracks,T,destination_folder)
         plot(h, log(deltat), log(deltat)-10, 'k--')
         plot(h, log(deltat), log(deltat.^2)-11, 'k--')
         text(h, log(deltat(5)),0,['\beta=2, ballistic' newline 'diffusion']...
-            ,'HorizontalAlignment', 'center','FontSize',9)
+            ,'HorizontalAlignment', 'center','FontSize',8)
         text(h, log(deltat(5)),-4.5,'Super-diffusion'...
-            ,'HorizontalAlignment', 'center','FontSize',9)
+            ,'HorizontalAlignment', 'center','FontSize',8)
         text(h, log(deltat(5)),-9,['\beta=1, normal' newline 'diffusion']...
-            ,'HorizontalAlignment', 'center','FontSize',9)
+            ,'HorizontalAlignment', 'center','FontSize',8)
         h.FontSize = 7.5;
         xlabel('Log(MSD(\tau))','FontSize',10);
         ylabel('Log(\tau(s))','FontSize',10);
