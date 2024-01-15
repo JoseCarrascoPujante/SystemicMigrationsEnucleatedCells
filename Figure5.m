@@ -123,7 +123,7 @@ function Figure5(tracks,T,destination_folder)
     %% Panel 3A - DFA \gamma Violin plots original
       
     h = nexttile(layout4,1);
-    colores = [1,0,1;1,.2,1;1,.45,1; 1,.65,1;.3,0,1; .3,.2,1; .3,.45,1; .3,.65,1];
+    colores = [1,0,1; 1,.2,1; 1,.45,1; 1,.65,1; 0,1,1; .2,1,1; .45,1,1; .65,1,1];
     space = 0;
     c = 0;
     conditions = ["Cells" "Cytoplasts"];
@@ -151,7 +151,7 @@ function Figure5(tracks,T,destination_folder)
     %% Panel 3B - DFA \gamma Violin plots shuffled
     
     h = nexttile(layout4,2);
-    colores = [0,1,1;.2,1,1;.45,1,1;.65,1,1; 0,1,.3; .2,1,.3; .45,1,.3; .65,1,.3];
+    colores = [.3,0,1; .3,.2,1; .3,.45,1; .3,.65,1; 0,1,.3; .2,1,.3; .45,1,.3; .65,1,.3];
     space = 0;
     c = 0;
     conditions = ["Cells" "Cytoplasts"];
