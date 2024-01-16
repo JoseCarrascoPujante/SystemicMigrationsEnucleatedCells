@@ -82,7 +82,7 @@ function Figure1(tracks,destination_folder)
             
         if AA == 1 || AA == 5
             pax = polaraxes(layouts{AA});
-            pax.Layout.Tile = 8; %Initialize tile
+            pax.Layout.Tile = 8; %Initialize polar axis tile
             pax.Layout.TileSpan = [4 1];
             thetaIn360 = mod(theta + 2*pi, 2*pi);
             pol = polarhistogram(pax,thetaIn360,'Normalization','probability','LineWidth',.5,...
@@ -108,7 +108,7 @@ function Figure1(tracks,destination_folder)
             % thetaticks([])
             % thetaticklabels([])
         else
-            axh = nexttile(layouts{AA},8,[3,1]); %Initialize tile
+            axh = nexttile(layouts{AA},8,[3,1]); %Initialize histogram tile
             b = histogram(axh,cos(theta),10,"BinEdges",-1:.2:1,'FaceColor','k');
             xticks([-1 0 1])
             xlim([-1,1])

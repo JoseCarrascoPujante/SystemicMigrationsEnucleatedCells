@@ -2,7 +2,7 @@
 function Figure4(AE,destination_folder,rr,T)
     %% Layouts
     
-    fig = figure('Visible','on','Position', [0 0 1200 625]);
+    fig = figure('Visible','off','Position', [0 0 1200 625]);
     layout0 = tiledlayout(2,3,'TileSpacing','tight','Padding','none') ;
     
     %% Panel 1 - ApEn heatmaps

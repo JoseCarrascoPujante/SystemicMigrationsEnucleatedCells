@@ -1,5 +1,5 @@
 
-function T=resultstruct2table(resultados,stat_names)
+function T=resultStruct2table(resultados,stat_names)
     a = {};
     stat_names = ['Track name' stat_names];
     a = enu.unfold(resultados,'results',false,a);
