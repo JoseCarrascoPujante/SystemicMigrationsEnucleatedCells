@@ -88,10 +88,10 @@ function Figure2(tracks,T,destination_folder)
         hold on
         plot(table2array(T(contains(T{:,1},field_names{f}),'RMSF_alpha')),zeros(50), ...
             'ro','MarkerSize',7,'LineWidth',0.2)
-        plot(table2array(T(contains(T{:,1},field_names{f}),'sRMSF_alpha')),zeros(50), ...
-            'o','MarkerEdgeColor','#00c1d4','MarkerSize',7,'LineWidth',0.2)        
+        % plot(table2array(T(contains(T{:,1},field_names{f}),'sRMSF_alpha')),zeros(50), ...
+            % 'o','MarkerEdgeColor','#00c1d4','MarkerSize',7,'LineWidth',0.2)        
         ylim([0 eps]) % minimize y-axis height
-        xlim([.3 .9])
+        xlim([.5 1])
         t.XRuler.TickLabelGapOffset = 2.5;
         t.TickLength = [.006 .01];
         t.LineWidth = .25;
@@ -105,8 +105,8 @@ function Figure2(tracks,T,destination_folder)
         hold on
         datamean = mean(table2array(T(contains(T{:,1},field_names{f}),'RMSF_alpha')));
         datastd = std(table2array(T(contains(T{:,1},field_names{f}),'RMSF_alpha')));
-        sdatamean = mean(table2array(T(contains(T{:,1},field_names{f}),'sRMSF_alpha')));
-        sdatastd = std(table2array(T(contains(T{:,1},field_names{f}),'sRMSF_alpha')));        
+        % sdatamean = mean(table2array(T(contains(T{:,1},field_names{f}),'sRMSF_alpha')));
+        % sdatastd = std(table2array(T(contains(T{:,1},field_names{f}),'sRMSF_alpha')));        
 
         line([datamean-datastd datamean+datastd],[0 0],'Color','red',...
             'LineWidth',.5)
@@ -118,18 +118,18 @@ function Figure2(tracks,T,destination_folder)
             num2str(round(datastd,2))],'HorizontalAlignment','center', ...
             'FontSize',9,"FontWeight","normal")
 
-        line([sdatamean-sdatastd sdatamean+sdatastd],[0 0],'Color','#00c1d4',...
-            'LineWidth',.5)
-        line([sdatamean-sdatastd+.001 sdatamean-sdatastd],[0 0],'Color','#00c1d4',...
-            'LineWidth',5)
-        line([sdatamean+sdatastd sdatamean+sdatastd+.001],[0 0],'Color','#00c1d4',...
-            'LineWidth',5)
-        text(t2,sdatamean,-.1,[num2str(round(sdatamean,2)) ' ' char(177) ' '...
-            num2str(round(sdatastd,2))],'HorizontalAlignment','center', ...
-            'FontSize',9,"FontWeight","normal")        
+        % line([sdatamean-sdatastd sdatamean+sdatastd],[0 0],'Color','#00c1d4',...
+        %     'LineWidth',.5)
+        % line([sdatamean-sdatastd+.001 sdatamean-sdatastd],[0 0],'Color','#00c1d4',...
+        %     'LineWidth',5)
+        % line([sdatamean+sdatastd sdatamean+sdatastd+.001],[0 0],'Color','#00c1d4',...
+        %     'LineWidth',5)
+        % text(t2,sdatamean,-.1,[num2str(round(sdatamean,2)) ' ' char(177) ' '...
+        %     num2str(round(sdatastd,2))],'HorizontalAlignment','center', ...
+        %     'FontSize',9,"FontWeight","normal")        
 
-        ylim([-0.2 0]) % minimize y-axis height
-        xlim([0.3 .9])
+        ylim([-0.2 0])
+        xlim([0.5 1])
         t2.YAxis.Visible = 'off'; % hide y-axis
         t2.XAxis.Visible = 'off'; % hide y-axis
         t2.Color = 'None';

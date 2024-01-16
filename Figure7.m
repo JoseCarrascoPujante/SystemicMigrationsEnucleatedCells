@@ -1,22 +1,16 @@
 %% Figure 7
-function Figure7(T,destination_folder)
+function Figure7(parT,destination_folder)
     fig = figure('Visible','off','Position', [0 0 1070 650]);
     
-    % create dataset
-    
-    T(:,"RMSFCorrelationTime") = T(:,"RMSFCorrelationTime")/120; % convert frames unit to minutes
-    
     % non-kynetic metrics
-    stat_names = {'RMSF\alpha', 'sRMSF\alpha', 'RMSF_R2', 'RMSFCorrelationTime', 'DFA\gamma', ...
-        'sDFA\gamma', 'MSD\beta', 'sMSD\beta','Approximate Entropy', 'sApproximate Entropy'} ;
+    tableColNames = {'RMSF\alpha' 'sRMSF\alpha' 'DFA\gamma' 'sDFA\gamma' ...
+        'MSD\beta' 'sMSD\beta' 'Approximate Entropy' 'sApproximate Entropy'} ;
     conf = 68.27;             % set to either a confidence or STD value. 68.27% CI equals 1xSTD
     ellipseFitType = 'x STD'; % set to either STD or confidence %
     
     % pair stats
-    indexes = 1:length(stat_names);
-    pairs = nchoosek(indexes([1,7:2:end]),2); % choose metrics to compare
-    pairs([3,5],:) = pairs([5,3],:);
-    pairs([4,5],:) = pairs([5,4],:);
+    combinaciones = nchoosek(tableColNames(~startsWith(tableColNames,'s')),2);    
+    [~, pairs] = ismember(combinaciones, tableColNames); % metric index for comparison on each panel
     
     % build axes positions
     props = {'sh', 0.02, 'sv', 0.03, 'padding', 0.03 'margin', 0.03};
@@ -50,33 +44,33 @@ function Figure7(T,destination_folder)
     hAxS(6) = axes('Position',posSmall{6});
     
     % Plot on big axes
-    for ej=1:length(pairs)
-        disp(strcat('Plot nº',num2str(ej),': ',stat_names{pairs(ej,1)},'_vs_',stat_names{pairs(ej,2)}))
-        metric1 = cat(1,results.full(:,pairs(ej,1)), results.full(:,pairs(ej,1)+1));
-        metric2 = cat(1,results.full(:,pairs(ej,2)), results.full(:,pairs(ej,2)+1));
+    for ej=1:size(pairs,1)
+        disp(strcat('Plot nº',num2str(ej),': ',tableColNames{pairs(ej,1)},'_vs_',tableColNames{pairs(ej,2)}))
+        metric1 = cat(1,parT(:,pairs(ej,1)), parT(:,pairs(ej,1)+1));
+        metric2 = cat(1,parT(:,pairs(ej,2)), parT(:,pairs(ej,2)+1));
         G = [1*ones(length(metric1)/2,1) ; 2*ones(length(metric2)/2,1)];
         gscatter(hAxB(ej),metric1,metric2, G,[.3 .5 0;0 0 1],'..',2.8,'off')
         hold(hAxB(ej),'on')
         ellipse_gscatter(hAxB(ej),cat(2,metric1,metric2),G,conf,'r')
-        xlabel(hAxB(ej),stat_names{pairs(ej,1)})
-        ylabel(hAxB(ej),stat_names{pairs(ej,2)})
+        xlabel(hAxB(ej),tableColNames{pairs(ej,1)})
+        ylabel(hAxB(ej),tableColNames{pairs(ej,2)})
     end
     
     % Plot on small axes, use ek+n when small panels start at big panel #n, use 
     % (ek[+n])+1 when plotting shuffled data
     for ek=1:length(pairs) % for # small axes do...
         if ek == 2 || ek == 3
-            scatter(hAxS(ek),results.full(:,pairs(ek+1,1)),results.full(:,pairs(ek+1,2)),.7,[.3 .5 0],'filled','o') ;
+            scatter(hAxS(ek),parT(:,pairs(ek+1,1)),parT(:,pairs(ek+1,2)),.7,[.3 .5 0],'filled','o') ;
             hold(hAxS(ek),'on')
-            ellipse_scatter(hAxS(ek),cat(2,results.full(:,pairs(ek+1,1)),results.full(:,pairs(ek+1,2))),conf,'r')
+            ellipse_scatter(hAxS(ek),cat(2,parT(:,pairs(ek+1,1)),parT(:,pairs(ek+1,2))),conf,'r')
         elseif ek == 6 % last small axis corresponds to original (green) data
-            scatter(hAxS(ek),results.full(:,pairs(ek,1)),results.full(:,pairs(ek,2)),.7,[.3 .5 0],'filled','o') ;
+            scatter(hAxS(ek),parT(:,pairs(ek,1)),parT(:,pairs(ek,2)),.7,[.3 .5 0],'filled','o') ;
             hold(hAxS(ek),'on')
-            ellipse_scatter(hAxS(ek),cat(2,results.full(:,pairs(ek,1)),results.full(:,pairs(ek,2))),conf,'r')
+            ellipse_scatter(hAxS(ek),cat(2,parT(:,pairs(ek,1)),parT(:,pairs(ek,2))),conf,'r')
         else
-            scatter(hAxS(ek),results.full(:,pairs(ek+1,1)+1),results.full(:,pairs(ek+1,2)+1),.7,'b','filled','o') ;
+            scatter(hAxS(ek),parT(:,pairs(ek+1,1)+1),parT(:,pairs(ek+1,2)+1),.7,'b','filled','o') ;
             hold(hAxS(ek),'on')
-            ellipse_scatter(hAxS(ek),cat(2,results.full(:,pairs(ek+1,1)+1),results.full(:,pairs(ek+1,2)+1)),conf,'r')
+            ellipse_scatter(hAxS(ek),cat(2,parT(:,pairs(ek+1,1)+1),parT(:,pairs(ek+1,2)+1)),conf,'r')
         end
         box(hAxS(ek),'on')
         xl = xlim(hAxS(ek));
@@ -93,10 +87,14 @@ function Figure7(T,destination_folder)
             [Xor,Yor] = ds2nfu(hAxB(ek),rPos(1),rPos(2));
             [Xfr,Yfr] = ds2nfu(hAxB(ek),rPos(1)+rPos(3),rPos(2)+rPos(4));
         end
-    %     disp([Xor,Yor; ...                                                     % rectangle bottom left
+        
+    %     disp([
+    %         Xor,Yor; ...                                                     % rectangle bottom left
     %         Xfr,Yfr; ...                                                       % rectangle top right
     %         posSmall{ek}(1),posSmall{ek}(2); ...                               % smallAxis{ek} bottom left
-    %         posSmall{ek}(1)+posSmall{ek}(3),posSmall{ek}(2)+posSmall{ek}(4)]); % smallAxis{ek} top right
+    %         posSmall{ek}(1)+posSmall{ek}(3),posSmall{ek}(2)+posSmall{ek}(4)
+    %           ]); % smallAxis{ek} top right
+        
         annotation(fig,'line',[Xfr posSmall{ek}(1)+posSmall{ek}(4)*ratio], [Yor posSmall{ek}(2)], ...
             'Color','k','LineStyle','--','LineWidth',.5);
         annotation(fig,'line',[Xor posSmall{ek}(1)], [Yfr posSmall{ek}(2)+posSmall{ek}(4)], ...
