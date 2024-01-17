@@ -146,7 +146,6 @@ function Figure7(parT,destination_folder)
     end
     
     disp(strcat(num2str(gabs-1),' Fig7 files found'))
-    
-    print(fig,'-vector','-dsvg',[destination_folder '\Figures\Fig7(',num2str(gabs),')' '.svg'])
-    print(fig,'-image','-djpeg','-r400',[destination_folder '\Figures\Fig7(',num2str(gabs),')' '.jpg'])
+    exportgraphics(fig,[destination_folder '\Figures\Fig7(',num2str(gabs),')' '.pdf'],'ContentType','vector')
+
 end
