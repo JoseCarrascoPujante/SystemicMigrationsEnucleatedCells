@@ -1,12 +1,12 @@
 function Figure2(tracks,T,destination_folder)
     
     figure('Visible','off','Position',[0 0 1400 680]);
-    layout0 = tiledlayout(1,3,'TileSpacing','loose','Padding','tight') ;
+    layout0 = tiledlayout(1,3,'TileSpacing','loose','Padding','none') ;
     layout1 = tiledlayout(layout0,2,1,'TileSpacing','loose','Padding','none') ;
     layout1.Layout.Tile = 1;
-    layout1_1 = tiledlayout(layout1,2,2,'TileSpacing','compact','Padding','none') ;
+    layout1_1 = tiledlayout(layout1,2,2,'TileSpacing','loose','Padding','none') ;
     layout1_1.Layout.Tile = 1;
-    layout1_2 = tiledlayout(layout1,2,2,'TileSpacing','compact','Padding','none') ;
+    layout1_2 = tiledlayout(layout1,2,2,'TileSpacing','loose','Padding','none') ;
     layout1_2.Layout.Tile = 2;        
     layout2 = tiledlayout(layout0,16,1,'TileSpacing','tight','Padding','none') ;
     layout2.Layout.Tile = 2;
@@ -21,53 +21,57 @@ function Figure2(tracks,T,destination_folder)
     nexttile(layout1_1)
     rmsfhandle = gca;
     enu.rmsf(tracks.x_1noStimuli_Cells.x24_10_2214_12.x2.scaled_rho, rmsfhandle) ;
-    title(rmsfhandle,"Sc1","FontWeight","normal","FontSize",9)
+    title(rmsfhandle,"Sc1","FontWeight","normal","FontSize",11)
 
     %galv cell
     nexttile(layout1_1)
     rmsfhandle = gca;
     enu.rmsf(tracks.x_2galvanotaxis_Cells.x05_02_2320_38.x1.scaled_rho, rmsfhandle) ;
-    title(rmsfhandle,"Sc2","FontWeight","normal","FontSize",9)
+    title(rmsfhandle,"Sc2","FontWeight","normal","FontSize",11)
 
     %chem cell
     nexttile(layout1_1)
     rmsfhandle = gca;
     enu.rmsf(tracks.x_3chemotaxis_Cells.x07_01_2319_49.x3.scaled_rho, rmsfhandle) ;
-    title(rmsfhandle,"Sc3","FontWeight","normal","FontSize",9)
+    title(rmsfhandle,"Sc3","FontWeight","normal","FontSize",11)
 
     %double stimulus cell
     nexttile(layout1_1)
     rmsfhandle = gca;
     enu.rmsf(tracks.x_4doubleStimulus_Cells.x22_01_2318_51.x1.scaled_rho, rmsfhandle) ;
-    title(rmsfhandle,"Sc4","FontWeight","normal","FontSize",9)    
+    title(rmsfhandle,"Sc4","FontWeight","normal","FontSize",11)
+
+    xlabel(layout1_1,'Log({\itl}(s))',"FontSize",9);
+    ylabel(layout1_1,'Log(F({\itl}))',"FontSize",9);    
+    
     
     % plot one cytoplast rmsf for each scenario
     %no stimuli cyto
     nexttile(layout1_2)
     rmsfhandle = gca;
     enu.rmsf(tracks.x_1noStimuli_Cytoplasts.x12_12_2216_57.x2.scaled_rho, rmsfhandle) ;
-    title(rmsfhandle,"Sc1","FontWeight","normal","FontSize",9)
+    title(rmsfhandle,"Sc1","FontWeight","normal","FontSize",11)
     
     %galvano cyto
     nexttile(layout1_2)
     rmsfhandle = gca;
     enu.rmsf(tracks.x_2galvanotaxis_Cytoplasts.x30_01_2303_06.x3.scaled_rho, rmsfhandle) ;
-    title(rmsfhandle,"Sc2","FontWeight","normal","FontSize",9)
+    title(rmsfhandle,"Sc2","FontWeight","normal","FontSize",11)
 
     %chem cyto
     nexttile(layout1_2)
     rmsfhandle = gca;
     enu.rmsf(tracks.x_3chemotaxis_Cytoplasts.x20_12_2214_48.x4.scaled_rho, rmsfhandle) ;
-    title(rmsfhandle,"Sc3","FontWeight","normal","FontSize",9)
+    title(rmsfhandle,"Sc3","FontWeight","normal","FontSize",11)
 
     %double stimulus cyto
     nexttile(layout1_2)
     rmsfhandle = gca;
     enu.rmsf(tracks.x_4doubleStimulus_Cytoplasts.x26_01_2311_04.x2.scaled_rho, rmsfhandle) ;
-    title(rmsfhandle,"Sc4","FontWeight","normal","FontSize",9)
+    title(rmsfhandle,"Sc4","FontWeight","normal","FontSize",11)
 
-    xlabel(layout1_1,'Log({\itl}(s))',"FontSize",9);
-    ylabel(layout1_1,'Log(F({\itl}))',"FontSize",9);    
+    xlabel(layout1_2,'Log({\itl}(s))',"FontSize",9);
+    ylabel(layout1_2,'Log(F({\itl}))',"FontSize",9);    
     %% Panel 2 - RMSFalpha
     
     field_names = {
@@ -148,36 +152,36 @@ function Figure2(tracks,T,destination_folder)
     
     %mejores colormaps: hsv,jet
     enu.superviolin(memory_violin(1:4),'Parent',ax,'FaceAlpha',0.15,...
-        'Errorbars','ci','Centrals','mean','LineWidth',0.01,'LUT','hsv')    
+        'Errorbars','ci','Centrals','mean','LineWidth',.075,'LUT','hsv')    
     colorgroups = [ones(50,1);repmat(2,50,1);repmat(3,50,1);repmat(4,50,1)];
     boxchart(ax,[ones(200,1)],[cat(1,memory_violin{1:4})], 'Notch', 'off',...
         'GroupByColor', colorgroups, 'BoxFaceAlpha',0,'BoxMedianLineColor','b') %"Box charts whose notches do not overlap have different medians at the 5% significance level".
     colororder(["red" "#00d400" "#0bb" "#800080"]); %select boxplot box colors
     h=gca;
     h.XAxisLocation = 'top';
-    h.FontSize = 8;
     box on
     h.XTick = [.84 .94 1.04 1.14];
     xticklabels(h,[{'Sc1'},{'Sc2'},{'Sc3'},{'Sc4'}])
-    h.XAxis.FontSize = 10;
+    h.FontSize = 8;
+    h.XAxis.FontSize = 11;
     h.XAxis.TickLength = [0 0];
     ylabel('Memory persistence (min)','FontSize',11)
     
     % cytoplasts superviolin
     ax=nexttile(layout3);
     enu.superviolin(memory_violin(5:8),'Parent',ax,'FaceAlpha',0.15,...
-    'Errorbars','ci','Centrals','mean','LineWidth',0.01,'LUT','hsv')    
+    'Errorbars','ci','Centrals','mean','LineWidth',.075,'LUT','hsv')    
     colorgroups = [ones(50,1);repmat(2,50,1);repmat(3,50,1);repmat(4,50,1)];  
     boxchart(ax,[ones(200,1)],[cat(1,memory_violin{1:4})], 'Notch', 'off',...
         'GroupByColor', colorgroups, 'BoxFaceAlpha',0,'BoxMedianLineColor','b') %"Box charts whose notches do not overlap have different medians at the 5% significance level".
     colororder(["red" "#00d400" "#0bb" "#800080"]); %select boxplot box colors
     h=gca;
     h.XAxisLocation = 'top';
-    h.FontSize = 8;
     box on
     h.XTick = [.84 .94 1.04 1.14];
     xticklabels(h,[{'Sc1'},{'Sc2'},{'Sc3'},{'Sc4'}])
-    h.XAxis.FontSize = 10;
+    h.FontSize = 8;
+    h.XAxis.FontSize = 11;
     h.XAxis.TickLength = [0 0];
     ylabel('Memory persistence (min)','FontSize',11)
     
@@ -189,7 +193,7 @@ function Figure2(tracks,T,destination_folder)
     end
     
     versions = dir(strcat(destination_folder,'\Figures\')) ;
-    gabs = 0 ;
+    gabs = 1 ;
     for v = 1:length(versions)
         if  contains(versions(v).name, 'Fig2'+wildcardPattern+'.svg')
             gabs = gabs + 1 ;

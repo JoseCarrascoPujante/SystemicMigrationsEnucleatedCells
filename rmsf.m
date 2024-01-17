@@ -94,7 +94,7 @@ function [dev1,dev2,dev3,tc2,goodness]=rmsf(u_all, rmsfhandle)
             max_corr = res(end,3); % Use max tc2 when R2>0.99   
             hold(rmsfhandle, 'on')
             % if strcmp(type,'original')
-            loglog(time(1:max_corr), F(1:max_corr), 'ro', 'MarkerSize', 1.75,'LineWidth', .25);
+            loglog(time(1:max_corr), F(1:max_corr), 'ro', 'MarkerSize', 2,'LineWidth', .3);
             rmsfhandle.FontSize = 6.5;
             % elseif strcmp(type,'shuffled')
                 % loglog(time(1:max_corr), F(1:max_corr), 'bo', 'MarkerSize', 2);
@@ -108,13 +108,13 @@ function [dev1,dev2,dev3,tc2,goodness]=rmsf(u_all, rmsfhandle)
                 'LineWidth',.5);
             text(time(15),(k/vmax(1))*vmax(150),strcat('\alpha=',...
                 num2str(round(res(end,1),3))),"HorizontalAlignment","left", ...
-                "FontSize",7.5)
+                "FontSize",8.5)
 
             % Plot alpha=0.5 line with the original data
             v2 = time.^(.5);
             loglog(time(1:max_corr),(k/v2(1))*v2(1:max_corr),'k--','LineWidth',.5);
             text(time(15),(k/v2(1))*v2(4),'\alpha=0.5, uncorrelated', ...
-                "HorizontalAlignment","left","FontSize",7.5)
+                "HorizontalAlignment","left","FontSize",8.5)
             set(rmsfhandle,'xscale','log')
             set(rmsfhandle,'yscale','log')
             axis padded

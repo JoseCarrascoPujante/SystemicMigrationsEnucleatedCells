@@ -136,7 +136,7 @@ function Figure2_simple(tracks,T,destination_folder)
     end
     
     versions = dir(strcat(destination_folder,'\Figures\')) ;
-    gabs = 0 ;
+    gabs = 1 ;
     for v = 1:length(versions)
         if  contains(versions(v).name, 'Fig2'+wildcardPattern+'.svg')
             gabs = gabs + 1 ;

@@ -126,7 +126,7 @@ function Figure1(tracks,destination_folder)
         text(ax,.5,1.1,columnlabels(AA),"Units","normalized","FontSize",11, ...
             "FontName",'Arial','FontWeight','normal',"HorizontalAlignment","center")
         ax.LineWidth=.25;
-
+        ax.YRuler.TickLabelGapOffset = 1;
     end
     
     % %% Panel 5

@@ -88,14 +88,14 @@ function Figure4(AE,destination_folder,rr,T)
     ylabel(a,'Approximate Entropy (shuffled)','FontSize',10,'Rotation',270);
     
     %% Panel 2 - Violin plots
-    % Violins degrade when manually moved in inkscape: set their x
-    % location programmatically
+    % manually moving thee violins or canvas in inkscape destroys the violins,
+    % always set their x position programmatically
         
     scenarios = ["noStimuli" "galvanotaxis" "chemotaxis" "doubleStimulus"];
     
     h = nexttile(layout0,3);
     colores = [1,0,1; 1,.2,1; 1,.45,1; 1,.65,1];
-    space = [0 2.5 4.6 6.45];
+    space = [0 3.1 5.9 8.1];
     c = 0;
     for jj = 1:4 % boxes (scenarios)
         c = c+1;
@@ -108,11 +108,12 @@ function Figure4(AE,destination_folder,rr,T)
     xlabel('Cells','FontSize',10)
     ylabel('Approximate Entropy','FontSize',10)
     axis padded
-    
+    ylim([0 .015]) % manually setting limits disables exp scale in axis
+    h.YAxis.Exponent = -3;
     
     h = nexttile(layout0,6);
     colores = [0,1,1; .2,1,1; .45,1,1; .65,1,1];
-    space = [0 3.2 5.9 8.1];
+    space = [0 3.1 5.9 8.1];
     c = 0;
     for jj = 1:4 % boxes (scenarios)
         c = c+1;
