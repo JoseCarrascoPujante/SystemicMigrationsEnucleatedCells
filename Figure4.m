@@ -3,7 +3,7 @@ function Figure4(AE,destination_folder,rr,T)
     %% Layouts
     
     fig = figure('Visible','off','Position', [0 0 1200 625]);
-    layout0 = tiledlayout(2,3,'TileSpacing','tight','Padding','none') ;
+    layout0 = tiledlayout(2,3,'TileSpacing','compact','Padding','none') ;
     
     %% Panel 1 - ApEn heatmaps
         
@@ -37,10 +37,10 @@ function Figure4(AE,destination_folder,rr,T)
     xticklabels(h,{});
     h.XAxis.TickLength = [0 0];
     h.YAxis.FontSize = 8;
-    ylabel(h,'Series','FontSize',10);
+    ylabel(h,'Series','FontSize',11);
     set(h, 'Color','k')
     clim([Zmin Zmax])
-    title('Cells','FontWeight','normal','FontSize',10,'Interpreter','none')
+    title('Cells','FontWeight','normal','FontSize',11,'Interpreter','none')
 
     nexttile(layout0,2)
     h = gca;
@@ -52,10 +52,10 @@ function Figure4(AE,destination_folder,rr,T)
     h.XAxis.TickLength = [0 0];
     h.YAxis.TickLength = [0 0];
     set(h, 'Color','k')
-    title('Cytoplasts','FontWeight','normal','FontSize',10,'Interpreter','none')
+    title('Cytoplasts','FontWeight','normal','FontSize',11,'Interpreter','none')
     a=colorbar(h,"FontSize",8);
     clim([Zmin Zmax])
-    ylabel(a,'Approximate Entropy','FontSize',10,'Rotation',270);    
+    ylabel(a,'Approximate Entropy','FontSize',11,'Rotation',270);    
 
     nexttile(layout0,4)
     h = gca;
@@ -67,8 +67,8 @@ function Figure4(AE,destination_folder,rr,T)
     h.XAxis.FontSize = 8;
     h.YAxis.FontSize = 8;
     clim([sZmin sZmax]);
-    ylabel(h,'Series (shuffled)','FontSize',10);
-    xlabel(h,'Time(s)','FontSize',10);
+    ylabel(h,'Series (shuffled)','FontSize',11);
+    xlabel(h,'Time(s)','FontSize',11);
     set(h, 'Color','k')
 
     nexttile(layout0,5)
@@ -85,7 +85,7 @@ function Figure4(AE,destination_folder,rr,T)
     set(h, 'Color','k')
     a=colorbar(h,"FontSize",8);
     clim([sZmin sZmax]); 
-    ylabel(a,'Approximate Entropy (shuffled)','FontSize',10,'Rotation',270);
+    ylabel(a,'Approximate Entropy (shuffled)','FontSize',11,'Rotation',270);
     
     %% Panel 2 - Violin plots
     % manually moving thee violins or canvas in inkscape destroys the violins,
@@ -104,9 +104,9 @@ function Figure4(AE,destination_folder,rr,T)
     xticklabels([])
     h.XAxis.TickLength = [0 0];
     h.YAxis.FontSize = 8;
-    title(['Sc1    ' 'Sc2    ' 'Sc3    ' 'Sc4    '],'FontWeight','normal','FontSize',10)
-    xlabel('Cells','FontSize',10)
-    ylabel('Approximate Entropy','FontSize',10)
+    title(['Sc1    ' 'Sc2    ' 'Sc3    ' 'Sc4    '],'FontWeight','normal','FontSize',11)
+    xlabel('Cells','FontSize',11)
+    ylabel('Approximate Entropy','FontSize',11)
     axis padded
     ylim([0 .015]) % manually setting limits disables exp scale in axis
     h.YAxis.Exponent = -3;
@@ -122,9 +122,9 @@ function Figure4(AE,destination_folder,rr,T)
     xticklabels([])
     h.XAxis.TickLength = [0 0];
     h.YAxis.FontSize = 8;
-    title(['Sc1    ' 'Sc2    ' 'Sc3    ' 'Sc4    '],'FontWeight','normal','FontSize',10)
-    xlabel('Cytoplasts','FontSize',10)
-    ylabel('Approximate Entropy','FontSize',10)
+    title(['Sc1    ' 'Sc2    ' 'Sc3    ' 'Sc4    '],'FontWeight','normal','FontSize',11)
+    xlabel('Cytoplasts','FontSize',11)
+    ylabel('Approximate Entropy','FontSize',11)
     ylim([0 inf]);
     h.YAxis.Exponent = -3;
     axis padded

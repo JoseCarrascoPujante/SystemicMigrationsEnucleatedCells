@@ -1,9 +1,9 @@
-%% Figure 6
+%% Figure 6a
 
-function Figure6(T,destination_folder)
+function Figure6a(T,destination_folder)
     
-    fig = figure('Visible','off','Position', [0 0 1350 350]);
-    layout0 = tiledlayout(1,3,'TileSpacing','compact','Padding','none') ;
+    fig = figure('Visible','off','Position', [0 0 1215 315]);
+    layout0 = tiledlayout(1,3,'TileSpacing','loose','Padding','none') ;
     
     % Intensity of response (mm)
     ax = nexttile(layout0);
@@ -39,14 +39,14 @@ function Figure6(T,destination_folder)
     versions = dir(strcat(destination_folder,'\Figures\')) ;
     gabs = 1 ;
     for v = 1:length(versions)
-        if  contains(versions(v).name, 'Fig6'+wildcardPattern+'.svg')
+        if  contains(versions(v).name, 'Fig6a'+wildcardPattern+'.svg')
             gabs = gabs + 1 ;
         end
     end
     
-    disp(strcat(num2str(gabs),' Fig6 files found'))
-    print(fig,'-vector','-dsvg',[destination_folder '\Figures\Fig6(',num2str(gabs),')' '.svg'])
-    print(fig,'-image','-djpeg','-r400',[destination_folder '\Figures\Fig6(',num2str(gabs),')' '.jpg'])        
+    disp(strcat(num2str(gabs),' Fig6a files found'))
+    print(fig,'-vector','-dsvg',[destination_folder '\Figures\Fig6a(',num2str(gabs),')' '.svg'])
+    print(fig,'-image','-djpeg','-r400',[destination_folder '\Figures\Fig6a(',num2str(gabs),')' '.jpg'])        
     
     %% Panel function
     function kyneticBoxplots(ax,string,T)

@@ -38,7 +38,7 @@ function Figure3(tracks,T,destination_folder)
         xlabel('Log(MSD(\tau))','FontSize',10);
         ylabel('Log(\tau(s))','FontSize',10);
         axis padded
-        title('Sc1','FontSize',10,'FontWeight','normal')
+        title('Sc1','FontSize',11,'FontWeight','normal')
         
     end
     
@@ -53,9 +53,7 @@ function Figure3(tracks,T,destination_folder)
     'x_2galvanotaxis_Cytoplasts'
     'x_3chemotaxis_Cytoplasts'
     'x_4doubleStimulus_Cytoplasts'};  
-
-    % scenario = ["Sc1" "Sc2" "Sc3" "Sc4" "Sc1" "Sc2" "Sc3" "Sc4"];
-    
+   
     for f = 1:length(field_names)
         
         t = nexttile(layout2);
@@ -123,7 +121,7 @@ function Figure3(tracks,T,destination_folder)
     
     %mejores colormaps: hsv,jet
     enu.superviolin(memory_violin(1:4),'Parent',ax,'FaceAlpha',0.15,...
-        'Errorbars','ci','Centrals','mean','LineWidth',0.01,'LUT','hsv')    
+        'Errorbars','ci','Centrals','mean','LineWidth',.05,'LUT','hsv')    
     colorgroups = [ones(50,1);repmat(2,50,1);repmat(3,50,1);repmat(4,50,1)];
     boxchart(ax,[ones(200,1)],[cat(1,memory_violin{1:4})], 'Notch', 'off',...
         'GroupByColor', colorgroups, 'BoxFaceAlpha',0,'BoxMedianLineColor','b') %"Box charts whose notches do not overlap have different medians at the 5% significance level".
@@ -132,16 +130,15 @@ function Figure3(tracks,T,destination_folder)
     h.XAxisLocation = 'top';
     h.FontSize = 7.5;
     box on
-    h.XTick = [.84 .94 1.04 1.14];
-    xticklabels(h,[{'Sc1'},{'Sc2'},{'Sc3'},{'Sc4'}])
-    h.XAxis.FontSize = 10;
+    xlabel(h,[{'Sc1   '} {'Sc2   '} {'Sc3   '} {'Sc4   '}],'FontSize', 11)
+    xticklabels(h,[])
     h.XAxis.TickLength = [0 0];
     ylabel('MSD\beta','FontSize',10)
     
     % cytoplasts superviolin
     ax=nexttile(layout3);
     enu.superviolin(memory_violin(5:8),'Parent',ax,'FaceAlpha',0.15,...
-    'Errorbars','ci','Centrals','mean','LineWidth',0.01,'LUT','hsv','Bandwidth',0.3)    
+    'Errorbars','ci','Centrals','mean','LineWidth',.05,'LUT','hsv','Bandwidth',0.3)    
     colorgroups = [ones(50,1);repmat(2,50,1);repmat(3,50,1);repmat(4,50,1)];  
     boxchart(ax,[ones(200,1)],[cat(1,memory_violin{1:4})], 'Notch', 'off',...
         'GroupByColor', colorgroups, 'BoxFaceAlpha',0,'BoxMedianLineColor','b') %"Box charts whose notches do not overlap have different medians at the 5% significance level".
@@ -150,9 +147,8 @@ function Figure3(tracks,T,destination_folder)
     h.XAxisLocation = 'top';
     h.FontSize = 7.5;
     box on
-    h.XTick = [.84 .94 1.04 1.14];
-    xticklabels(h,[{'Sc1'},{'Sc2'},{'Sc3'},{'Sc4'}])
-    h.XAxis.FontSize = 10;
+    xlabel(h,[{'Sc1   '} {'Sc2   '} {'Sc3   '} {'Sc4   '}],'FontSize', 11)
+    xticklabels(h,[])
     h.XAxis.TickLength = [0 0];
     ylabel('MSD\beta','FontSize',10)
     

@@ -100,9 +100,9 @@ function Figure1(tracks,destination_folder)
             pax.GridAlpha = 0;
             pax.LineWidth=.05;
             title(pax,subpanelabels(AA),[],"Units","normalized","Position",[-0.15 .8], ...
-                "FontSize",10,"FontName",'Arial','FontWeight','normal')
+                "FontSize",9,"FontName",'Arial','FontWeight','normal')
             ylabel(ax,rowlabels(AA),"Units","normalized","Position",[-0.18 .15], ...
-                "Rotation",90,"FontSize",11,"FontName",'Arial','FontWeight','normal')
+                "Rotation",90,"FontSize",8,"FontName",'Arial','FontWeight','normal')
 
             % rticks([])            
             % thetaticks([])
@@ -117,13 +117,13 @@ function Figure1(tracks,destination_folder)
             axh.FontSize = 5;
             pbaspect([1.2 1 1])
             title(axh,subpanelabels(AA),[],"Units","normalized","Position",[-0.35 .75], ...
-                "FontSize",10,"FontName",'Arial','FontWeight','normal')
+                "FontSize",9,"FontName",'Arial','FontWeight','normal')
             axh.LineWidth=.25;
         end
 
         title(ax,panelabels(AA),[],"Units","normalized","Position",[-0.15 1.05], ...
-            "FontSize",10,"FontName",'Arial','FontWeight','normal')
-        text(ax,.5,1.1,columnlabels(AA),"Units","normalized","FontSize",11, ...
+            "FontSize",9,"FontName",'Arial','FontWeight','normal')
+        text(ax,.5,1.1,columnlabels(AA),"Units","normalized","FontSize",8, ...
             "FontName",'Arial','FontWeight','normal',"HorizontalAlignment","center")
         ax.LineWidth=.25;
         ax.YRuler.TickLabelGapOffset = 1;

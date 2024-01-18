@@ -1,6 +1,6 @@
-%% Figure 7
-function Figure7(parT,destination_folder)
-    fig = figure('Visible','on','Position', [0 0 1070 650]);
+%% Figure 6b
+function Figure6b(parT,destination_folder)
+    fig = figure('Visible','off','Position', [0 0 1500 911]);
     
     % non-kynetic metrics
     tableColNames = {'RMSF\alpha' 'sRMSF\alpha' 'DFA\gamma' 'sDFA\gamma' ...
@@ -13,7 +13,7 @@ function Figure7(parT,destination_folder)
     [~, pairs] = ismember(combinaciones, tableColNames); % metric index for comparison on each panel
     
     % build axes positions
-    props = {'sh', 0.02, 'sv', 0.03, 'padding', 0.03 'margin', 0.03};
+    props = {'sh', 0.02, 'sv', 0.03, 'padding', 0.03 'margin', 0.02};
     hBig = [enu.subaxis(2,3,1, props{:}) enu.subaxis(2,3,2, props{:})...
         enu.subaxis(2,3,3, props{:}) enu.subaxis(2,3,4, props{:}) ...
         enu.subaxis(2,3,5, props{:}) enu.subaxis(2,3,6, props{:})]; % create subplots
@@ -140,12 +140,14 @@ function Figure7(parT,destination_folder)
     versions = dir(strcat(destination_folder,'\Figures\')) ;
     gabs = 1 ;
     for v = 1:length(versions)
-        if contains(versions(v).name, 'Fig7'+wildcardPattern+'.svg')
+        if contains(versions(v).name, 'Fig6b'+wildcardPattern+'.svg')
             gabs = gabs + 1 ;
         end
     end
     
-    disp(strcat(num2str(gabs-1),' Fig7 files found'))
-    exportgraphics(fig,[destination_folder '\Figures\Fig7(',num2str(gabs),')' '.pdf'],'ContentType','vector')
+    disp(strcat(num2str(gabs-1),' Fig6b files found'))
+    set(gcf, 'InvertHardcopy', 'off')
+    print(fig,'-vector','-dsvg',[destination_folder '\Figures\Fig6b(',num2str(gabs),')' '.svg'])
+    % exportgraphics(fig,[destination_folder '\Figures\Fig6b(',num2str(gabs),')' '.pdf'],'ContentType','vector')
 
 end
