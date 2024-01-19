@@ -87,12 +87,12 @@ function [resultados,T442,errorList] = resultStruct(tracks)
                     enu.ApEn(2, 0.2*std(tracks.(A{aa}).(B{bb}).(C{cc}).shuffled_rho), ...
                              tracks.(A{aa}).(B{bb}).(C{cc}).shuffled_rho) ;
         
-                % Intensity of response (mm)
+                % Intensity of response (mm) modulus
                 resultados.(A{aa}).(B{bb})(cc,strcmp(stat_names(:), 'Intensity')) = ...
-                    norm([tracks.(A{aa}).(B{bb}).(C{cc}).scaled(end,1) tracks.(A{aa}).(B{bb}).(C{cc}).scaled(end,2)]...
-                    - [tracks.(A{aa}).(B{bb}).(C{cc}).scaled(1,1) tracks.(A{aa}).(B{bb}).(C{cc}).scaled(1,2)]);
+					% .scaled always starts at (0,0) so no need to substract initial coordinates from the final coordinates
+                    norm([tracks.(A{aa}).(B{bb}).(C{cc}).scaled(end,1) tracks.(A{aa}).(B{bb}).(C{cc}).scaled(end,2)]);
         
-                % Shuff intensity of response (mm)
+                % Shuff intensity of response (mm) modulus
                 resultados.(A{aa}).(B{bb})(cc,strcmp(stat_names(:), 'sIntensity')) = ...
                     norm([tracks.(A{aa}).(B{bb}).(C{cc}).shuffled(end,1) tracks.(A{aa}).(B{bb}).(C{cc}).shuffled(end,2)]...
                     - [tracks.(A{aa}).(B{bb}).(C{cc}).shuffled(1,1) tracks.(A{aa}).(B{bb}).(C{cc}).shuffled(1,2)]);

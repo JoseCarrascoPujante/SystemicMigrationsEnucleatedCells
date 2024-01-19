@@ -19,7 +19,7 @@ function Figure5(tracks,T,destination_folder)
     gamma = enu.DFA_main2(tracks.x_1noStimuli_Cells.x21_11_2211_11.x2.scaled_rho,'original', dfahandle) ;
     yl = ylim();
     xl = xlim();
-    text(xl(1)+1,yl(1)+.65,strcat('\gamma=',num2str(round(gamma,2))))
+    text(xl(1)+1,yl(1)+.65,strcat('\gamma=',num2str(round(gamma,2))),"FontSize",10)
     axis padded
     
     nexttile(layout2,2)
@@ -37,7 +37,7 @@ function Figure5(tracks,T,destination_folder)
     gamma = enu.DFA_main2(tracks.x_1noStimuli_Cytoplasts.x12_12_2215_05.x3.scaled_rho,'original', dfahandle) ;
     yl = ylim();
     xl = xlim();
-    text(xl(1)+1,yl(1)+.25,strcat('\gamma=',num2str(round(gamma,2))))
+    text(xl(1)+1,yl(1)+.25,strcat('\gamma=',num2str(round(gamma,2))),"FontSize",10)
     axis padded
     
     nexttile(layout2,4)
@@ -49,8 +49,8 @@ function Figure5(tracks,T,destination_folder)
     text(xl(1)+1,yl(1)+.25,strcat('\gamma=',num2str(round(gamma,2))),"FontSize",10)
     axis padded
     
-    xlabel(layout2,'log10(n)','FontSize',10)
-    ylabel(layout2,'log10(F(n))','FontSize',10)
+    xlabel(layout2,'log10(n)','FontSize',11)
+    ylabel(layout2,'log10(F(n))','FontSize',11)
 
     %% Panel 2 - DFA \gamma original and shuffled
     
@@ -80,7 +80,7 @@ function Figure5(tracks,T,destination_folder)
         t.FontSize = 8;
         t.YAxis.Visible = 'off'; % hide y-axis
         t.Color = 'None';
-        % title(t,scenario(f),'FontSize',10,'FontWeight','normal','Interpreter','none', ...
+        % title(t,scenario(f),'FontSize',11,'FontWeight','normal','Interpreter','none', ...
             % 'VerticalAlignment','bottom')
         hold off
 
@@ -146,7 +146,7 @@ function Figure5(tracks,T,destination_folder)
     xticklabels([])
     h.XAxis.TickLength = [0 0];
     h.YAxis.FontSize = 7;
-    ylabel('DFA\gamma','FontSize',10)
+    ylabel('DFA\gamma','FontSize',11)
     
     %% Panel 3B - DFA \gamma Violin plots shuffled
     
@@ -174,7 +174,7 @@ function Figure5(tracks,T,destination_folder)
     xticklabels([])
     h.XAxis.TickLength = [0 0];
     h.YAxis.FontSize = 7;
-    ylabel('DFA\gamma (Shuffled)','FontSize',10)
+    ylabel('DFA\gamma (Shuffled)','FontSize',11)
     
     
     %% Export as jpg, tiff and vector graphics pdf
