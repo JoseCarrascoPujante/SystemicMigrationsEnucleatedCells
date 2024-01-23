@@ -1,48 +1,78 @@
-%% Figure 3
 function Figure3(tracks,T,destination_folder)
-    fig=figure('Visible','off','Position',[0 0 1200 640]);
-    layout0 = tiledlayout(1,3,'TileSpacing','loose','Padding','tight') ;
-    layout1 = tiledlayout(layout0,2,1,'TileSpacing','compact','Padding','none') ;
+    
+    figure('Visible','off','Position',[0 0 1400 680]);
+    layout0 = tiledlayout(1,3,'TileSpacing','loose','Padding','none') ;
+    layout1 = tiledlayout(layout0,2,1,'TileSpacing','loose','Padding','none') ;
     layout1.Layout.Tile = 1;
+    layout1_1 = tiledlayout(layout1,2,2,'TileSpacing','loose','Padding','none') ;
+    layout1_1.Layout.Tile = 1;
+    layout1_2 = tiledlayout(layout1,2,2,'TileSpacing','loose','Padding','none') ;
+    layout1_2.Layout.Tile = 2;        
     layout2 = tiledlayout(layout0,16,1,'TileSpacing','tight','Padding','none') ;
     layout2.Layout.Tile = 2;
     layout3 = tiledlayout(layout0,2,1,'TileSpacing','compact','Padding','none') ;
     layout3.Layout.Tile = 3;
     
-    %% Panel 1 - MSD \Beta plots
+    %% Panel 1 - RMSF max_correlations
     
-    a={};
-    a = enu.unfold(tracks,'results',false,a);
-    a = a(endsWith(a,'scaled'));
-    a = strrep(a,'results','tracks');
-    a = [a(contains(a,'x_1noStimuli_Cells')) a(contains(a,'x_1noStimuli_Cytoplasts'))];
-    chosen = [2,5,14,34,41,46,48,50;5,6,18,27,32,34,35,49];
+    % plot one cell rmsf for each scenario
 
-    for ii = 1:2
+    % no stimuli cell
+    nexttile(layout1_1)
+    rmsfhandle = gca;
+    enu.rmsf(tracks.x_1noStimuli_Cells.x24_10_2214_12.x2.scaled_rho, rmsfhandle) ;
+    title(rmsfhandle,"Sc1","FontWeight","normal","FontSize",10)
+
+    %galv cell
+    nexttile(layout1_1)
+    rmsfhandle = gca;
+    enu.rmsf(tracks.x_2galvanotaxis_Cells.x05_02_2320_38.x1.scaled_rho, rmsfhandle) ;
+    title(rmsfhandle,"Sc2","FontWeight","normal","FontSize",10)
+
+    %chem cell
+    nexttile(layout1_1)
+    rmsfhandle = gca;
+    enu.rmsf(tracks.x_3chemotaxis_Cells.x07_01_2319_49.x3.scaled_rho, rmsfhandle) ;
+    title(rmsfhandle,"Sc3","FontWeight","normal","FontSize",10)
+
+    %double stimulus cell
+    nexttile(layout1_1)
+    rmsfhandle = gca;
+    enu.rmsf(tracks.x_4doubleStimulus_Cells.x22_01_2318_51.x1.scaled_rho, rmsfhandle) ;
+    title(rmsfhandle,"Sc4","FontWeight","normal","FontSize",10)
+
+    xlabel(layout1_1,'Log({\itl}(s))',"FontSize",9);
+    ylabel(layout1_1,'Log(F({\itl}))',"FontSize",9);    
     
-        nexttile(layout1,ii)
-        h = gca;
-        for jj = chosen(ii,:)
-            trac = eval(a{jj,ii});
-            [~,deltat] = enu.msd(trac(:,1),trac(:,2),h);
-        end
-        plot(h, log(deltat), log(deltat)-10, 'k--')
-        plot(h, log(deltat), log(deltat.^2)-11, 'k--')
-        text(h, log(deltat(5)),0,['\beta=2, ballistic' newline 'diffusion']...
-            ,'HorizontalAlignment', 'center','FontSize',8)
-        text(h, log(deltat(5)),-4.5,'Super-diffusion'...
-            ,'HorizontalAlignment', 'center','FontSize',8)
-        text(h, log(deltat(5)),-9,['\beta=1, normal' newline 'diffusion']...
-            ,'HorizontalAlignment', 'center','FontSize',8)
-        h.FontSize = 7.5;
-        xlabel('Log(MSD(\tau))','FontSize',10);
-        ylabel('Log(\tau(s))','FontSize',10);
-        axis padded
-        title('Sc1','FontSize',11,'FontWeight','normal')
-        
-    end
     
-    %% Panel 2 - MSD \Beta circles
+    % plot one cytoplast rmsf for each scenario
+    %no stimuli cyto
+    nexttile(layout1_2)
+    rmsfhandle = gca;
+    enu.rmsf(tracks.x_1noStimuli_Cytoplasts.x12_12_2216_57.x2.scaled_rho, rmsfhandle) ;
+    title(rmsfhandle,"Sc1","FontWeight","normal","FontSize",10)
+    
+    %galvano cyto
+    nexttile(layout1_2)
+    rmsfhandle = gca;
+    enu.rmsf(tracks.x_2galvanotaxis_Cytoplasts.x30_01_2303_06.x3.scaled_rho, rmsfhandle) ;
+    title(rmsfhandle,"Sc2","FontWeight","normal","FontSize",10)
+
+    %chem cyto
+    nexttile(layout1_2)
+    rmsfhandle = gca;
+    enu.rmsf(tracks.x_3chemotaxis_Cytoplasts.x20_12_2214_48.x4.scaled_rho, rmsfhandle) ;
+    title(rmsfhandle,"Sc3","FontWeight","normal","FontSize",10)
+
+    %double stimulus cyto
+    nexttile(layout1_2)
+    rmsfhandle = gca;
+    enu.rmsf(tracks.x_4doubleStimulus_Cytoplasts.x26_01_2311_04.x2.scaled_rho, rmsfhandle) ;
+    title(rmsfhandle,"Sc4","FontWeight","normal","FontSize",10)
+
+    xlabel(layout1_2,'Log({\itl}(s))',"FontSize",9);
+    ylabel(layout1_2,'Log(F({\itl}))',"FontSize",9);    
+    %% Panel 2 - RMSFalpha
     
     field_names = {
     'x_1noStimuli_Cells'
@@ -52,71 +82,72 @@ function Figure3(tracks,T,destination_folder)
     'x_1noStimuli_Cytoplasts'
     'x_2galvanotaxis_Cytoplasts'
     'x_3chemotaxis_Cytoplasts'
-    'x_4doubleStimulus_Cytoplasts'};  
-   
+    'x_4doubleStimulus_Cytoplasts'};
+    
+    tile = 0;
     for f = 1:length(field_names)
         
-        t = nexttile(layout2);
+        tile = tile+1;
+        t = nexttile(layout2,tile);
         hold on
-        plot(table2array(T(contains(T{:,1},field_names{f}),'MSD_beta')),zeros(50), ...
-            'ro','MarkerSize',7,'LineWidth',0.3)
-        plot(table2array(T(contains(T{:,1},field_names{f}),'sMSD_beta')),zeros(50), ...
-            'o','MarkerEdgeColor','#00c1d4','MarkerSize',7,'LineWidth',0.3)        
+        plot(table2array(T(contains(T{:,1},field_names{f}),'RMSF_alpha')),zeros(50), ...
+            'ro','MarkerSize',7,'LineWidth',0.2)
+        % plot(table2array(T(contains(T{:,1},field_names{f}),'sRMSF_alpha')),zeros(50), ...
+            % 'o','MarkerEdgeColor','#00c1d4','MarkerSize',7,'LineWidth',0.2)        
         ylim([0 eps]) % minimize y-axis height
-        xlim([-.1 2.1])
+        xlim([.5 1])
         t.XRuler.TickLabelGapOffset = 2.5;
         t.TickLength = [.006 .01];
         t.LineWidth = .25;
         t.FontSize = 7.5;
         t.YAxis.Visible = 'off'; % hide y-axis
         t.Color = 'None';
-        % title(t,scenario(f),'FontSize',10,'FontWeight','normal','Interpreter','none', ...
-            % 'VerticalAlignment','bottom')
         hold off
 
-        t2 = nexttile(layout2);
+        tile=tile+1;
+        t2 = nexttile(layout2,tile);
         hold on
-        datamean = mean(table2array(T(contains(T{:,1},field_names{f}),'MSD_beta')));
-        datastd = std(table2array(T(contains(T{:,1},field_names{f}),'MSD_beta')));
-        sdatamean = mean(table2array(T(contains(T{:,1},field_names{f}),'sMSD_beta')));
-        sdatastd = std(table2array(T(contains(T{:,1},field_names{f}),'sMSD_beta')));        
+        datamean = mean(table2array(T(contains(T{:,1},field_names{f}),'RMSF_alpha')));
+        datastd = std(table2array(T(contains(T{:,1},field_names{f}),'RMSF_alpha')));
+        % sdatamean = mean(table2array(T(contains(T{:,1},field_names{f}),'sRMSF_alpha')));
+        % sdatastd = std(table2array(T(contains(T{:,1},field_names{f}),'sRMSF_alpha')));        
 
         line([datamean-datastd datamean+datastd],[0 0],'Color','red',...
             'LineWidth',.5)
-        line([datamean-datastd+.002 datamean-datastd],[0 0],'Color','red',...
+        line([datamean-datastd+.001 datamean-datastd],[0 0],'Color','red',...
             'LineWidth',5)
-        line([datamean+datastd datamean+datastd+.002],[0 0],'Color','red',...
+        line([datamean+datastd datamean+datastd+.001],[0 0],'Color','red',...
             'LineWidth',5)
-        text(t2,datamean,-.15,[num2str(round(datamean,2)) ' ' char(177) ' '...
+        text(t2,datamean,-.1,[num2str(round(datamean,2)) ' ' char(177) ' '...
             num2str(round(datastd,2))],'HorizontalAlignment','center', ...
             'FontSize',9,"FontWeight","normal")
 
-        line([sdatamean-sdatastd sdatamean+sdatastd],[0 0],'Color','#00c1d4',...
-            'LineWidth',.5)
-        line([sdatamean-sdatastd+.002 sdatamean-sdatastd],[0 0],'Color','#00c1d4',...
-            'LineWidth',5)
-        line([sdatamean+sdatastd sdatamean+sdatastd+.002],[0 0],'Color','#00c1d4',...
-            'LineWidth',5)
-        text(t2,sdatamean,-.15,[num2str(round(sdatamean,2)) ' ' char(177) ' '...
-            num2str(round(sdatastd,2))],'HorizontalAlignment','center', ...
-            'FontSize',9,"FontWeight","normal")        
+        % line([sdatamean-sdatastd sdatamean+sdatastd],[0 0],'Color','#00c1d4',...
+        %     'LineWidth',.5)
+        % line([sdatamean-sdatastd+.001 sdatamean-sdatastd],[0 0],'Color','#00c1d4',...
+        %     'LineWidth',5)
+        % line([sdatamean+sdatastd sdatamean+sdatastd+.001],[0 0],'Color','#00c1d4',...
+        %     'LineWidth',5)
+        % text(t2,sdatamean,-.1,[num2str(round(sdatamean,2)) ' ' char(177) ' '...
+        %     num2str(round(sdatastd,2))],'HorizontalAlignment','center', ...
+        %     'FontSize',9,"FontWeight","normal")        
 
-        ylim([-0.2 0]) % minimize y-axis height
-        xlim([-.1 2.1])
+        ylim([-0.2 0])
+        xlim([0.5 1])
         t2.YAxis.Visible = 'off'; % hide y-axis
         t2.XAxis.Visible = 'off'; % hide y-axis
         t2.Color = 'None';
         hold off
     end
     
-    
-    %% "Superviolin" plots of MSD \beta
+    %% Panel 3 - RMSF Violin plots
+
     %cells superviolin
     ax=nexttile(layout3);
     memory_violin = {}; % one cell array per condition and one array per scenario
 
     for ii=1:length(field_names)
-        memory_violin{ii}=table2array(T(contains(T{:,1},field_names{ii}),'MSD_beta'));
+        memory_violin{ii}=table2array(T(contains(T{:,1},field_names{ii}),'RMSFCorrelationTime'))/120;
     end
     
     %mejores colormaps: hsv,jet
@@ -127,32 +158,33 @@ function Figure3(tracks,T,destination_folder)
         'GroupByColor', colorgroups, 'BoxFaceAlpha',0,'BoxMedianLineColor','b') %"Box charts whose notches do not overlap have different medians at the 5% significance level".
     colororder(["red" "#00d400" "#0bb" "#800080"]); %select boxplot box colors
     h=gca;
-    h.XAxisLocation = 'top';
-    h.FontSize = 7.5;
     box on
+    h.XAxisLocation = 'top';
     xlabel(h,[{'Sc1   '} {'Sc2   '} {'Sc3   '} {'Sc4   '}],'FontSize', 11)
     xticklabels(h,[])
+    h.FontSize = 8;
     h.XAxis.TickLength = [0 0];
-    ylabel('MSD\beta','FontSize',10)
+    ylabel('Memory persistence (min)','FontSize',11)
     
     % cytoplasts superviolin
     ax=nexttile(layout3);
     enu.superviolin(memory_violin(5:8),'Parent',ax,'FaceAlpha',0.15,...
-    'Errorbars','ci','Centrals','mean','LineWidth',.05,'LUT','hsv','Bandwidth',0.3)    
+    'Errorbars','ci','Centrals','mean','LineWidth',.05,'LUT','hsv')    
     colorgroups = [ones(50,1);repmat(2,50,1);repmat(3,50,1);repmat(4,50,1)];  
     boxchart(ax,[ones(200,1)],[cat(1,memory_violin{1:4})], 'Notch', 'off',...
         'GroupByColor', colorgroups, 'BoxFaceAlpha',0,'BoxMedianLineColor','b') %"Box charts whose notches do not overlap have different medians at the 5% significance level".
     colororder(["red" "#00d400" "#0bb" "#800080"]); %select boxplot box colors
     h=gca;
-    h.XAxisLocation = 'top';
-    h.FontSize = 7.5;
     box on
+    h.XAxisLocation = 'top';
     xlabel(h,[{'Sc1   '} {'Sc2   '} {'Sc3   '} {'Sc4   '}],'FontSize', 11)
     xticklabels(h,[])
+    h.FontSize = 8;
     h.XAxis.TickLength = [0 0];
-    ylabel('MSD\beta','FontSize',10)
+    ylabel('Memory persistence (min)','FontSize',11)
     
-    %% Export as jpg, tiff and vector graphics pdf
+    
+    %% Export figures as jpg and svg
     
     if ~exist(strcat(destination_folder,'\Figures'), 'dir')
        mkdir(strcat(destination_folder,'\Figures'))
@@ -166,9 +198,14 @@ function Figure3(tracks,T,destination_folder)
         end
     end
     
-    disp(strcat(num2str(gabs),' Fig3 files found'))
-    print(fig,'-vector','-dsvg',[destination_folder '\Figures\Fig3(',num2str(gabs),')' '.svg'])
-    print(fig,'-image','-djpeg','-r400',[destination_folder '\Figures\Fig3(',num2str(gabs),')' '.jpg'])
-
+    disp(strcat(num2str(gabs-1),' Fig3 files found'))
+    
+    % Save the remaining figures
+    FigList = findobj(allchild(0), 'flat', 'Type', 'figure') ;
+    for iFig = length(FigList):-1:1
+        FigHandle = FigList(iFig) ;
+        set(0, 'CurrentFigure', FigHandle) ;
+        print(FigHandle,'-vector','-dsvg',[destination_folder '\Figures\Fig3(',num2str(gabs),')' '.svg'])
+        print(FigHandle,'-image','-djpeg','-r400',[destination_folder '\Figures\Fig3(',num2str(gabs),')' '.jpg'])
+    end
 end
-

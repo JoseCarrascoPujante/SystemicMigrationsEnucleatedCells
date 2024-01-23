@@ -1,5 +1,5 @@
-%% Figure 6b
-function Figure6b(parT,destination_folder)
+%% Figure 7b
+function Figure7b(parT,destination_folder)
     fig = figure('Visible','off','Position', [0 0 1500 911]);
     
     % non-kynetic metrics
@@ -140,14 +140,14 @@ function Figure6b(parT,destination_folder)
     versions = dir(strcat(destination_folder,'\Figures\')) ;
     gabs = 1 ;
     for v = 1:length(versions)
-        if contains(versions(v).name, 'Fig6b'+wildcardPattern+'.svg')
+        if contains(versions(v).name, 'Fig7b'+wildcardPattern+'.svg')
             gabs = gabs + 1 ;
         end
     end
     
-    disp(strcat(num2str(gabs-1),' Fig6b files found'))
+    disp(strcat(num2str(gabs-1),' Fig7b files found'))
     set(gcf, 'InvertHardcopy', 'off')
-    print(fig,'-vector','-dsvg',[destination_folder '\Figures\Fig6b(',num2str(gabs),')' '.svg'])
-    % exportgraphics(fig,[destination_folder '\Figures\Fig6b(',num2str(gabs),')' '.pdf'],'ContentType','vector')
+    print(fig,'-vector','-dsvg',[destination_folder '\Figures\Fig7b(',num2str(gabs),')' '.svg'])
+    % exportgraphics(fig,[destination_folder '\Figures\Fig7b(',num2str(gabs),')' '.pdf'],'ContentType','vector')
 
 end

@@ -1,6 +1,6 @@
-%% Figure 6a
+%% Figure 7a
 
-function Figure6a(T,destination_folder)
+function Figure7a(T,destination_folder)
     
     fig = figure('Visible','off','Position', [0 0 1215 315]);
     layout0 = tiledlayout(1,3,'TileSpacing','loose','Padding','none') ;
@@ -39,14 +39,14 @@ function Figure6a(T,destination_folder)
     versions = dir(strcat(destination_folder,'\Figures\')) ;
     gabs = 1 ;
     for v = 1:length(versions)
-        if  contains(versions(v).name, 'Fig6a'+wildcardPattern+'.svg')
+        if  contains(versions(v).name, 'Fig7a'+wildcardPattern+'.svg')
             gabs = gabs + 1 ;
         end
     end
     
-    disp(strcat(num2str(gabs),' Fig6a files found'))
-    print(fig,'-vector','-dsvg',[destination_folder '\Figures\Fig6a(',num2str(gabs),')' '.svg'])
-    print(fig,'-image','-djpeg','-r400',[destination_folder '\Figures\Fig6a(',num2str(gabs),')' '.jpg'])        
+    disp(strcat(num2str(gabs-1),' Fig7a files found'))
+    print(fig,'-vector','-dsvg',[destination_folder '\Figures\Fig7a(',num2str(gabs),')' '.svg'])
+    print(fig,'-image','-djpeg','-r400',[destination_folder '\Figures\Fig7a(',num2str(gabs),')' '.jpg'])        
     
     %% Panel function
     function kyneticBoxplots(ax,string,T)
@@ -85,7 +85,7 @@ function Figure6a(T,destination_folder)
             'FactorGap',[10,2],'colors',...
             [.9 0 .9;.9 0 .9;.9 0 .9;.9 0 .9;0 .6 .6;0 .6 .6;0 .6 .6;0 .6 .6],'Symbol','');
         hold(ax,"on")
-        set(findobj(ax,'Type','text'),'FontSize',9);
+        set(findobj(ax,'Type','text'),'FontSize',10);
         set(b(5:7:end),'LineWidth',.8);
         set(b(6:7:end),'LineWidth',.8);
         % h=findobj('LineStyle','--'); set(h, 'LineStyle','-'); % Make whiskers a solid line
