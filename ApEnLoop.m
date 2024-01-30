@@ -52,5 +52,5 @@ function ApEnLoop(tracks,destination_folder)
     end
 
     close(bar1,bar2,bar3,bar4)
-    save(strcat(destination_folder,'\','ApEn',num2str(step),'framestep.mat'), 'AE') ;
+    save(strcat(destination_folder,'\','ApEn',num2str(step),'frames.mat'), 'AE') ;
 end

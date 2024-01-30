@@ -90,7 +90,6 @@ function Figure7a(T,destination_folder)
         set(b(6:7:end),'LineWidth',.8);
         % h=findobj('LineStyle','--'); set(h, 'LineStyle','-'); % Make whiskers a solid line
         
-        % Scatter plotmeanvalPosition
         scatcolours = [
             repmat([.9 0 .9],50,1);
             repmat([.9 0 .9],50,1);
@@ -102,7 +101,7 @@ function Figure7a(T,destination_folder)
             repmat([0 .6 .6],50,1)
             ];
         
-        meanValPosition = [
+        meanValPosition = [ % ~1.15 default separation between box plots
             repmat(1.5,50,1);
             repmat(2.65,50,1);
             repmat(3.8,50,1);
