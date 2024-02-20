@@ -6,13 +6,13 @@ function Figure5(AE,destination_folder,rr,T)
     
     %% Panel 1 - ApEn heatmaps
         
-    % Optionally use AE min and max as colormap range limits for
+    % AE min and max as colormap range limits of
     % non-shuffled heatmaps(upper row)
     Zmin = min([min(min(AE.Cells)),min(min(AE.Cytoplasts))]);
     
     Zmax = max([max(max(AE.Cells)),max(max(AE.Cytoplasts))]);
 
-    % Optionally use AESh min and max as colormap range limits for shuffled
+    % AESh min and max as colormap range limits of shuffled
     % heatmaps (lower row)
     sZmin = min([min(min(AE.sCells)),min(min(AE.sCytoplasts))]);
     
