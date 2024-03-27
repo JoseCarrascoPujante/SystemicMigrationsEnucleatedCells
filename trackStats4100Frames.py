@@ -21,7 +21,7 @@ logging.basicConfig(
     format="[%(asctime)s] %(message)s",
     datefmt='%d-%b-%y %H:%M:%S',
     handlers=[
-        logging.FileHandler(fr'C:\Users\JoseC\Desktop\Doctorado\Publicaciones\Papers sin nucleo\mov.sist.enucleadas\Trayectorias\Tracks def\Track_info_{datetime.now().strftime("%d.%m.%Y_%H.%M.%S")}.txt'),
+        logging.FileHandler(fr'C:\Users\JoseC\Desktop\Doctorado\Amebas\Papers sin nucleo\mov.sist.enucleadas\Supplementary material (frames)\Track_info_{datetime.now().strftime("%d.%m.%Y_%H.%M.%S")}.txt'),
         logging.StreamHandler(sys.stdout)
     ])
 
@@ -29,7 +29,7 @@ logging.basicConfig(
 t = time.time()
 
 
-walk_dir = r'C:\Users\JoseC\Desktop\Doctorado\Publicaciones\Papers sin nucleo\mov.sist.enucleadas\Trayectorias\Tracks def'
+walk_dir = r'C:\Users\JoseC\Desktop\Doctorado\Amebas\Papers sin nucleo\mov.sist.enucleadas\Supplementary material (frames)'
 
 
 logging.info('\n\n\nwalk_dir = ' + walk_dir)
@@ -95,6 +95,12 @@ for root, subdirs, files in os.walk(walk_dir):
         logging.info(f'{experiment} has {sum(left_n[experiment].values())} cells to the left')
         logging.info(f'{experiment} has {(sum(left_n[experiment].values())/tracks_quantity[experiment])*100} left side ratio')
         logging.info(f'{experiment} has {(sum(right_n[experiment].values())/tracks_quantity[experiment])*100} right side ratio')
+    
+    elif any(file.endswith('.jpg') for file in files): # If the folder that was just parsed by the above if loop contained any jpg files do...
+        if len(files) != 4100 and len(files) != 3600:
+            # print(f'\t root.rsplit({chr(92)},1)[1] number of frames is {len(files)}')
+            raise SystemExit(f'\t {root.rsplit(chr(92),1)[1]} number of frames is {len(files)}')                
+    
     else:
         logging.info(f'\nThere are no xlsx files in folder: {root}')
 
@@ -106,7 +112,7 @@ logging.info(f'{elapsed} seconds elapsed')
 
 # Count "leaf" folders (videos) in the supp. material directory
 
-supp_material = r'C:\Users\JoseC\Desktop\Doctorado\Publicaciones\Papers sin nucleo\frames'
+supp_material = r'C:\Users\JoseC\Desktop\Doctorado\Amebas\Papers sin nucleo\mov.sist.enucleadas\Supplementary material (frames)'
 
 logging.info(f'{chr(10)}{chr(10)}Now counting videos in Supp. Material and xlsx files in \
 "tracks válidas" folder...{chr(10)}{chr(10)}')
