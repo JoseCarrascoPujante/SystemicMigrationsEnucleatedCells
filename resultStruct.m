@@ -88,8 +88,8 @@ function [resultados,T442,errorList] = resultStruct(tracks)
                              tracks.(A{aa}).(B{bb}).(C{cc}).shuffled_rho) ;
         
                 % Intensity of response (mm) modulus
+                % scaled always starts at (0,0) so no need to substract initial coordinates from the final coordinates
                 resultados.(A{aa}).(B{bb})(cc,strcmp(stat_names(:), 'Intensity')) = ...
-					% .scaled always starts at (0,0) so no need to substract initial coordinates from the final coordinates
                     norm([tracks.(A{aa}).(B{bb}).(C{cc}).scaled(end,1) tracks.(A{aa}).(B{bb}).(C{cc}).scaled(end,2)]);
         
                 % Shuff intensity of response (mm) modulus
