@@ -1,5 +1,5 @@
 %% Figure 7b
-function Figure7b(parT,destination_folder)
+function Figure7b(T,destination_folder)
     fig = figure('Visible','off','Position', [0 0 1500 911]);
     
     % non-kynetic metrics
@@ -43,36 +43,40 @@ function Figure7b(parT,destination_folder)
     hAxS(5) = axes('Position',posSmall{5});
     hAxS(6) = axes('Position',posSmall{6});
     
+    parT = table2array(T(:,[4,5,8:13])); % Save metrics to compare in a separate array
+    G = [contains(T.("Track name"),'Cells'); contains(T.("Track name"),'Cells')+2];
     % Plot big axes
     for ej=1:size(pairs,1)
         disp(strcat('Plot nº',num2str(ej),': ',tableColNames{pairs(ej,1)},'_vs_',tableColNames{pairs(ej,2)}))
         metric1 = cat(1,parT(:,pairs(ej,1)), parT(:,pairs(ej,1)+1));
         metric2 = cat(1,parT(:,pairs(ej,2)), parT(:,pairs(ej,2)+1));
-        G = [ones(length(metric1)/2,1) ; 2*ones(length(metric2)/2,1)];
-        gscatter(hAxB(ej),metric1,metric2, G,[.1 .5 0; 0 0 1],'..',2.9,'off', ...
+        
+        gscatter(hAxB(ej),metric1, metric2, G,[.7 .2 0; .2 .7 0; 0 0 .5; .9 .1 .64],'..',3.2,'off', ...
             tableColNames{pairs(ej,1)},tableColNames{pairs(ej,2)})
         hold(hAxB(ej),'on')
-        enu.ellipse_gscatter(hAxB(ej),cat(2,metric1,metric2),G,conf,'r')
+        
+        gEllipse = [ones(length(metric1)/2,1) ; 2*ones(length(metric2)/2,1)];
+        enu.ellipse_gscatter(hAxB(ej),cat(2,metric1,metric2),gEllipse,conf,'r')
         axis(hAxB(ej),'padded')
         % xlabel(hAxB(ej),tableColNames{pairs(ej,1)})
         % ylabel(hAxB(ej),tableColNames{pairs(ej,2)})
     end
     
-    % Plot small axes, use ek+n when small panels start at big panel #n, use 
+    % Plot small axes. Use ek+n when small panels start at 'n' big axis, use 
     % (ek[+n])+1 when plotting shuffled data
     for ek=1:length(pairs) % for # small axes do...
         if ek == 2 || ek == 4
-            scatter(hAxS(ek),parT(:,pairs(ek+1,1)),parT(:,pairs(ek+1,2)),.7,[.1 .5 0],'filled','o') ;
+            gscatter(hAxS(ek),parT(:,pairs(ek+1,1)),parT(:,pairs(ek+1,2)),G(1:400),[.7 .2 0; .2 .7 0],'..',3.2,'off') ;
             hold(hAxS(ek),'on')
             enu.ellipse_scatter(hAxS(ek),cat(2,parT(:,pairs(ek+1,1)),parT(:,pairs(ek+1,2))),conf,'r')
             axis(hAxS(ek),'padded')
-        elseif ek == 6 % last small axis corresponds to original (green) data
-            scatter(hAxS(ek),parT(:,pairs(ek,1)),parT(:,pairs(ek,2)),.7,[.1 .5 0],'filled','o') ;
+        elseif ek == 6 % last small axis corresponds to original data
+            gscatter(hAxS(ek),parT(:,pairs(ek,1)),parT(:,pairs(ek,2)),G(1:400),[.7 .2 0; .2 .7 0],'..',3.2,'off') ;
             hold(hAxS(ek),'on')
             enu.ellipse_scatter(hAxS(ek),cat(2,parT(:,pairs(ek,1)),parT(:,pairs(ek,2))),conf,'r')
             axis(hAxS(ek),'padded')
         else
-            scatter(hAxS(ek),parT(:,pairs(ek+1,1)+1),parT(:,pairs(ek+1,2)+1),.7,'b','filled','o') ;
+            gscatter(hAxS(ek),parT(:,pairs(ek+1,1)+1),parT(:,pairs(ek+1,2)+1),G(1:400),[0 0 .5; .9 .1 .64],'..',3.2,'off') ;
             hold(hAxS(ek),'on')
             enu.ellipse_scatter(hAxS(ek),cat(2,parT(:,pairs(ek+1,1)+1),parT(:,pairs(ek+1,2)+1)),conf,'r')
             axis(hAxS(ek),'padded')
@@ -80,7 +84,7 @@ function Figure7b(parT,destination_folder)
                 hAxS(ek).XAxis.Exponent = -1;
             end
         end
-        box(hAxS(ek),'on')
+        % box(hAxS(ek),'on')
         axis(hAxS(ek),'tight')
         xl = xlim(hAxS(ek));
         yl = ylim(hAxS(ek));
@@ -110,7 +114,7 @@ function Figure7b(parT,destination_folder)
             'Color','k','LineStyle','--','LineWidth',.5);
         annotation(fig,'line',[Xor posSmall{ek}(1)], [Yfr posSmall{ek}(2)+posSmall{ek}(4)], ...
             'Color','k','LineStyle','--','LineWidth',.5);
-        % alpha(hAxS(ek),1) % make small axes' background invisible
+        alpha(hAxS(ek),1) % make small axes' background invisible
     end
     
     %# set axes properties
@@ -118,18 +122,19 @@ function Figure7b(parT,destination_folder)
     set(hAxS, 'Color','w', 'XColor','k', 'YColor','k','LineWidth',.5,'FontSize',7, ...
         'XAxisLocation','bottom', 'YAxisLocation','left');
     
-    [h,objh] = legend(hAxB(1),'Systemic Cell Migrations','Non-Systemic Cell Migrations',...
-        '', Orientation='Horizontal',TextColor='k',FontSize=12);
-    objhl = findobj(objh, 'type', 'line'); %// objects of legend #1 of type line
-    set(objhl, 'Markersize', 27); %// set marker size as desired
+    [h,objh] = legend(hAxB(1),'Systemic Cell Migrations (enucleated)','Systemic Cell Migrations (nucleated)',...
+        'Non-Systemic Cell Migrations (enucleated)','Non-Systemic Cell Migrations (nucleated)',...
+        '', Orientation='Horizontal',TextColor='k',FontSize=10);
+    objhl = findobj(objh, 'type', 'line'); %// line objects of legend #1
+    set(objhl, 'Markersize', 27); %// set marker size
     
-    [h2,objh2] = legend(hAxB(4),'','',strcat(num2str(1),' ',ellipseFitType), Orientation='Vertical', ...
+    [h2,objh2] = legend(hAxB(4),'','','','',strcat(num2str(1),' ',ellipseFitType), Orientation='Vertical', ...
         TextColor='k',FontSize=8.5);
-    objhl2 = findobj(objh2, 'type', 'line'); %// objects of legend #2 of type line
-    set(objhl2, 'Markersize', 15); %// set marker size as desired
+    objhl2 = findobj(objh2, 'type', 'line'); %// line objects of legend #2
+    set(objhl2, 'Markersize', 15); %// set marker size
     
-    h.Position(1:2)=[0.28 0.96];
-    h2.Position(1:2)=[0.37 0];
+    h.Position(1:2)=[0.11 0.99];
+    h2.Position(1:2)=[0.32 0.01];
     
     %% Export as vector graphics svg file
         
