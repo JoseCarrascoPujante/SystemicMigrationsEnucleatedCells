@@ -2,7 +2,7 @@ function namearray = unfold(SC,varargin)
 %UNFOLD Unfolds a structure.
 %   UNFOLD(SC) displays the content of a variable. If SC is a structure it
 %   recursively shows the name of SC and the fieldnames of SC and their
-%   contents. If SC is a cell arraythe contents of each cell are displayed.
+%   contents. If SC is a cell array the contents of each cell are displayed.
 %   It uses the caller's workspace variable name as the name of SC. 
 %   UNFOLD(SC,NAME) uses NAME as the name of SC.
 %   UNFOLD(SC,SHOW) If SHOW is false only the fieldnames and their sizes
