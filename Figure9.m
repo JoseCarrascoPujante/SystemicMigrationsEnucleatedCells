@@ -1,5 +1,5 @@
-%% Figure 7b
-function Figure7b(T,destination_folder)
+%% Figure 9
+function Figure9(T,destination_folder)
     fig = figure('Visible','off','Position', [0 0 1500 911]);
     
     % non-kynetic metrics
@@ -51,7 +51,7 @@ function Figure7b(T,destination_folder)
         metric1 = cat(1,parT(:,pairs(ej,1)), parT(:,pairs(ej,1)+1));
         metric2 = cat(1,parT(:,pairs(ej,2)), parT(:,pairs(ej,2)+1));
         
-        gscatter(hAxB(ej),metric1, metric2, G,[.7 .2 0; .2 .7 0; 0 0 .5; .9 .1 .64],'..',3.2,'off', ...
+        gscatter(hAxB(ej),metric1, metric2, G,[.7 .2 0; .7 .2 0; 0 0 .5; .9 .1 .64],'..',3.2,'off', ...
             tableColNames{pairs(ej,1)},tableColNames{pairs(ej,2)})
         hold(hAxB(ej),'on')
         
@@ -66,12 +66,12 @@ function Figure7b(T,destination_folder)
     % (ek[+n])+1 when plotting shuffled data
     for ek=1:length(pairs) % for # small axes do...
         if ek == 2 || ek == 4
-            gscatter(hAxS(ek),parT(:,pairs(ek+1,1)),parT(:,pairs(ek+1,2)),G(1:400),[.7 .2 0; .2 .7 0],'..',3.2,'off') ;
+            gscatter(hAxS(ek),parT(:,pairs(ek+1,1)),parT(:,pairs(ek+1,2)),G(1:400),[.7 .2 0; .7 .2 0],'..',3.2,'off') ;
             hold(hAxS(ek),'on')
             enu.ellipse_scatter(hAxS(ek),cat(2,parT(:,pairs(ek+1,1)),parT(:,pairs(ek+1,2))),conf,'r')
             axis(hAxS(ek),'padded')
         elseif ek == 6 % last small axis corresponds to original data
-            gscatter(hAxS(ek),parT(:,pairs(ek,1)),parT(:,pairs(ek,2)),G(1:400),[.7 .2 0; .2 .7 0],'..',3.2,'off') ;
+            gscatter(hAxS(ek),parT(:,pairs(ek,1)),parT(:,pairs(ek,2)),G(1:400),[.7 .2 0; .7 .2 0],'..',3.2,'off') ;
             hold(hAxS(ek),'on')
             enu.ellipse_scatter(hAxS(ek),cat(2,parT(:,pairs(ek,1)),parT(:,pairs(ek,2))),conf,'r')
             axis(hAxS(ek),'padded')
@@ -122,9 +122,8 @@ function Figure7b(T,destination_folder)
     set(hAxS, 'Color','w', 'XColor','k', 'YColor','k','LineWidth',.5,'FontSize',7, ...
         'XAxisLocation','bottom', 'YAxisLocation','left');
     
-    [h,objh] = legend(hAxB(1),'Systemic Cell Migrations (enucleated)','Systemic Cell Migrations (nucleated)',...
-        'Non-Systemic Cell Migrations (enucleated)','Non-Systemic Cell Migrations (nucleated)',...
-        '', Orientation='Horizontal',TextColor='k',FontSize=10);
+    [h,objh] = legend(hAxB(1),'Enucleated','Nucleated',...
+        'Shuffled','','', Orientation='Horizontal',TextColor='k',FontSize=10);
     objhl = findobj(objh, 'type', 'line'); %// line objects of legend #1
     set(objhl, 'Markersize', 27); %// set marker size
     
@@ -145,14 +144,14 @@ function Figure7b(T,destination_folder)
     versions = dir(strcat(destination_folder,'\Figures\')) ;
     gabs = 1 ;
     for v = 1:length(versions)
-        if contains(versions(v).name, 'Fig7b'+wildcardPattern+'.svg')
+        if contains(versions(v).name, 'Fig9'+wildcardPattern+'.svg')
             gabs = gabs + 1 ;
         end
     end
     
-    disp(strcat(num2str(gabs-1),' Fig7b files found'))
+    disp(strcat(num2str(gabs-1),' Fig9 files found'))
     set(gcf, 'InvertHardcopy', 'off')
-    print(fig,'-vector','-dsvg',[destination_folder '\Figures\Fig7b(',num2str(gabs),')' '.svg'])
-    % exportgraphics(fig,[destination_folder '\Figures\Fig7b(',num2str(gabs),')' '.pdf'],'ContentType','vector')
+    print(fig,'-vector','-dsvg',[destination_folder '\Figures\Fig9(',num2str(gabs),')' '.svg'])
+    % exportgraphics(fig,[destination_folder '\Figures\Fig9(',num2str(gabs),')' '.pdf'],'ContentType','vector')
 
 end

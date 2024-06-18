@@ -1,44 +1,35 @@
 %% Figure 8
 
-function Fig8(T,destination_folder)
+function Figure8(T,destination_folder)
     
-    fig = figure('Visible','off','Position', [0 0 1215 1215]);
-    layout0 = tiledlayout(3,3,'TileSpacing','loose','Padding','none') ;
+    fig = figure('Visible','off','Position', [0 0 1215 315]);
+    layout0 = tiledlayout(1,3,'TileSpacing','loose','Padding','none') ;
     
     % Intensity of response (mm)
     ax = nexttile(layout0);
     kyneticBoxplots(ax,'Intensity',T)
-
+    
+    % % Shuffled Intensity of response (mm)
+    % ax = nexttile(layout0,2);
+    % kyneticBoxplots(ax,'Shuffled Intensity of response (mm)',T)
+    
     % Directionality ratio (straightness)
     ax = nexttile(layout0);
     kyneticBoxplots(ax,'DR',T)
     
+    % % Shuffled Directionality ratio (straightness)
+    % ax = nexttile(layout0,4);
+    % kyneticBoxplots(ax,'Shuffled Directionality ratio',T)
+    
     % Average speed (mm/s)
     ax = nexttile(layout0);
     kyneticBoxplots(ax,'AvgSpeed',T)
-  
-    % RMSF a
-    ax = nexttile(layout0);
-    kyneticBoxplots(ax,'RMSF_alpha',T)
     
-    % RMSF correlation time
-    ax = nexttile(layout0);
-    kyneticBoxplots(ax,'RMSFCorrelationTime',T)
+    % % Shuffled Average speed (mm/s)
+    % ax = nexttile(layout0,6);
+    % kyneticBoxplots(ax,'Shuffled average speed (mm/s)',T)
     
-    % MSD beta
-    ax = nexttile(layout0);
-    kyneticBoxplots(ax,'MSD_beta',T)
-
-    % ApEn beta
-    ax = nexttile(layout0);
-    kyneticBoxplots(ax,'ApEn',T)
-
-    % DFA Gamma
-    ax = nexttile(layout0);
-    kyneticBoxplots(ax,'DFA_gamma',T)
-
-
-
+    
     %% Export as jpg and vector graphics svg file
     
     if ~exist(strcat(destination_folder,'\Figures'), 'dir')

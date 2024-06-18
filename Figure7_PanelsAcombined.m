@@ -1,4 +1,4 @@
-function Figure6_PanelsAcombined(tracks,T,destination_folder)
+function Figure7_PanelsAcombined(tracks,T,destination_folder)
     %% Layouts
     fig = figure('Visible','off','Position',[0 0 1150 800]);
     layout0 = tiledlayout(2,1,'TileSpacing','compact','Padding','none') ;
@@ -177,14 +177,14 @@ function Figure6_PanelsAcombined(tracks,T,destination_folder)
     versions = dir(strcat(destination_folder,'\Figures\')) ;
     gabs = 1 ;
     for v = 1:length(versions)
-        if  contains(versions(v).name, 'Fig6_PanelsAcombined'+wildcardPattern+'.svg')
+        if  contains(versions(v).name, 'Fig7_PanelsAcombined'+wildcardPattern+'.svg')
             gabs = gabs + 1 ;
         end
     end
     
-    disp(strcat(num2str(gabs-1),' Fig6_PanelsAcombined files found'))
-    print(fig,'-vector','-dsvg',[destination_folder '\Figures\Fig6_PanelsAcombined(',num2str(gabs),')' '.svg'])
-    print(fig,'-image','-djpeg','-r400',[destination_folder '\Figures\Fig6_PanelsAcombined(',num2str(gabs),')' '.jpg'])    
+    disp(strcat(num2str(gabs-1),' Fig7_PanelsAcombined files found'))
+    print(fig,'-vector','-dsvg',[destination_folder '\Figures\Fig7_PanelsAcombined(',num2str(gabs),')' '.svg'])
+    print(fig,'-image','-djpeg','-r400',[destination_folder '\Figures\Fig7_PanelsAcombined(',num2str(gabs),')' '.jpg'])    
 
     
 end

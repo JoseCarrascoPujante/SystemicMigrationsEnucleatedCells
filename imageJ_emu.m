@@ -31,7 +31,7 @@ function imageJ_emu(tracks)
 
     % Listbox to choose scenario->experiment->track to plot
     trackList = {};
-    trackList = unfold(tracks,'tracks',false,trackList);
+    trackList = enu.unfold(tracks,'tracks',false,trackList);
     trackList = trackList(contains(trackList,'original'));
     myCoords = cell(1,numel(trackList));
     for v = 1:length(trackList)

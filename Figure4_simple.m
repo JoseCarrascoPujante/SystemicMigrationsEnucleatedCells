@@ -1,4 +1,4 @@
-function Figure3_simple(tracks,T,destination_folder)
+function Figure4_simple(tracks,T,destination_folder)
     
     figure('Visible','off','Position',[0 0 1400 680]);
     layout0 = tiledlayout(1,3,'TileSpacing','loose','Padding','none') ;
@@ -157,19 +157,19 @@ function Figure3_simple(tracks,T,destination_folder)
     versions = dir(strcat(destination_folder,'\Figures\')) ;
     gabs = 1 ;
     for v = 1:length(versions)
-        if  contains(versions(v).name, 'Fig3_simple'+wildcardPattern+'.svg')
+        if  contains(versions(v).name, 'Figure4_simple'+wildcardPattern+'.svg')
             gabs = gabs + 1 ;
         end
     end
     
-    disp(strcat(num2str(gabs-1),' Fig3_simple files found'))
+    disp(strcat(num2str(gabs-1),' Figure4_simple files found'))
     
     % Save the remaining figures
     FigList = findobj(allchild(0), 'flat', 'Type', 'figure') ;
     for iFig = length(FigList):-1:1
         FigHandle = FigList(iFig) ;
         set(0, 'CurrentFigure', FigHandle) ;
-        print(FigHandle,'-vector','-dsvg',[destination_folder '\Figures\Fig3_simple(',num2str(gabs),')' '.svg'])
-        print(FigHandle,'-image','-djpeg','-r400',[destination_folder '\Figures\Fig3_simple(',num2str(gabs),')' '.jpg'])
+        print(FigHandle,'-vector','-dsvg',[destination_folder '\Figures\Figure4_simple(',num2str(gabs),')' '.svg'])
+        print(FigHandle,'-image','-djpeg','-r400',[destination_folder '\Figures\Figure4_simple(',num2str(gabs),')' '.jpg'])
     end
 end
