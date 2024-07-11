@@ -1,5 +1,7 @@
 function imageJ_emu(tracks)
-    % Create ui elements
+% Plot tracks on top of original video    
+
+% Create ui elements
     fig = uifigure('Position', [0 0 1200 700]);
     g = uigridlayout(fig);
     g.Padding = [5 5 5 5]; % Reduce padding to 5 pixels on all sides
