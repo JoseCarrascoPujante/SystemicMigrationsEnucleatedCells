@@ -128,7 +128,7 @@ function Figure4_simple(tracks,T,destination_folder)
     xticklabels(h,[])
     h.FontSize = 8;
     h.XAxis.TickLength = [0 0];
-    ylabel('Memory persistence (min)','FontSize',11)
+    ylabel('Correlations duration (min)','FontSize',11)
     
     % cytoplasts superviolin
     ax=nexttile(layout3);
@@ -145,7 +145,7 @@ function Figure4_simple(tracks,T,destination_folder)
     xticklabels(h,[])
     h.FontSize = 8;
     h.XAxis.TickLength = [0 0];
-    ylabel('Memory persistence (min)','FontSize',11)
+    ylabel('Correlations duration (min)','FontSize',11)
     
     
     %% Export figures as jpg and svg

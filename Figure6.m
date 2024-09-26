@@ -7,7 +7,7 @@ function Figure6(AE,destination_folder,rr,T)
     %% Panel 1 - ApEn heatmaps
         
     % AE min and max as colormap range limits of
-    % non-shuffled heatmaps(upper row)
+    % non-shuffled heatmaps(upper row). Usamos AE de 50 framestep
     Zmin = min([min(min(AE.Cells)),min(min(AE.Cytoplasts))]);
     
     Zmax = max([max(max(AE.Cells)),max(max(AE.Cytoplasts))]);
@@ -32,7 +32,7 @@ function Figure6(AE,destination_folder,rr,T)
     h = gca;
     imagesc(AE.Cells(rr,7:end),'AlphaData',~isnan(AE.Cells(rr,7:end)))
     set(h,'YDir','normal')
-    colormap(jet)
+    colormap(flipud(jet))
     xticklabels(h,{});
     h.XAxis.TickLength = [0 0];
     h.YAxis.FontSize = 8;
@@ -45,7 +45,7 @@ function Figure6(AE,destination_folder,rr,T)
     h = gca;
     imagesc(AE.Cytoplasts(rr,7:end),'AlphaData',~isnan(AE.Cytoplasts(rr,7:end)))
     set(h,'YDir','normal')
-    colormap(jet)
+    colormap(flipud(jet))
     xticklabels(h,{});
     yticklabels(h,{});
     h.XAxis.TickLength = [0 0];
@@ -60,7 +60,7 @@ function Figure6(AE,destination_folder,rr,T)
     h = gca;
     imagesc(AE.sCells(rr,7:end),'AlphaData',~isnan(AE.sCells(rr,7:end)))
     set(h,'YDir','normal')
-    colormap(jet)
+    colormap(flipud(jet))
     xticks([1:columns/5:columns,columns])
     xticklabels(h,300:760:4100);
     h.XAxis.FontSize = 8;
@@ -74,7 +74,7 @@ function Figure6(AE,destination_folder,rr,T)
     h = gca;
     imagesc(AE.sCytoplasts(rr,7:end),'AlphaData',~isnan(AE.sCytoplasts(rr,7:end)))
     set(h,'YDir','normal')
-    colormap(jet)
+    colormap(flipud(jet))
     xticks([1:columns/5:columns,columns])
     xticklabels(h,300:760:4100);
     yticklabels(h,{});

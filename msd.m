@@ -8,7 +8,7 @@ function [slope,deltat] = msd(x, y, axis)
     tau = 0.5; % s time between trajectory points
     data = sqrt(x.^2 + y.^2);
     nData = length(data); %# number of data points
-    numberOfDeltaT = floor(nData/4); %# for MSD, dt should be up to 1/4 of number of data points
+    numberOfDeltaT = floor(nData/4); %# for MSD, it can only be up to 1/4 of number of data points
     
     sem = zeros(numberOfDeltaT, 1); 
     deltat = zeros(numberOfDeltaT, 1); 
