@@ -1,4 +1,4 @@
-function Figure7_PanelsAcombined(tracks,T,destination_folder)
+function Figure7_mergedPanelA(tracks,T,destination_folder)
     %% Layouts
     fig = figure('Visible','off','Position',[0 0 1150 800]);
     layout0 = tiledlayout(2,1,'TileSpacing','compact','Padding','none') ;
