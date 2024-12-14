@@ -1,4 +1,4 @@
-function FigureS3(destination_folder)
+function FigureS1(destination_folder)
     a = [0 2 5 10 20 30;
         0 0.17712933 0.33438485 0.42744479 0.55394321 0.60063091];
     err=[0 0.01813880 0.05063091 0.09116719 0.12413249 0.11214511];

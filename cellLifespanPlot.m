@@ -1,4 +1,4 @@
-function trackLengthPlot(tracks,xnumber)
+function cellLifespanPlot(tracks,xnumber)
     a={};
     a=enu.unfold(tracks,'',false,a);
     a=a(contains(a,'original'));
