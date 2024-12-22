@@ -20,7 +20,7 @@ text(centers(1:15), h.Values(1:15)+8, strcat(values(1:15), '%'), 'HorizontalAlig
     'center','FontWeight','bold')
 % Adjust the limits of the axes to fit the highest bar's label.
 xlim([0 15])
-ylim([0 296])
+ylim([0 20])
 xlabel("Time after enucleation (minutes)")
 ylabel("Enucleated cell death rate (N per minute)")
 xticks(1:35)
@@ -30,5 +30,5 @@ title('Curve of enucleated cell survival', 'FontSize', 16)
 fontsize(scale=1.5)
 box off
 
-print(f,'-vector','-dsvg','C:\Users\JoseC\Desktop\FigS2.svg')
-print(f,'-image','-djpeg','-r330','C:\Users\JoseC\Desktop\FigS2.jpg')
+print(f,'-vector','-dsvg','C:\Users\JoseC\Desktop\FigS2B.svg')
+print(f,'-image','-djpeg','-r330','C:\Users\JoseC\Desktop\FigS2B.jpg')
