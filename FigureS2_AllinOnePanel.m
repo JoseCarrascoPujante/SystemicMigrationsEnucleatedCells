@@ -16,7 +16,7 @@ ylabel("Number of surviving cytoplasts")
 % Panel B Survival histogram
 hold on
 yyaxis right
-h = histogram(CytoplastsLifespanArray(CytoplastsLifespanArray<34.1666),0:34,'FaceAlpha',.5);
+h = histogram(CytoplastsLifespanArray(CytoplastsLifespanArray<34.1666),0:34,'FaceAlpha',1);
 edges = h.BinEdges;
 values = string(round(h.Values*100/length(CytoplastsLifespanArray),1));
 % The center of each bin is its left edge plus half the distance to the right edge (which is where diff comes in.)
@@ -30,5 +30,5 @@ ylabel("Cytoplast death rate (N)")
 
 title('Enucleated cell survival curve and death rate histogram','FontSize',16)
 
-print(f,'-vector','-dsvg','C:\Users\JoseC\Desktop\FigS2.svg')
-print(f,'-image','-djpeg','-r330','C:\Users\JoseC\Desktop\FigS2.jpg')
+print(f,'-vector','-dsvg','C:\Users\JoseC\Desktop\FigS2_.svg')
+print(f,'-image','-djpeg','-r330','C:\Users\JoseC\Desktop\FigS2_.jpg')
