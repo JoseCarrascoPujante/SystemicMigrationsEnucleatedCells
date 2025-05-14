@@ -7,7 +7,7 @@ function ks=k_s(resultados)
         for ii = 1:length(a)
             b = [b; resultados.(p{ii,2}).(p{ii,3})];
         end        
-        n_hypotheses = size(b,1) ; % N hypotheses being tested, needed by Bonferroni correction)
+        n_hypotheses = size(b,1) ; % N hypotheses (cells) being tested, for Bonferroni correction)
         
         for column_index = 2:size(b,2)
     
